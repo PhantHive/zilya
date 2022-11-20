@@ -1,7 +1,7 @@
 <h1 align="center"><strong><i>ZILYA</i></strong></h1>
 
 
-<img src="https://images4.alphacoders.com/125/1256750.jpg" align="center">
+<img src="https://imgur.com/Fe90Rwm.png" align="center">
 
 ---
 
