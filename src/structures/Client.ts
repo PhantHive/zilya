@@ -15,7 +15,7 @@ export class ExtendedClient extends Client {
     commands: Collection<string, CommandType> = new Collection();
 
     constructor() {
-        super({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'GuildMessageReactions'] });
+        super({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'GuildMessageReactions', 'MessageContent', 'DirectMessages'] });
     }
 
     start() {
@@ -38,13 +38,18 @@ export class ExtendedClient extends Client {
     }
 
     async registerModules() {
-        // Commands
+        // Commands global
         const slashCommands: ApplicationCommandDataResolvable[] = [];
+        const phearionSlashCommands: ApplicationCommandDataResolvable[] = [];
+
         // get list of all ts and js file within subfolder of SlashCommands
         const commandFiles = glob.sync(`${__dirname}/../SlashCommands/*/*{.ts,.js}`.replace(/\\/g, '/'));
+        // keep only commands within Phearion folder (global commands only here)
+        const filteredCommandFiles = commandFiles.filter((file) => file.includes('phearion'));
 
-        console.log(commandFiles);
+        console.log('Phearion commands: ', filteredCommandFiles);
 
+        // register global commands
         let c = 1;
         for (const filePath of commandFiles) {
             const command: CommandType = await this.importFiles(filePath);
@@ -53,9 +58,23 @@ export class ExtendedClient extends Client {
             slashCommands.push(command);
             c++;
         }
+
+        // register Phearion guild commands
+        for (const filePath of filteredCommandFiles) {
+            const command: CommandType = await this.importFiles(filePath);
+            if (!command.name) continue;
+            this.commands.set(command.name, command);
+            phearionSlashCommands.push(command);
+            c++;
+        }
+
         this.on('ready', () => {
             this.registerCommands({
                 commands: slashCommands,
+                guildId: null
+            });
+            this.registerCommands({
+                commands: phearionSlashCommands,
                 guildId: process.env.GUILD_ID
             });
         })
