@@ -7,12 +7,12 @@ export default new SlashCommand({
     'options': [
         {
             "name": "user",
-            "description": "minecraft user name",
+            "description": "PSEUDO minecraft",
             "type": 3,
             "required": true
         }
     ],
-    description: 'Money',
+    description: 'Argent',
     run: async ({interaction}) => {
 
         const user = interaction.options.get('user').value as string;

@@ -7,7 +7,7 @@ const { EmbedBuilder } = require('discord.js');
 
 export default new SlashCommand({
     name: 'pheabank',
-    description: 'Show your bank information',
+    description: 'Vos informations bancaires',
     run: async ({interaction}) => {
 
         await interaction.reply({content: "Processing...", ephemeral: true})
@@ -73,7 +73,6 @@ export default new SlashCommand({
                     let daily = "✅"
                     if (result["money"] !== data.pheaCoins) {
                         data.pheaCoins = result["money"]
-                        data.save()
                     }
 
                     const fPheaCoins = new Intl.NumberFormat('fr-FR').format(data.pheaCoins)
@@ -82,6 +81,13 @@ export default new SlashCommand({
                     if (data.daily === 1) {
                         daily = "❌"
                     }
+
+                    // try data.save() if it doesn't work retry in 2 seconds
+                    data.save().catch(() => {
+                        setTimeout(() => {
+                            data.save()
+                        }, 2000)
+                    });
 
                     const embed = new EmbedBuilder()
                         .setColor('#FEE75C')

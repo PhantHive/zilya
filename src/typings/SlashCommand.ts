@@ -1,7 +1,7 @@
 import { ExtendedClient } from '../structures/Client';
 import {
     CommandInteraction, CommandInteractionOptionResolver,
-    PermissionResolvable, ChatInputApplicationCommandData, GuildMember
+    PermissionResolvable, ChatInputApplicationCommandData, GuildMember, AnyComponentBuilder, ActionRowBuilder
 } from 'discord.js';
 
 /**
@@ -15,6 +15,10 @@ import {
 
 export interface ExtendedInteraction extends CommandInteraction {
     member: GuildMember;
+    customId?: string;
+    async
+
+    update(options: any): Promise<any>;
 }
 
 

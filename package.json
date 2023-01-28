@@ -19,7 +19,9 @@
     "glob": "^8.0.3",
     "glob-promise": "^5.0.0",
     "mongoose": "^6.8.1",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "mysql2": "^3.0.1",
+    "promise-mysql": "^5.2.0"
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",

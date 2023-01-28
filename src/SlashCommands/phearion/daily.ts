@@ -4,7 +4,7 @@ import {sqlPhearion} from "./src/sqlPhearion";
 
 exports.default = new SlashCommand({
     name: 'daily',
-    description: 'Get your daily discoins reward',
+    description: 'Gagnez 20 Discoins par jour!',
     run: async ({interaction}) => {
 
         PBK.findOne({

@@ -1,8 +1,7 @@
 import { client } from '..';
 import { Event } from '../structures/Event';
 import { ExtendedInteraction } from "../typings/SlashCommand";
-import { CommandInteractionOptionResolver } from "discord.js";
-
+import {ButtonStyle, CommandInteractionOptionResolver} from "discord.js";
 
 export default new Event('interactionCreate', async (interaction) => {
     if (!interaction.isCommand()) return;
