@@ -1,11 +1,12 @@
 import {SlashCommand} from "../../structures/SlashCommand";
 import {client} from "../../index";
 import {sqlPhearion} from "./src/sqlPhearion";
-import {Collector, Message, MessageCollector, MessageCollectorOptions, TextChannel} from "discord.js";
+import { Message, TextChannel, EmbedBuilder } from "discord.js";
+import {ExtendedInteraction} from "../../typings/SlashCommand";
 const PBK = require("../../assets/models/pheaBank.js");
-const { EmbedBuilder } = require('discord.js');
 
-export default new SlashCommand({
+
+exports.default = new SlashCommand({
     name: 'pheabank',
     description: 'Vos informations bancaires',
     run: async ({interaction}) => {
@@ -28,19 +29,22 @@ export default new SlashCommand({
 
                         const guild = client.guilds.cache.get('717344084695580672');
                         const channel = guild.channels.cache.get('732984129443987496');
-                        const filter = (m) => {
-                            console.log(m);
-                            return (m.author.id === "732984718378795120" && m.content.includes(`verify bank account ${randomNb}`));
+                        const filter = (m: Message) => {
+                            return (m.author.id === "732984718378795120" && m["content"].includes(`verify bank account ${randomNb}`));
                         };
 
                         const collector = (channel as TextChannel).createMessageCollector({ filter, time: 60000, max: 5 });
 
-                        collector.on('collect', async (m) => {
-                            let message = m.content;
-                            let mcName = message.split("»")[0].split(" ")[1];
+                        collector.on('collect', async (m: Message) => {
+                            let message: string = m["content"] as string;
+                            let splitMessage = message.split("»");
+                            let splitFirstPart = splitMessage[0].split(" ");
+                            let mcName: string = splitFirstPart[0];
+                            console.log("pseudo:", mcName);
 
-                            await sql.getBankInfos(mcName).then((result) => {
-
+                            try {
+                                let result = await sql.getBankInfos(mcName);
+                                console.log(result)
                                 new PBK({
                                     userId: interaction.user.id,
                                     mcNick: mcName,
@@ -50,10 +54,9 @@ export default new SlashCommand({
                                     properties: []
 
                                 }).save()
-
-
-                            })
-                                .catch(() => reject("Error while getting bank infos from sql"));
+                            } catch (e) {
+                                reject("Error while getting bank infos from sql");
+                            }
 
                             resolve(`*${interaction.user.tag} discord account has been linked to: ${mcName}'s minecraft account*`)
 
@@ -68,10 +71,10 @@ export default new SlashCommand({
                         data.save()
                     }
 
-                    let result = await sql.getBankInfos(data.mcNick)
+                    let result = await sql.getBankInfos(data.mcNick);
 
                     let daily = "✅"
-                    if (result["money"] !== data.pheaCoins) {
+                    if ((result["money"] as number) !== (data.pheaCoins as number)) {
                         data.pheaCoins = result["money"]
                     }
 

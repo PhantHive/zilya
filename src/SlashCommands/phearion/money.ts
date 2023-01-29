@@ -2,7 +2,7 @@ import {SlashCommand} from "../../structures/SlashCommand";
 import {sqlPhearion} from "./src/sqlPhearion";
 import {EmbedBuilder} from "discord.js";
 
-export default new SlashCommand({
+exports.default = new SlashCommand({
     name: 'money',
     'options': [
         {
@@ -41,9 +41,8 @@ export default new SlashCommand({
 
                 return interaction.reply({ embeds: [embed] });
             })
-            .catch((err) => {
-                console.log(err)
-                interaction.reply({content: err, ephemeral: true})
+            .catch(() => {
+                interaction.reply({content: `L'utilisateur Casper #${user} n'existe pas.`, ephemeral: true})
             });
 
 

@@ -28,11 +28,15 @@ export class sqlPhearion {
 
     async getBankInfos(userName: string ) {
         console.log(`Getting bank infos for ${userName}`)
+        let info = null;
         try{
             // start transaction
             await (await this.connection).beginTransaction();
 
-            await (await this.connection).query(`SELECT *FROM eco_accounts WHERE player_name = "${userName}" `);
+            await (await this.connection).query(`SELECT *FROM eco_accounts WHERE player_name = "${userName}" `)
+                .then((result) => {
+                    info = result[0][0];
+                });
 
             // commit changes
             await (await this.connection).commit();
@@ -43,6 +47,8 @@ export class sqlPhearion {
             // close connection
             await (await this.connection).end();
         }
+
+        return info;
     }
 
     async transferMoney(userName: string, amount: number) {

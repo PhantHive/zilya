@@ -47,11 +47,14 @@ export class ExtendedClient extends Client {
         // keep only commands within Phearion folder (global commands only here)
         const filteredCommandFiles = commandFiles.filter((file) => file.includes('phearion'));
 
+        // in slashCommands, filter out Phearion commands
+        const filteredGlobalFiles = commandFiles.filter((file) => !file.includes('phearion'));
+
         console.log('Phearion commands: ', filteredCommandFiles);
 
         // register global commands
         let c = 1;
-        for (const filePath of commandFiles) {
+        for (const filePath of filteredGlobalFiles) {
             const command: CommandType = await this.importFiles(filePath);
             if (!command.name) continue;
             this.commands.set(command.name, command);

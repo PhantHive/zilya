@@ -25,7 +25,11 @@ exports.default = new SlashCommand({
             "choices": [
                 {
                     "name": "souk level 20-27",
-                    "value": "all_souk_level-200"
+                    "value": "souk19_27-200"
+                },
+                {
+                    "name": "Auberge",
+                    "value": "auberge-200"
                 }
             ]
         }
@@ -149,9 +153,9 @@ exports.default = new SlashCommand({
 
                                 await sql.addProperty(data.mcNick, image_name)
                                     .then(async () => {
-                                        data.discoins -= price
-                                        data.properties.push(image_name)
-                                        data.save()
+                                        data.discoins -= price;
+                                        data.properties.push(image_name);
+                                        data.save();
 
                                         if (i.customId === 'buy_area') {
 
