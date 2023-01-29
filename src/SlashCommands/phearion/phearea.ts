@@ -26,10 +26,6 @@ exports.default = new SlashCommand({
                 {
                     "name": "souk level 20-27",
                     "value": "souk19_27-200"
-                },
-                {
-                    "name": "Auberge",
-                    "value": "auberge-200"
                 }
             ]
         }
