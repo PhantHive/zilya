@@ -50,6 +50,7 @@ export class ExtendedClient extends Client {
         // in slashCommands, filter out Phearion commands
         const filteredGlobalFiles = commandFiles.filter((file) => !file.includes('phearion'));
 
+
         console.log('Phearion commands: ', filteredCommandFiles);
 
         // register global commands
@@ -70,6 +71,7 @@ export class ExtendedClient extends Client {
             phearionSlashCommands.push(command);
             c++;
         }
+
 
         this.on('ready', () => {
             this.registerCommands({

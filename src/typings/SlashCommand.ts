@@ -1,34 +1,42 @@
 import { ExtendedClient } from '../structures/Client';
 import {
-    CommandInteraction, CommandInteractionOptionResolver,
-    PermissionResolvable, ChatInputApplicationCommandData, GuildMember, AnyComponentBuilder, ActionRowBuilder
+    CommandInteraction,
+    CommandInteractionOptionResolver,
+    PermissionResolvable,
+    ChatInputApplicationCommandData,
+    GuildMember,
+    AnyComponentBuilder,
+    ActionRowBuilder,
+    EmbedBuilder
 } from 'discord.js';
 
-/**
-* {
-* "name": "commandName,
-* "description": "any desc"
-* "run: async ({ interaction }) => {
-* }
-* }
-*/
 
 export interface ExtendedInteraction extends CommandInteraction {
     member: GuildMember;
     customId?: string;
-    async
 
-    update(options: any): Promise<any>;
+    options: CommandInteractionOptionResolver & {
+        getSubcommand(): string;
+        get(name: string, required?: boolean): any;
+    }
+
+    // configure the type of the options property
+    update(options: {
+        content?: string | null;
+        embeds?: EmbedBuilder[] | null;
+        components?: (AnyComponentBuilder | ActionRowBuilder)[] | null;
+    }): Promise<ExtendedInteraction>;
+
 }
 
-
-interface RunOptions {
+export interface RunOptions {
     client: ExtendedClient,
     interaction: ExtendedInteraction,
     args: CommandInteractionOptionResolver
+
 }
 
-type RunFunction = ( options: RunOptions ) => any;
+type RunFunction = (options: RunOptions) => any;
 
 export type CommandType = {
     userPermissions?: PermissionResolvable[];

@@ -4,5 +4,6 @@ export interface RegisterCommandsOptions {
 
     guildId?: string;
     commands: ApplicationCommandDataResolvable[];
+    subcommands?: ApplicationCommandDataResolvable[];
 
 }
