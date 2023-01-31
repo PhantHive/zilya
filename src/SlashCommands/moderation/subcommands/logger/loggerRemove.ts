@@ -1,8 +1,8 @@
-import {SlashCommand} from "../../../structures/SlashCommand";
-import {RunOptions} from "../../../typings/SlashCommand";
-import {ExtendedInteraction} from "../../../typings/SlashCommand";
-import {client} from "../../../index";
-const LG = require("../../../assets/models/logger.js");
+import {SlashCommand} from "../../../../structures/SlashCommand";
+import {RunOptions} from "../../../../typings/SlashCommand";
+import {ExtendedInteraction} from "../../../../typings/SlashCommand";
+import {client} from "../../../../index";
+const LG = require("../../../../assets/models/logger.js");
 
 
 exports.default = new SlashCommand({

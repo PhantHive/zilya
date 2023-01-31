@@ -1,7 +1,7 @@
-import {SlashCommand} from "../../../structures/SlashCommand";
+import {SlashCommand} from "../../../../structures/SlashCommand";
 import {EmbedBuilder} from "discord.js";
-const LG = require("../../../assets/models/logger.js");
-import colors from "../subcommands/colors.json";
+const LG = require("../../../../assets/models/logger.js");
+import colors from "./colors.json";
 
 exports.default = new SlashCommand({
     name: 'configure',

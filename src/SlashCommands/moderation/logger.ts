@@ -1,6 +1,6 @@
 import {SlashCommand} from "../../structures/SlashCommand";
-const configureLoggerCommand = require("./subcommands/loggerConfig");
-const removeLoggerCommand = require("./subcommands/loggerRemove");
+const configureLoggerCommand = require("./subcommands/logger/loggerConfig");
+const removeLoggerCommand = require("./subcommands/logger/loggerRemove");
 
 // create logger command that will have 2 subcommands
 exports.default = new SlashCommand({

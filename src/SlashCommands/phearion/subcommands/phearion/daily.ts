@@ -1,6 +1,6 @@
-import {SlashCommand} from "../../structures/SlashCommand";
-const PBK = require("../../assets/models/pheaBank.js");
-import {sqlPhearion} from "./src/sqlPhearion";
+import {SlashCommand} from "../../../../structures/SlashCommand";
+const PBK = require("../../../../assets/models/pheaBank.js");
+import {sqlPhearion} from "../../src/sqlPhearion";
 
 exports.default = new SlashCommand({
     name: 'daily',

@@ -1,5 +1,5 @@
-import {SlashCommand} from "../../structures/SlashCommand";
-import {sqlPhearion} from "./src/sqlPhearion";
+import {SlashCommand} from "../../../../structures/SlashCommand";
+import {sqlPhearion} from "../../src/sqlPhearion";
 import {EmbedBuilder} from "discord.js";
 
 exports.default = new SlashCommand({

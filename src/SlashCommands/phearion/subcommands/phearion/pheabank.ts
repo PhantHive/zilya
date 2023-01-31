@@ -1,9 +1,9 @@
-import {SlashCommand} from "../../structures/SlashCommand";
-import {client} from "../../index";
-import {sqlPhearion} from "./src/sqlPhearion";
+import {SlashCommand} from "../../../../structures/SlashCommand";
+import {client} from "../../../../index";
+import {sqlPhearion} from "../../src/sqlPhearion";
 import { Message, TextChannel, EmbedBuilder } from "discord.js";
-import {ExtendedInteraction} from "../../typings/SlashCommand";
-const PBK = require("../../assets/models/pheaBank.js");
+import {ExtendedInteraction} from "../../../../typings/SlashCommand";
+const PBK = require("../../../../assets/models/pheaBank.js");
 
 
 exports.default = new SlashCommand({

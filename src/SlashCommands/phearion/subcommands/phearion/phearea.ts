@@ -1,4 +1,4 @@
-import {SlashCommand} from "../../structures/SlashCommand";
+import {SlashCommand} from "../../../../structures/SlashCommand";
 import {
     ActionRowBuilder,
     AttachmentBuilder,
@@ -8,10 +8,10 @@ import {
     Interaction,
     TextChannel
 } from "discord.js";
-import {ExtendedInteraction} from "../../typings/SlashCommand";
-import {client} from "../../index";
-const PBK = require("../../assets/models/pheaBank.js");
-import {sqlPhearion} from "./src/sqlPhearion";
+import {ExtendedInteraction} from "../../../../typings/SlashCommand";
+import {client} from "../../../../index";
+const PBK = require("../../../../assets/models/pheaBank.js");
+import {sqlPhearion} from "../../src/sqlPhearion";
 
 exports.default = new SlashCommand({
     name: 'phearea',
