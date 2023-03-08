@@ -15,7 +15,8 @@ export class ExtendedClient extends Client {
     commands: Collection<string, CommandType> = new Collection();
 
     constructor() {
-        super({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'GuildMessageReactions', 'MessageContent', 'DirectMessages'] });
+        super({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'GuildMessageReactions', 'MessageContent', 'DirectMessages',
+            'GuildVoiceStates'] });
     }
 
     start() {
@@ -86,7 +87,7 @@ export class ExtendedClient extends Client {
 
 
         // Event
-        const eventFiles = glob.sync(`${__dirname}/../events/*{.ts,.js}`.replace(/\\/g, '/'));
+        const eventFiles = glob.sync(`${__dirname}/../events/*/*{.ts,.js}`.replace(/\\/g, '/'));
         c = 1;
         for (const filePath of eventFiles) {
             const event: Event<keyof ClientEvents> = await this.importFiles(filePath);

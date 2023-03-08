@@ -1,6 +1,6 @@
-import { client } from '..';
-import { Event } from '../structures/Event';
-import { ExtendedInteraction } from "../typings/SlashCommand";
+import { client } from '../../index';
+import { Event } from '../../structures/Event';
+import { ExtendedInteraction } from "../../typings/SlashCommand";
 import {ButtonStyle, CommandInteractionOptionResolver} from "discord.js";
 
 export default new Event('interactionCreate', async (interaction) => {

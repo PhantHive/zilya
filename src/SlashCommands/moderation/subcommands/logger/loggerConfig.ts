@@ -1,7 +1,7 @@
 import {SlashCommand} from "../../../../structures/SlashCommand";
 import {EmbedBuilder} from "discord.js";
 const LG = require("../../../../assets/models/logger.js");
-import colors from "./colors.json";
+import colors from "../../../../assets/data/colors.json";
 
 exports.default = new SlashCommand({
     name: 'configure',
@@ -103,7 +103,6 @@ exports.default = new SlashCommand({
                     // "and a description with channel id and notif type"
                     // send the embed
 
-                    console.log(color)
                     embed = new EmbedBuilder()
                         .setColor(colors[color.toLowerCase()])
                         .setTitle(`${serverId}: ${serverName}`)

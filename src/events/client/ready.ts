@@ -1,5 +1,5 @@
-import { client } from '..';
-import { Event } from "../structures/Event";
+import { client } from '../../index';
+import { Event } from "../../structures/Event";
 import { ActivityType } from "discord.js";
 
 export default new Event ('ready', () => {

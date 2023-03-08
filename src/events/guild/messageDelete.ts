@@ -1,8 +1,8 @@
-import {Event} from "../structures/Event";
-import {client} from "../index";
+import {Event} from "../../structures/Event";
+import {client} from "../../index";
 import {Message, EmbedBuilder, AuditLogEvent, TextChannel, Channel} from "discord.js";
-const LG = require("../assets/models/logger.js");
-
+const LG = require("../../assets/models/logger.js");
+import colors from "../../assets/data/colors.json";
 
 export default new Event('messageDelete', async (message: Message) => {
 
@@ -16,8 +16,8 @@ export default new Event('messageDelete', async (message: Message) => {
                 if (data) {
                     const channelId = data.logChannel;
                     let color = data.color;
-                    const logger: Channel = client.channels.cache.find(c => `<#${c.id}>` === channelId);
-
+                    // find the channel by id using client.channels.fetch()
+                    const logger = await client.channels.fetch(channelId) as TextChannel;
 
                     if (logger !== undefined) {
                         if (!message.guild) return;
@@ -36,11 +36,11 @@ export default new Event('messageDelete', async (message: Message) => {
                             action_author = executor.id;
                         }
                         else {
-                            desc = `A message from: **${message.author.tag}** has been deleted but by who???.`
+                            desc = `A message from: **${message.author.tag}** has been deleted.`
                             action_author = "Unknown";
                         }
 
-                        color = color.charAt(0).toUpperCase() + color.slice(1).toLowerCase();
+                        color = colors[data.color.toLowerCase()];
                         const deleteLog = new EmbedBuilder()
                             .setAuthor({ name: `Target> ${message.author.tag}`, iconURL: message.author.avatarURL() })
                             .setTitle('LOG: Deleted Message')
@@ -54,7 +54,7 @@ export default new Event('messageDelete', async (message: Message) => {
                             )
                             .setColor(color)
                             .setTimestamp()
-                            .setFooter({ text: `by Iris logs. Sever: ${message.guild.name}`, iconURL: client.user.displayAvatarURL() });
+                            .setFooter({ text: `by PhearionNetwork. Sever: ${message.guild.name}`, iconURL: client.user.displayAvatarURL() });
 
                         console.log("sending");
                         await (logger as TextChannel).send({embeds: [deleteLog]});
