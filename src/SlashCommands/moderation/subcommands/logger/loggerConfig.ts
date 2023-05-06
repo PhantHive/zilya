@@ -85,10 +85,11 @@ exports.default = new SlashCommand({
         const serverName = interaction.guild.name;
         const serverId = interaction.guild.id;
 
-        LG.findOne({
+        let data = await LG.findOne({
                 serverId: interaction.guild.id
-            },
-            async (err, data) => new Promise(async (resolve) => {
+            });
+
+        new Promise(async (resolve) => {
                 let embed: EmbedBuilder;
                 if (!data) {
                     await new LG({
@@ -131,11 +132,12 @@ exports.default = new SlashCommand({
 
                 return resolve(embed);
 
-            })
-                .then((result: EmbedBuilder) => {
-                    interaction.reply({embeds: [result]})
-                })
-
-        )
+        })
+        .then((result: EmbedBuilder) => {
+            interaction.reply({embeds: [result]})
+        })
+        .catch((err: Error) => {
+            console.log(err);
+        })
     }
 });

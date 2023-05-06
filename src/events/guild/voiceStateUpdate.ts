@@ -9,10 +9,10 @@ export default new Event('voiceStateUpdate', async (oldState: VoiceState, newSta
     if (!oldState.guild) return;
 
     try {
-        LG.findOne({
+        let data = await LG.findOne({
                 serverId: oldState.guild.id
-            },
-            async (err, data) => {
+            })
+        new Promise(async (resolve) => {
                 if (data) {
                     const channelId = data.logChannel;
                     let color = data.color;
@@ -130,8 +130,8 @@ export default new Event('voiceStateUpdate', async (oldState: VoiceState, newSta
 
                 }
 
-            }
-        )
+        });
+
     } catch (e) {
         console.error(e);
     }

@@ -13,28 +13,36 @@ exports.default = new SlashCommand({
 
         // remove logger
         // find logger in database
-        LG.findOne({
+        let data = await LG.findOne({
             serverId: interaction.guild.id
-        },
-        (err, data) => {
-            if (err) console.error(err);
+            });
+        new Promise(async (resolve) => {
             if (!data) {
-                interaction.reply({
+                await interaction.reply({
                     content: 'Logger is not configured for this server.',
                     ephemeral: true
                 });
             } else {
-                LG.findOneAndDelete({
+                let data = await LG.findOneAndDelete({
                     serverId: interaction.guild.id
-                }, (err, data) => {
-                    if (err) console.error(err);
-                    interaction.reply({
+                });
+
+                new Promise(async (resolve) => {
+                    await interaction.reply({
                         content: 'Logger has been removed.',
                         ephemeral: true
                     });
-                });
+                })
+                    .catch((err: Error) => {
+                        console.log(err);
+                        interaction.reply({ content: 'An error occurred.', ephemeral: true });
+                    })
             }
-        });
+        })
+            .catch((err: Error) => {
+                console.log(err);
+                interaction.reply({ content: 'An error occurred.', ephemeral: true });
+            });
     }
 
 });
