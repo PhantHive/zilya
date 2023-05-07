@@ -2,6 +2,7 @@ import {SlashCommand} from "../../../../structures/SlashCommand";
 import {EmbedBuilder} from "discord.js";
 const LG = require("../../../../assets/utils/models/logger.js");
 import colors from "../../../../assets/data/colors.json";
+import {ExtendedInteraction} from "../../../../typings/SlashCommand";
 
 exports.default = new SlashCommand({
     name: 'configure',
@@ -64,11 +65,11 @@ exports.default = new SlashCommand({
     ],
     userPermissions: ['Administrator'],
     run: async ({interaction}) => {
-        let channelId = interaction.options.get('channel_id').channel.id;
-        let notifType = interaction.options.get('notif').value as string;
+        let channelId = (interaction as ExtendedInteraction).options.get('channel_id').channel.id;
+        let notifType = (interaction as ExtendedInteraction).options.get('notif').value as string;
         let color;
         try {
-            color = interaction.options.get('color').value as string;
+            color = (interaction as ExtendedInteraction).options.get('color').value as string;
             color = color.toUpperCase();
         }
         catch (e) {
@@ -77,7 +78,7 @@ exports.default = new SlashCommand({
 
 
         // check if the channel is type text
-        if (interaction.options.get('channel_id').channel.type !== 0) {
+        if ((interaction as ExtendedInteraction).options.get('channel_id').channel.type !== 0) {
             await interaction.reply({content: "Please choose a text channel. Cannot log into a voice channel.", ephemeral: true});
             return;
         }

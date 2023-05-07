@@ -1,4 +1,5 @@
 import {SlashCommand} from "../../structures/SlashCommand";
+import {ExtendedInteraction} from "../../typings/SlashCommand";
 
 const daily = require('./subcommands/phearion/daily');
 const money = require('./subcommands/phearion/money');
@@ -37,16 +38,16 @@ exports.default = new SlashCommand({
     ],
     run: async ({interaction}) => {
         // check which subcommand was used
-        if (interaction.options.getSubcommand() === 'daily') {
+        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'daily') {
             await daily.default.run({interaction});
         }
-        if (interaction.options.getSubcommand() === 'money') {
+        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'money') {
             await money.default.run({interaction});
         }
-        if (interaction.options.getSubcommand() === 'pheabank') {
+        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'pheabank') {
             await pheabank.default.run({interaction});
         }
-        if (interaction.options.getSubcommand() === 'phearea') {
+        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'phearea') {
             await phearea.default.run({interaction});
         }
     }

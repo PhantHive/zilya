@@ -14,7 +14,7 @@ exports.default = new SlashCommand_1.SlashCommand({
         }
     ],
     run: async ({ interaction }) => {
-        const user = interaction.options.getUser('user');
+        const user = (interaction as ExtendedInteraction).options.getUser('user');
         let huggedOne;
         if (user.id === interaction.user.id) {
             huggedOne = "him/herself";

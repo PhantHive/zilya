@@ -10,5 +10,5 @@ const guildSchema = mongoose.Schema({
 
 });
 
-const myDB = mongoose.connection.useDb('zouk');
+const myDB = mongoose.connection.useDb('welcome');
 module.exports = myDB.model('welcomes', guildSchema);

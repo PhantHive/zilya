@@ -1,4 +1,5 @@
 import {SlashCommand} from "../../../structures/SlashCommand";
+import {ExtendedInteraction} from "../../../typings/SlashCommand";
 const paladinsJS = require('paladins.js');
 const { createCanvas } = require("canvas");
 const { drawCard, drawStats} = require("./src/drawProfile")
@@ -39,7 +40,7 @@ exports.default = new SlashCommand({
         }
     ],
     run: async ({interaction}) => {
-        const pseudo = interaction.options.get('nickname').value as string;
+        const pseudo = (interaction as ExtendedInteraction).options.get('nickname').value as string;
 
         await interaction.deferReply()
 

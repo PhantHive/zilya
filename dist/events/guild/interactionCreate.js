@@ -9,7 +9,7 @@ exports.default = new Event_1.Event('interactionCreate', async (interaction) => 
     if (!command)
         return;
     await command.run({
-        args: interaction.options,
+        args: (interaction as ExtendedInteraction).options,
         client: index_1.client,
         interaction: interaction
     });

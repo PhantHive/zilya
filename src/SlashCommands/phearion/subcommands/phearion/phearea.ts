@@ -34,13 +34,13 @@ exports.default = new SlashCommand({
 
 
 
-        const info = interaction.options.get("info").value as string;
+        const info = (interaction as ExtendedInteraction).options.get("info").value as string;
         let image_name: string = info.split('-')[0];
         let price: number = Number(info.split('-')[1]);
 
         let image_path = `./src/assets/img/phearion/areas/${image_name}.png`
         const attachment = new AttachmentBuilder(image_path, { name: 'area.png' });
-        const sql = await new sqlPhearion(interaction);
+        const sql = await new sqlPhearion((interaction as ExtendedInteraction));
 
         const areaEmbed = new EmbedBuilder()
             .setColor('#FF52F8')

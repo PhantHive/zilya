@@ -1,6 +1,7 @@
 import {SlashCommand} from "../../../../structures/SlashCommand";
 import {sqlPhearion} from "../../src/sqlPhearion";
 import {EmbedBuilder} from "discord.js";
+import {ExtendedInteraction} from "../../../../typings/SlashCommand";
 
 exports.default = new SlashCommand({
     name: 'money',
@@ -15,12 +16,12 @@ exports.default = new SlashCommand({
     description: 'Argent',
     run: async ({interaction}) => {
 
-        const user = interaction.options.get('user').value as string;
+        const user = (interaction as ExtendedInteraction).options.get('user').value as string;
         if (!user) return interaction.reply('User not found');
 
         console.log(user);
 
-        const sql = await new sqlPhearion(interaction);
+        const sql = await new sqlPhearion((interaction as ExtendedInteraction));
 
         // get bank infos
         await sql.getBankInfos(user)

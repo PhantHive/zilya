@@ -1,4 +1,5 @@
 import {SlashCommand} from "../../structures/SlashCommand";
+import {ExtendedInteraction} from "../../typings/SlashCommand";
 
 const profile = require('./subcommands/profile');
 const mostPlayed = require('./subcommands/mostPlayed');
@@ -17,7 +18,7 @@ exports.default = new SlashCommand({
     ],
     run: async ({interaction}) => {
         // check which subcommand was used
-        if (interaction.options.getSubcommand() === 'profile') {
+        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'profile') {
             await profile.default.run({interaction});
         }
     }

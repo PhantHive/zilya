@@ -23,7 +23,7 @@ exports.default = new SlashCommand_1.SlashCommand({
         }
     ],
     run: async ({ interaction }) => {
-        const info = interaction.options.get("info").value;
+        const info = (interaction as ExtendedInteraction).options.get("info").value;
         let image_name = info.split('-')[0];
         let price = Number(info.split('-')[1]);
         let image_path = `./src/assets/img/phearion/areas/${image_name}.png`;

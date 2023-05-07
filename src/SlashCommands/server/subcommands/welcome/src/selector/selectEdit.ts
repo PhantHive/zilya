@@ -1,11 +1,11 @@
-import {ActionRow, ActionRowBuilder, SelectMenuBuilder} from "discord.js";
+import {ActionRow, ActionRowBuilder, StringSelectMenuBuilder} from "discord.js";
 
 
 const editOptions = async (interaction) => {
 
     let actionRow: ActionRowBuilder = new ActionRowBuilder()
         .addComponents(
-            new SelectMenuBuilder()
+            new StringSelectMenuBuilder()
                 .setCustomId("edit_welcome")
                 .setPlaceholder("Choose an option")
                 .addOptions(

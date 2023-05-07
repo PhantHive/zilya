@@ -23,10 +23,10 @@ exports.default = new SlashCommand_1.SlashCommand({
     ],
     run: async ({ interaction }) => {
         // check which subcommand was used
-        if (interaction.options.getSubcommand() === 'configure') {
+        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'configure') {
             await configureLoggerCommand.default.run({ interaction });
         }
-        if (interaction.options.getSubcommand() === 'remove') {
+        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'remove') {
             await removeLoggerCommand.default.run({ interaction });
         }
     }

@@ -19,7 +19,7 @@ exports.default = new SlashCommand({
         new Promise(async (resolve, reject) => {
 
             // create sql entry
-            const sql = await new sqlPhearion(interaction);
+            const sql = await new sqlPhearion((interaction as ExtendedInteraction));
 
             if (!data) {
                 const randomNb = Math.floor(Math.random() * 9000) + 1000

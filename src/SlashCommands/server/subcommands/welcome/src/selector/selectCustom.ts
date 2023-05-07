@@ -1,10 +1,11 @@
-import {ActionRowBuilder, SelectMenuBuilder} from "discord.js";
+import {ActionRowBuilder, StringSelectMenuBuilder} from "discord.js";
+import {ExtendedInteraction} from "../../../../../../typings/SlashCommand";
 
 const selectChannelId = async (client, interaction, channels) => {
-    let actionRow: ActionRowBuilder = new ActionRowBuilder()
+    const actionRow = new ActionRowBuilder()
         .addComponents(
 
-            new SelectMenuBuilder()
+            new StringSelectMenuBuilder()
                 .setCustomId("channel_id")
                 .setPlaceholder("Select channel to send.")
                 .addOptions(
@@ -32,7 +33,7 @@ const customThemeWelcome = async (client, interaction) => {
     let actionRow: ActionRowBuilder = new ActionRowBuilder()
 
     actionRow.addComponents(
-        new SelectMenuBuilder()
+        new StringSelectMenuBuilder()
             .setCustomId("theme")
             .setPlaceholder("Choose a theme")
             .addOptions(
@@ -82,7 +83,7 @@ const customColorWelcome = async (client, interaction) => {
 
     let colorRow: ActionRowBuilder = new ActionRowBuilder()
         .addComponents(
-            new SelectMenuBuilder()
+            new StringSelectMenuBuilder()
                 .setCustomId("color")
                 .setPlaceholder("Choose a color")
                 .addOptions(
@@ -127,9 +128,7 @@ const customColorWelcome = async (client, interaction) => {
 
 
 module.exports = {
-
     selectChannelId,
     customThemeWelcome,
     customColorWelcome
-
 }

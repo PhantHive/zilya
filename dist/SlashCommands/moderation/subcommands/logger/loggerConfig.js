@@ -65,18 +65,18 @@ exports.default = new SlashCommand_1.SlashCommand({
     ],
     userPermissions: ['Administrator'],
     run: async ({ interaction }) => {
-        let channelId = interaction.options.get('channel_id').channel.id;
-        let notifType = interaction.options.get('notif').value;
+        let channelId = (interaction as ExtendedInteraction).options.get('channel_id').channel.id;
+        let notifType = (interaction as ExtendedInteraction).options.get('notif').value;
         let color;
         try {
-            color = interaction.options.get('color').value;
+            color = (interaction as ExtendedInteraction).options.get('color').value;
             color = color.toUpperCase();
         }
         catch (e) {
             color = "#fee75c";
         }
         // check if the channel is type text
-        if (interaction.options.get('channel_id').channel.type !== 0) {
+        if ((interaction as ExtendedInteraction).options.get('channel_id').channel.type !== 0) {
             await interaction.reply({ content: "Please choose a text channel. Cannot log into a voice channel.", ephemeral: true });
             return;
         }

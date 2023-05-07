@@ -1,5 +1,6 @@
 import {SlashCommand} from "../../../../structures/SlashCommand";
 import {EmbedBuilder} from "discord.js";
+import {ExtendedInteraction} from "../../../../typings/SlashCommand";
 
 
 exports.default = new SlashCommand({
@@ -14,7 +15,7 @@ exports.default = new SlashCommand({
         }
     ],
     run: async ({interaction}) => {
-        const user = interaction.options.getUser('user');
+        const user = (interaction as ExtendedInteraction).options.getUser('user');
         let huggedOne;
 
         if (user.id === interaction.user.id) {

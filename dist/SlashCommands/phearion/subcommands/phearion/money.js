@@ -15,7 +15,7 @@ exports.default = new SlashCommand_1.SlashCommand({
     ],
     description: 'Argent',
     run: async ({ interaction }) => {
-        const user = interaction.options.get('user').value;
+        const user = (interaction as ExtendedInteraction).options.get('user').value;
         if (!user)
             return interaction.reply('User not found');
         console.log(user);

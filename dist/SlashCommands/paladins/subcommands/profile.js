@@ -31,7 +31,7 @@ exports.default = new SlashCommand_1.SlashCommand({
         }
     ],
     run: async ({ interaction }) => {
-        const pseudo = interaction.options.get('nickname').value;
+        const pseudo = (interaction as ExtendedInteraction).options.get('nickname').value;
         await interaction.deferReply();
         let paladinsProfile = {
             userAvatar: "",

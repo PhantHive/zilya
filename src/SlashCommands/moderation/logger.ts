@@ -1,4 +1,5 @@
 import {SlashCommand} from "../../structures/SlashCommand";
+import {ExtendedInteraction} from "../../typings/SlashCommand";
 const configureLoggerCommand = require("./subcommands/logger/loggerConfig");
 const removeLoggerCommand = require("./subcommands/logger/loggerRemove");
 
@@ -22,10 +23,10 @@ exports.default = new SlashCommand({
     ],
     run: async ({interaction}) => {
         // check which subcommand was used
-        if (interaction.options.getSubcommand() === 'configure') {
+        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'configure') {
             await configureLoggerCommand.default.run({interaction});
         }
-        if (interaction.options.getSubcommand() === 'remove') {
+        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'remove') {
             await removeLoggerCommand.default.run({interaction});
         }
     }
