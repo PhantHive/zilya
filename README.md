@@ -52,17 +52,18 @@ The many particles smashed together created a great wonderful BOT called ZILYA.
 --- 
 ### Logger
 
-| Logs            | What it does?                                       |
-|-----------------|-----------------------------------------------------|
-| messageCreate   | Records new messages that are created               |
-| messageUpdate   | Records when a message is updated                   |
-| messageDelete   | Records when a message is deleted                   |
-| voiceStateUpdate | Records when a user joins or leaves a voice channel |
-| roleCreate      | Records when a new role is created                  |
-| roleUpdate      | Records when a role is updated                      |
-| roleDelete      | Records when a role is deleted                      |
+| #   | Logs            | What it does?                                       |
+|-----|----------------|-----------------------------------------------------|
+| 1   | messageUpdate   | Records when a message is updated                   |
+| 2   | messageDelete   | Records when a message is deleted                   |
+| 3   | voiceStateUpdate | Records when a user joins or leaves a voice channel |
+| 4   | roleCreate      | Records when a new role is created                  |
+| 5   | roleUpdate      | Records when a role is updated                      |
+| 6   | roleDelete      | Records when a role is deleted                      |
+| 7   | guildMemberUpdate | Records when a guild member is updated              |
+| 8   | channelUpdate   | Records when a channel is updated                    |
 
-More logs will be added soon, you can suggest some in the [issues](https://github.com/PhantHive/zillya/issues) section.
+More logs will be added later, you can suggest some in the [issues](https://github.com/PhantHive/zillya/issues) section.
 
 ### Fun commands
 
