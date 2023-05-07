@@ -1,7 +1,7 @@
 <h1 align="center"><strong><i>ZILLYA</i></strong></h1>
 
 
-<img src="./src/assets/img/zillya.png" align="center">
+<img src="./src/assets/img/readme-zillya.png" align="center">
 
 ---
 
@@ -30,3 +30,56 @@
 
 Once upon a time, two bots got smashed on the floor: Zouk and UTA.
 The many particles smashed together created a great wonderful BOT called ZILYA.
+
+
+[//]: # (table of contents)
+## Table of contents
+
+- [Who is Zilya?](#who-is-zilya)
+- [Table of contents](#table-of-contents)
+- [Features](#features)
+  - [Logger](#logger)
+  - [Fun commands](#fun-commands)
+  - [Paladins commands](#paladins-commands)
+
+
+## Features 
+
+- [x] Logger
+- [x] Fun commands
+- [x] Paladins commands
+
+--- 
+### Logger
+
+| Logs            | What it does?                                       |
+|-----------------|-----------------------------------------------------|
+| messageCreate   | Records new messages that are created               |
+| messageUpdate   | Records when a message is updated                   |
+| messageDelete   | Records when a message is deleted                   |
+| voiceStateUpdate | Records when a user joins or leaves a voice channel |
+| roleCreate      | Records when a new role is created                  |
+| roleUpdate      | Records when a role is updated                      |
+| roleDelete      | Records when a role is deleted                      |
+
+More logs will be added soon, you can suggest some in the [issues](https://github.com/PhantHive/zillya/issues) section.
+
+### Fun commands
+
+| Commands | What it does? |
+|----------|---------------|
+| action    | hug / objection     |
+
+
+### Paladins commands
+
+The Paladins command allows you to get information about the game Paladins.
+
+| Subcommand | Description |
+| ---------- | ----------- |
+| profile    | Get profile information for a specific player. |
+| mostPlayed | Get information about a player's most played champions and their stats. |
+
+--- 
+[//]: # (go back to top)
+🐦 [go back to top](#table-of-contents) 🐦
