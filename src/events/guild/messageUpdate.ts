@@ -1,7 +1,7 @@
 import {Event} from "../../structures/Event";
 import {client} from "../../index";
 import {Message, EmbedBuilder, AuditLogEvent, TextChannel, Channel} from "discord.js";
-const LG = require("../../assets/models/logger.js");
+const LG = require("../../assets/utils/models/logger.js");
 import colors from "../../assets/data/colors.json";
 
 export default new Event('messageUpdate', async (oldMessage: Message, newMessage: Message) => {

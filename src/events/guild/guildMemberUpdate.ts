@@ -3,7 +3,7 @@ import {client} from "../../index";
 import {AuditLogEvent, EmbedBuilder, TextChannel} from "discord.js";
 import colors from "../../assets/data/colors.json";
 
-const LG = require("../../assets/models/logger.js");
+const LG = require("../../assets/utils/models/logger.js");
 
 function sendEmbed(logger, data, color, executor, tagName, tagValue, fieldComment, desc, changeName, oldRole) {
 

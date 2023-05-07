@@ -1,5 +1,6 @@
 import { ExtendedClient } from '../structures/Client';
 import {
+    SelectMenuInteraction,
     CommandInteraction,
     CommandInteractionOptionResolver,
     PermissionResolvable,
@@ -29,9 +30,14 @@ export interface ExtendedInteraction extends CommandInteraction {
 
 }
 
+export interface ExtendedSelectMenuInteraction extends SelectMenuInteraction {
+    customId: string;
+    values: string[];
+}
+
 export interface RunOptions {
     client: ExtendedClient,
-    interaction: ExtendedInteraction,
+    interaction: ExtendedInteraction | ExtendedSelectMenuInteraction,
     args: CommandInteractionOptionResolver
 
 }

@@ -1,6 +1,6 @@
 import {SlashCommand} from "../../../../structures/SlashCommand";
 import {EmbedBuilder} from "discord.js";
-const LG = require("../../../../assets/models/logger.js");
+const LG = require("../../../../assets/utils/models/logger.js");
 import colors from "../../../../assets/data/colors.json";
 
 exports.default = new SlashCommand({
