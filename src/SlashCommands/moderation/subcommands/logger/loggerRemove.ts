@@ -23,11 +23,13 @@ exports.default = new SlashCommand({
                     ephemeral: true
                 });
             } else {
-                let data = await LG.findOneAndDelete({
-                    serverId: interaction.guild.id
-                });
-
+                
                 new Promise(async (resolve) => {
+
+                    await LG.findOneAndDelete({
+                        serverId: interaction.guild.id
+                    });
+
                     await interaction.reply({
                         content: 'Logger has been removed.',
                         ephemeral: true
