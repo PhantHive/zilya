@@ -14,8 +14,6 @@ export default new Event('interactionCreate', async (interaction) => {
 
     if (interaction.isStringSelectMenu()) {
 
-        console.log("string select menu");
-
         // ================
         // WELCOME SYSTEM
         // ================
@@ -48,6 +46,35 @@ export default new Event('interactionCreate', async (interaction) => {
 
         else if ((interaction as ExtendedSelectMenuInteraction).customId === "color") {
             await setColor(data, interaction);
+        }
+
+    }
+
+    else if (interaction.isButton()) {
+
+        // ================
+        // WELCOME SYSTEM
+        // ================
+
+        // check if customId is welcome_remove_yes
+        if (interaction.customId === "welcome_remove_yes") {
+            // remove the welcome message
+            await WDB.findOneAndDelete({
+                server_id: `${interaction.guild.id}`
+            });
+
+            // send a confirmation message
+            await interaction.update({
+                content: "Welcome message has been removed.",
+                components: []
+            });
+        }
+        else if (interaction.customId === "welcome_remove_no") {
+            // send a confirmation message
+            await interaction.update({
+                content: "Welcome message removal has been cancelled.",
+                components: []
+            });
         }
 
     }

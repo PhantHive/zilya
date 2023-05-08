@@ -41,7 +41,7 @@ const nextStep = async (data, interaction: ExtendedSelectMenuInteraction) => {
     else {
         // all data is present
         await interaction.reply({
-            content: `All data are present for <#${data.channel_id}>\n` +
+            content: `All data are saved for <#${data.channel_id}>\n` +
                 `\`\`\`js\nChannel ID: ${data.channel_id}\n` +
                 `Theme: ${theme[data.theme].name}\n` +
                 `Color: ${data.color}\`\`\`` +
@@ -49,7 +49,7 @@ const nextStep = async (data, interaction: ExtendedSelectMenuInteraction) => {
         })
             .catch(async () => {
                 await interaction.editReply({
-                    content: `All data are present for <#${data.channel_id}>\n` +
+                    content: `All data are saved for <#${data.channel_id}>\n` +
                         `\`\`\`js\nChannel ID: ${data.channel_id}\n` +
                         `Theme: ${theme[data.theme].name}\n` +
                         `Color: ${data.color}\`\`\`` +
@@ -68,14 +68,16 @@ const setChannelId = async (data, interaction: ExtendedSelectMenuInteraction) =>
             // create a message collector to wait for the user to select a channel
             const filter = (m) => m.author.id === interaction.user.id;
             const collector = interaction.channel.createMessageCollector({ filter, time: 60000, max: 1 });
-            await interaction.update({ content: "Please select a channel.", components: [] });
+            await interaction.update({ content: "Please write the ID of the desired channel for welcome messages to appear.", components: [] });
             collector.on('collect', async (m) => {
                 try {
                     await isChannelValid(m.content, "welcome");
                     data.channel_id = m.content;
                     data.save();
+                    await wait(2000);
+                    await m.delete();
                     // reply to the user that the channel is valid and that we will proceed to the next step and remove the components
-                    resolve("Thank you! I will setup the welcome message in this channel.");
+                    resolve("Thank you! I will setup the welcome message in this channel. Proceeding to the next step...");
                 }
                 catch (e) {
                     await interaction.reply({ content: e, ephemeral: true });
@@ -89,7 +91,7 @@ const setChannelId = async (data, interaction: ExtendedSelectMenuInteraction) =>
                 data.channel_id = interaction.values[0];
                 data.save();
                 // reply to the user that the channel is valid and that we will proceed to the next step and remove the components
-                resolve("Thank you! I will setup the welcome message in this channel.");
+                resolve("Thank you! I will setup the welcome message in this channel. Proceeding to the next step...");
             }
             catch (e) {
                 await interaction.reply({ content: e, ephemeral: true });
@@ -98,12 +100,18 @@ const setChannelId = async (data, interaction: ExtendedSelectMenuInteraction) =>
         }
     })
         .then(async (res: string) => {
-            await interaction.update({ content: res, components: [] });
+            await interaction.update({ content: res, components: [] })
+                .catch(async () => {
+                    await interaction.editReply({ content: res });
+                });
             await wait(3000);
             await nextStep(data, interaction);
         })
         .catch(async (err: string) => {
-            await interaction.update({ content: err, components: [] });
+            await interaction.update({ content: err, components: [] })
+                .catch(async () => {
+                    await interaction.editReply({ content: err });
+                });
             await wait(3000);
             await nextStep(data, interaction);
         });
