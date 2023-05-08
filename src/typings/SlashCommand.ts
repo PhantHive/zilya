@@ -8,7 +8,7 @@ import {
     GuildMember,
     AnyComponentBuilder,
     ActionRowBuilder,
-    EmbedBuilder
+    EmbedBuilder, BufferResolvable, AttachmentData
 } from 'discord.js';
 
 
@@ -33,6 +33,11 @@ export interface ExtendedInteraction extends CommandInteraction {
 export interface ExtendedSelectMenuInteraction extends SelectMenuInteraction {
     customId: string;
     values: string[];
+}
+
+export interface MyAttachmentData extends AttachmentData {
+    attachment: BufferResolvable;
+    name?: string;
 }
 
 export interface RunOptions {

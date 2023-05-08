@@ -5,8 +5,6 @@ import {ButtonStyle, ChannelType, CommandInteractionOptionResolver} from "discor
 const { setChannelId, setTheme, setColor } = require("../../SlashCommands/server/subcommands/welcome/src/setter/setCustom");
 const { setEdit } = require("../../SlashCommands/server/subcommands/welcome/src/setter/setEdit");
 const WDB = require("../../assets/utils/models/welcome.js");
-const themes = require("../../assets/data/theme.json");
-
 
 
 export default new Event('interactionCreate', async (interaction) => {
