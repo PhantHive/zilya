@@ -6,19 +6,7 @@ import {setTimeout as wait} from "node:timers/promises";
 const { customThemeWelcome, customColorWelcome, selectChannelId} = require("../../SlashCommands/server/subcommands/welcome/src/setter/setCustom");
 const WDB = require("../../assets/utils/models/welcome.js");
 const themes = require("../../assets/data/theme.json");
-
-const isChannelValid = async (channel, configName) => new Promise((resolve, reject) => {
-
-    const id = Number(channel);
-    if (Number.isInteger(id) && id !== 0 ) {
-        resolve(`Thank you! I will setup ${configName} message in this channel.`);
-    }
-    else {
-        reject(`Sorry, I can't setup the ${configName} message in this channel. It is probably not a valid channel.`);
-    }
-
-})
-
+const { setChannelId, setTheme, setColor } = require("../../SlashCommands/server/subcommands/welcome/src/setter/setCustom");
 
 
 export default new Event('interactionCreate', async (interaction) => {
@@ -32,21 +20,35 @@ export default new Event('interactionCreate', async (interaction) => {
         // WELCOME SYSTEM
         // ================
 
-        // welcome message edit
-        // if ((interaction as ExtendedSelectMenuInteraction).customId === "edit_welcome") {
-        //     if ((interaction as ExtendedSelectMenuInteraction).values[0] === "edit_channel_id") {
-        //         await chooseConfigWelcome(client, interaction, 1, true);
-        //     }
-        //     else if ((interaction as ExtendedSelectMenuInteraction).values[0] === "edit_theme") {
-        //         await chooseConfigWelcome(client, interaction, 2, true);
-        //     }
-        //     else if ((interaction as ExtendedSelectMenuInteraction).values[0] === "edit_color") {
-        //         await chooseConfigWelcome(client, interaction, 3, true);
-        //     }
-        // }
+        let data = await WDB.findOne({
+            server_id: `${interaction.guild.id}`
+        });
 
-        // welcome message
+        if (!data) {
+            await new WDB({
+                server_id: `${interaction.guild.id}`,
+                channel_id: "0",
+                theme: -1,
+                color: "#000000"
+            }).save();
 
+            data = await WDB.findOne({
+                server_id: `${interaction.guild.id}`
+            });
+
+        }
+
+        if ((interaction as ExtendedSelectMenuInteraction).customId === "channel_id") {
+            await setChannelId(data, interaction);
+        }
+
+        else if ((interaction as ExtendedSelectMenuInteraction).customId === "theme") {
+            await setTheme(data, interaction);
+        }
+
+        else if ((interaction as ExtendedSelectMenuInteraction).customId === "color") {
+            await setColor(data, interaction);
+        }
 
     }
 

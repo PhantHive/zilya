@@ -2,8 +2,8 @@ import {SlashCommand} from "../../../../structures/SlashCommand";
 import {EmbedBuilder, ChannelType} from "discord.js";
 const WDB = require("../../../../assets/utils/models/welcome.js");
 import colors from "../../../../assets/data/colors.json";
-const { customThemeWelcome, customColorWelcome, selectChannelId} = require("./src/setter/setCustom");
-const Client = require("../../../../structures/Client");
+const { nextStep } = require("./src/setter/setCustom");
+
 
 exports.default = new SlashCommand({
     name: 'configure',
@@ -11,32 +11,27 @@ exports.default = new SlashCommand({
     userPermissions: ['Administrator'],
     run: async ({interaction}) => {
 
-        let data = WDB.findOne({
+        let data = await WDB.findOne({
             server_id: `${interaction.guild.id}`
         });
 
-        if (data) {
+        if (!data) {
+            await new WDB({
+                server_id: `${interaction.guild.id}`,
+                channel_id: "0",
+                theme: -1,
+                color: "#000000"
+            }).save();
 
-            new Promise(async (resolve) => {
-                let channels = interaction.guild.channels.cache.filter(c => c.type === ChannelType.GuildText).map(c => {
-                    return {
-                        label: `${c.name}`,
-                        value: `${c.id}`
-                    }
-                });
+            data = await WDB.findOne({
+                server_id: `${interaction.guild.id}`
+            });
 
-                if (channels.length >= 25) {
-                    channels.splice(24, channels.length - 23)
-                }
-                await selectChannelId(Client, interaction, channels)
-                resolve(true);
-            })
-
-
-
-
+            await nextStep(data, interaction);
         }
-
+        else {
+            await nextStep(data, interaction);
+        }
 
     }
 });

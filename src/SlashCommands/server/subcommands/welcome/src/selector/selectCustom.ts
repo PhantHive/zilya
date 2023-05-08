@@ -1,7 +1,7 @@
 import {ActionRowBuilder, StringSelectMenuBuilder} from "discord.js";
-import {ExtendedInteraction} from "../../../../../../typings/SlashCommand";
+import {ExtendedInteraction, ExtendedSelectMenuInteraction} from "../../../../../../typings/SlashCommand";
 
-const selectChannelId = async (client, interaction, channels) => {
+const selectChannelId = async (interaction, channels) => {
     const actionRow = new ActionRowBuilder()
         .addComponents(
 
@@ -28,7 +28,7 @@ const selectChannelId = async (client, interaction, channels) => {
         });
 }
 
-const customThemeWelcome = async (client, interaction) => {
+const customThemeWelcome = async (interaction) => {
 
     let actionRow: ActionRowBuilder = new ActionRowBuilder()
 
@@ -70,16 +70,16 @@ const customThemeWelcome = async (client, interaction) => {
             )
     )
     //await interaction.editReply({ content: "You may want to customize your welcome message :)." });
-    await interaction.editReply({ content: "You may want to customize your welcome message :).", components: [actionRow] })
+    await interaction.reply({ content: "You may want to customize your welcome message :).", components: [actionRow] })
         .catch(async () => {
-            await interaction.update({ content: "You may want to customize your welcome message :).", components: [actionRow] });
+            await interaction.editReply({ content: "You may want to customize your welcome message :).", components: [actionRow] });
         })
 
 
 
 }
 
-const customColorWelcome = async (client, interaction) => {
+const customColorWelcome = async (interaction) => {
 
     let colorRow: ActionRowBuilder = new ActionRowBuilder()
         .addComponents(
@@ -120,9 +120,9 @@ const customColorWelcome = async (client, interaction) => {
                 )
         )
     //await interaction.editReply({ content: "Choose your color." });
-    await interaction.editReply({ content: "Choose your color.", components: [colorRow] })
+    await interaction.reply({ content: "Choose your color.", components: [colorRow] })
         .catch(async () => {
-            await interaction.update({ content: "Choose your color.", components: [colorRow] });
+            await interaction.editReply({ content: "Choose your color.", components: [colorRow] });
         })
 }
 
