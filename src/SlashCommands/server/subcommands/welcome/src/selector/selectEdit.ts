@@ -28,6 +28,9 @@ const editOptions = async (interaction) => {
         )
 
     await interaction.reply({ content: "What do you wish to edit?", components: [actionRow] })
+        .catch(() => {
+            interaction.editReply({ content: "What do you wish to edit?", components: [actionRow] })
+        })
 }
 
 

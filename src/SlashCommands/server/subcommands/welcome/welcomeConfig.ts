@@ -1,5 +1,5 @@
 import {SlashCommand} from "../../../../structures/SlashCommand";
-import {EmbedBuilder, ChannelType} from "discord.js";
+import {ChannelType} from "discord.js";
 const WDB = require("../../../../assets/utils/models/welcome.js");
 import colors from "../../../../assets/data/colors.json";
 const { nextStep } = require("./src/setter/setCustom");

@@ -40,8 +40,8 @@ export default new Event('messageUpdate', async (oldMessage: Message, newMessage
                         .setDescription(desc)
                         .addFields(
                             {name: 'Channel TAG', value: `<#${oldMessage.channel.id}>`},
-                            {name: 'Old Message', value: `> ${oldMessage}`},
-                            {name: 'New Message', value: `> ${newMessage}`},
+                            {name: 'Old Message', value: `${oldMessage}`},
+                            {name: 'New Message', value: `${newMessage}`},
                             {
                                 name: 'All IDs', value: `\`\`\`js\nExecutor ID: ${action_author}\nChannel ID: ${oldMessage.channel.id}\nMessage ID: ${oldMessage.id}\`\`\``
                             }

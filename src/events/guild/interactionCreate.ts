@@ -2,11 +2,11 @@ import { client } from '../../index';
 import { Event } from '../../structures/Event';
 import { ExtendedInteraction, ExtendedSelectMenuInteraction } from '../../typings/SlashCommand';
 import {ButtonStyle, ChannelType, CommandInteractionOptionResolver} from "discord.js";
-import {setTimeout as wait} from "node:timers/promises";
-const { customThemeWelcome, customColorWelcome, selectChannelId} = require("../../SlashCommands/server/subcommands/welcome/src/setter/setCustom");
+const { setChannelId, setTheme, setColor } = require("../../SlashCommands/server/subcommands/welcome/src/setter/setCustom");
+const { setEdit } = require("../../SlashCommands/server/subcommands/welcome/src/setter/setEdit");
 const WDB = require("../../assets/utils/models/welcome.js");
 const themes = require("../../assets/data/theme.json");
-const { setChannelId, setTheme, setColor } = require("../../SlashCommands/server/subcommands/welcome/src/setter/setCustom");
+
 
 
 export default new Event('interactionCreate', async (interaction) => {
@@ -36,6 +36,8 @@ export default new Event('interactionCreate', async (interaction) => {
 
         }
 
+
+        // setter
         if ((interaction as ExtendedSelectMenuInteraction).customId === "channel_id") {
             await setChannelId(data, interaction);
         }
@@ -46,6 +48,14 @@ export default new Event('interactionCreate', async (interaction) => {
 
         else if ((interaction as ExtendedSelectMenuInteraction).customId === "color") {
             await setColor(data, interaction);
+        }
+
+        // selector
+        else if ((interaction as ExtendedSelectMenuInteraction).customId === "edit_welcome") {
+            // get value that need to be edited
+            const value = (interaction as ExtendedSelectMenuInteraction).values[0];
+            await setEdit(data, interaction, value);
+
         }
 
     }

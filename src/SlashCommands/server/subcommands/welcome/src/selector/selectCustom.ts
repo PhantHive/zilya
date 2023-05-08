@@ -28,7 +28,7 @@ const selectChannelId = async (interaction, channels) => {
         });
 }
 
-const customThemeWelcome = async (interaction) => {
+const selectWelcomeTheme = async (interaction) => {
 
     let actionRow: ActionRowBuilder = new ActionRowBuilder()
 
@@ -79,7 +79,7 @@ const customThemeWelcome = async (interaction) => {
 
 }
 
-const customColorWelcome = async (interaction) => {
+const selectWelcomeColor = async (interaction) => {
 
     let colorRow: ActionRowBuilder = new ActionRowBuilder()
         .addComponents(
@@ -129,6 +129,6 @@ const customColorWelcome = async (interaction) => {
 
 module.exports = {
     selectChannelId,
-    customThemeWelcome,
-    customColorWelcome
+    selectWelcomeTheme,
+    selectWelcomeColor
 }

@@ -1,7 +1,7 @@
 import {ChannelType} from "discord.js";
 import {ExtendedSelectMenuInteraction} from "../../../../../../typings/SlashCommand";
 const wait = require('node:timers/promises').setTimeout;
-const { selectChannelId, customThemeWelcome, customColorWelcome } = require("../selector/selectCustom");
+const { selectChannelId, selectWelcomeTheme, selectWelcomeColor } = require("../selector/selectCustom");
 const theme = require("../../../../../../assets/data/theme.json");
 
 const isChannelValid = async (channel, configName) => new Promise((resolve, reject) => {
@@ -18,45 +18,48 @@ const isChannelValid = async (channel, configName) => new Promise((resolve, reje
 
 const nextStep = async (data, interaction: ExtendedSelectMenuInteraction) => {
 
-    let channels = interaction.guild.channels.cache.filter(c => c.type === ChannelType.GuildText).map(c => {
-        return {
-            label: `${c.name}`,
-            value: `${c.id}`
+    new Promise(async (resolve, reject) => {
+        let channels = interaction.guild.channels.cache.filter(c => c.type === ChannelType.GuildText).map(c => {
+            return {
+                label: `${c.name}`,
+                value: `${c.id}`
+            }
+        });
+
+        if (channels.length >= 25) {
+            channels.splice(24, channels.length - 23)
         }
-    });
 
-    if (channels.length >= 25) {
-        channels.splice(24, channels.length - 23)
-    }
-
-    if (data.channel_id === "0") {
-        await selectChannelId(interaction, channels);
-    }
-    else if (data.theme === -1) {
-        await customThemeWelcome(interaction);
-    }
-    else if (data.color === "#000000") {
-        await customColorWelcome(interaction);
-    }
-    else {
-        // all data is present
-        await interaction.reply({
-            content: `All data are saved for <#${data.channel_id}>\n` +
+        if (data.channel_id === "0") {
+            await selectChannelId(interaction, channels);
+        }
+        else if (data.theme === -1) {
+            await selectWelcomeTheme(interaction);
+        }
+        else if (data.color === "#000000") {
+            await selectWelcomeColor(interaction);
+        }
+        else {
+            let msg = `All data are saved for <#${data.channel_id}>\n` +
                 `\`\`\`js\nChannel ID: ${data.channel_id}\n` +
                 `Theme: ${theme[data.theme].name}\n` +
                 `Color: ${data.color}\`\`\`` +
                 `you can reset the welcome message with the command: \`/welcome remove\` or edit it with the command: \`/welcome edit\``
+            resolve(msg);
+        }
+    })
+        .then(async (res: string) => {
+            // all data is present
+            await interaction.reply({
+                content: res
+            })
+                .catch(async () => {
+                    await interaction.editReply({
+                        content: res
+                    })
+                });
         })
-            .catch(async () => {
-                await interaction.editReply({
-                    content: `All data are saved for <#${data.channel_id}>\n` +
-                        `\`\`\`js\nChannel ID: ${data.channel_id}\n` +
-                        `Theme: ${theme[data.theme].name}\n` +
-                        `Color: ${data.color}\`\`\`` +
-                        `you can reset the welcome message with the command: \`/welcome remove\` or edit it with the command: \`/welcome edit\``
-                })
-            });
-    }
+
 
 }
 
@@ -104,7 +107,7 @@ const setChannelId = async (data, interaction: ExtendedSelectMenuInteraction) =>
                 .catch(async () => {
                     await interaction.editReply({ content: res });
                 });
-            await wait(3000);
+            await wait(2000);
             await nextStep(data, interaction);
         })
         .catch(async (err: string) => {
@@ -112,7 +115,7 @@ const setChannelId = async (data, interaction: ExtendedSelectMenuInteraction) =>
                 .catch(async () => {
                     await interaction.editReply({ content: err });
                 });
-            await wait(3000);
+            await wait(2000);
             await nextStep(data, interaction);
         });
 }
@@ -127,7 +130,8 @@ const setTheme = async (data, interaction: ExtendedSelectMenuInteraction) => {
 
         new Promise((resolve, reject) => {
 
-            if (!(choosedTheme > 6 || choosedTheme < 1)) {
+            // check if the theme is between 1 and 6
+            if (choosedTheme >= 0 && choosedTheme <= 5) {
                 data.theme = choosedTheme;
                 data.save();
                 resolve(`You choosed the theme: **${themeName}**, I will setup the welcome message with this theme.\n Proceeding to the next step...`);
