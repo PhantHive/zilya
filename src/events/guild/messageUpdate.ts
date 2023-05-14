@@ -7,6 +7,7 @@ import colors from "../../assets/data/colors.json";
 export default new Event('messageUpdate', async (oldMessage: Message, newMessage: Message) => {
 
         if (!oldMessage.guild) return;
+        if (oldMessage.author.bot) return;
 
         let data = await LG.findOne({
             serverId: oldMessage.guild.id

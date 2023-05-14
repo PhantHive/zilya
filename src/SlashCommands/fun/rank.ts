@@ -1,35 +1,32 @@
 import {SlashCommand} from "../../structures/SlashCommand";
 import {AttachmentBuilder, BaseImageURLOptions} from "discord.js";
-import {createCanvas, Image, loadImage} from "canvas";
+import {createCanvas, Image, loadImage, CanvasRenderingContext2D} from "canvas";
 import * as fs from "fs";
 const GifEncoder = require('gif-encoder-2');
 const { GifReader } = require('omggif');
-const jimp = require('jimp');
 const fetch = require('node-fetch');
 
 const RDB = require("../../assets/utils/models/rank.js");
 
-const getFontSize = async (ctx, maxwidth, text, initialFontSize) => {
-
+const getFontSize = (ctx: CanvasRenderingContext2D, maxwidth: number, text: string, initialFontSize: number): [string, number] => {
     let font = initialFontSize;
 
     do {
         font -= 10;
-        ctx.font = `${font}px "ApoCs" "Arial"`
-    } while (ctx.measureText(text).width > maxwidth)
+        ctx.font = `${font}px "Apocs" "Arial" normal`;
+    } while (ctx.measureText(text).width > maxwidth);
 
     return [ctx.font, ctx.measureText(text).width];
-
-}
-
-
-const drawCard = async (ctx, canvas, data: any, interaction) => {
+};
 
 
-    ctx.save();
+const drawShape = async (ctx: CanvasRenderingContext2D, canvas) => {
+
+    ctx.strokeStyle = "#b7a4a4";
+    ctx.lineWidth = 1;
+
     // left side
     ctx.beginPath();
-    ctx.strokeStyle = "#ffffff";
     ctx.moveTo(0, 0);
     ctx.lineTo(0, canvas.height);
     ctx.lineTo(365, canvas.height);
@@ -45,16 +42,11 @@ const drawCard = async (ctx, canvas, data: any, interaction) => {
     // --------------------
     ctx.lineTo(0, 0);
 
-    ctx.restore();
+
     // --------------------
     // PROFILE PIC
     ctx.moveTo(canvas.width * 0.62, ((canvas.height * 0.6) / 2) + canvas.height * 0.4) // go to the middle of the profile pic
-    ctx.arc(canvas.width * 0.62, ((canvas.height * 0.6) / 2) + canvas.height * 0.4, canvas.height * 0.27, 0, Math.PI * 2, false);
-
-
-    ctx.stroke();
-
-
+    ctx.arc(canvas.width * 0.62, ((canvas.height * 0.6) / 2) + canvas.height * 0.4, canvas.height * 0.24, 0, Math.PI * 2, false);
 
     // --------------------
 
@@ -69,11 +61,6 @@ const drawCard = async (ctx, canvas, data: any, interaction) => {
     ctx.quadraticCurveTo(canvas.width*0.91, canvas.height*0.5, canvas.width * 0.715, canvas.height * 0.45)
 
 
-    // server icon
-    ctx.moveTo(canvas.width * 0.85, canvas.height * 0.85)
-    ctx.arc(canvas.width * 0.825, canvas.height * 0.75, 15, 0, Math.PI * 2, false);
-    ctx.stroke();
-
     // top leaf
     ctx.moveTo(canvas.width * 0.75, canvas.height * 0.46);
     ctx.lineTo(canvas.width * 0.77, canvas.height * 0.35)
@@ -82,94 +69,174 @@ const drawCard = async (ctx, canvas, data: any, interaction) => {
     ctx.quadraticCurveTo(canvas.width*0.95, canvas.height*0.4, canvas.width*0.93, canvas.height*0.5);
     ctx.lineTo(canvas.width*0.90, canvas.height*0.65);
     ctx.quadraticCurveTo(canvas.width*0.85, canvas.height*0.52, canvas.width*0.75, canvas.height*0.46);
-    ctx.stroke();
     ctx.closePath();
 
+
     ctx.clip();
+    ctx.stroke();
+
+    ctx.save();
+
+
+    // draw the background
+    ctx.globalAlpha = 0.45;
+    const background = await loadImage(`${process.cwd()}/src/assets/img/welcome/landscapes/landscape-2.jpg`);
+    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+
+
+}
+
+const drawBar = (ctx, x, y, width, height, fillColor) => {
+
+    // Draw bar
+    ctx.fillStyle = fillColor;
+    ctx.beginPath();
+    ctx.moveTo(x + height / 2, y + height / 2);
+    ctx.quadraticCurveTo(x + height / 2, y, x + height, y);
+    ctx.lineTo(x + width - height, y);
+    ctx.quadraticCurveTo(x + width - height / 2, y, x + width - height / 2, y + height / 2);
+    ctx.lineTo(x + width - height / 2, y + height / 2);
+    ctx.quadraticCurveTo(x + width - height / 2, y + height, x + width - height, y + height);
+    ctx.lineTo(x + height, y + height);
+    ctx.quadraticCurveTo(x + height / 2, y + height, x + height / 2, y + height / 2);
+    ctx.closePath();
+    ctx.fill();
+};
+
+
+const drawXpBar = async (ctx, canvas, data: any) => {
+    let font;
+    const nextLvlXpMsg = 25 * (data.level_msg ** 2) + 15 * data.level_msg + 25;
+    const currentXpMsg = data.xp_msg;
+    const percentageMsg = currentXpMsg / nextLvlXpMsg;
+
+    const nextLvlXpVocal = 25 * (data.level_vocal ** 2) + 15 * data.level_vocal + 25;
+    const currentXpVocal = data.xp_vocal;
+    const percentageVocal = currentXpVocal / nextLvlXpVocal;
+
+    const msgXpEmoji: Image = await loadImage(`${process.cwd()}/src/assets/img/rank-card/msg-xp.png`);
+    const vocalXpEmoji: Image = await loadImage(`${process.cwd()}/src/assets/img/rank-card/mic-xp.png`);
+
+    // MSG XP BAR
+    ctx.globalAlpha = 1;
+    await drawBar(ctx, canvas.width * 0.035, canvas.height * 0.65, canvas.width * 0.35, 17, "rgba(0,0,0,0.5)")
+    // draw the xp bar
+    await drawBar(ctx, canvas.width * 0.035, canvas.height * 0.65, canvas.width * 0.35 * percentageMsg, 17, "rgba(145,127,127,0.9)")
+
+
+    // VOCAL XP BAR
+    await drawBar(ctx, canvas.width * 0.035, canvas.height * 0.85, canvas.width * 0.35, 17, "rgba(0,0,0,0.5)")
+    // draw the xp bar
+    await drawBar(ctx, canvas.width * 0.035, canvas.height * 0.85, canvas.width * 0.35 * percentageVocal, 17, "rgba(145,127,127,0.9)")
+
+
+    // draw the xp emoji on the left side
+    ctx.drawImage(msgXpEmoji, canvas.width * 0.01, canvas.height * 0.64, 20, 20);
+    ctx.drawImage(vocalXpEmoji, canvas.width * 0.001, canvas.height * 0.82, 35, 30);
+
+
+    // draw the xp text on the center of each bar "currentXpMsg + "/" + nextLvlXpMsg"
+    // max width of the text need to be 0.4 of the bar width
+    let xpMsgTxt: string = `${currentXpMsg}/${nextLvlXpMsg}`;
+    font = getFontSize(ctx, (canvas.width * 0.35) * 0.4, xpMsgTxt as string, 25);
+    font[0] = font[0].replace("normal", "bold");
+    ctx.font = font[0];
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
+    ctx.fillText(xpMsgTxt, canvas.width * 0.2, canvas.height * 0.7);
+
+    let xpVocalTxt: string = `${currentXpVocal}/${nextLvlXpVocal}`;
+    font = getFontSize(ctx, (canvas.width * 0.35) * 0.4, xpVocalTxt, 25);
+    font[0] = font[0].replace("normal", "bold");
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
+    ctx.fillText(xpVocalTxt, canvas.width * 0.2, canvas.height * 0.9);
+
+    ctx.restore();
+
+    // add the level text on top left of each bar
+    let levelMsgTxt: string = `Lvl: ${data.level_msg}`;
+    font = getFontSize(ctx, canvas.width * 0.3, levelMsgTxt, 30);
+    ctx.font = font[0];
+    ctx.fillStyle = "#ffffff";
+    // top right of the bar
+    ctx.textAlign = "right";
+    ctx.fillText(levelMsgTxt, canvas.width * 0.36, canvas.height * 0.63);
+
+    let levelVocalTxt: string = `Lvl: ${data.level_vocal}`;
+    font = getFontSize(ctx, canvas.width * 0.3, levelVocalTxt, 30);
+    ctx.font = font[0];
+    ctx.fillStyle = "#ffffff";
+    // top right
+    ctx.textAlign = "right";
+    ctx.fillText(levelVocalTxt, canvas.width * 0.36, canvas.height * 0.83);
 
 
 
 
 
-    // global form before clipping on it
-    // rectangle
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    // clip form on the black rectangle
+}
 
-    // check if user has animated avatar
+const drawCard = async (ctx, canvas, data: any, interaction) => {
 
+    // draw global shape
+    await drawShape(ctx, canvas);
+    ctx.globalAlpha = 1;
+    ctx.save();
+    // draw the avatar
 
-    const avatarUrl = interaction.user.displayAvatarURL({ forceStatic: false } as BaseImageURLOptions);
-
-    let extension = 'png';
-    try {
-        // try loading the avatar image with the 'gif' extension
-        await loadImage(avatarUrl + '?format=gif');
-        extension = 'gif';
-    } catch (error) {
-        // ignore the error, extension will be 'png' if GIF format is not supported
-    }
-
-    // construct the final avatar URL with the correct extension
-    const finalAvatarUrl = interaction.user.displayAvatarURL({ extension } as BaseImageURLOptions);
-
-    console.log(finalAvatarUrl);
+    const avatarUrl = interaction.member.displayAvatarURL({ extension: 'png', forceStatic: false, size: 2048 } as BaseImageURLOptions);
     let avatar;
     async function loadAvatar(): Promise<void> {
-        avatar = await loadImage(finalAvatarUrl);
+        avatar = await loadImage(avatarUrl);
     }
     await loadAvatar();
+    const imageWidth = canvas.height * 0.49;
+    const imageHeight = canvas.height * 0.49;
+    const offsetX = canvas.width * 0.62 - imageWidth / 2;
+    const offsetY = ((canvas.height * 0.6) / 2) + canvas.height * 0.4 - imageHeight / 2;
+    ctx.drawImage(avatar, offsetX, offsetY, imageWidth, imageHeight);
 
-    if (extension === 'gif') {
-        try {
-            const res = await fetch(finalAvatarUrl);
-            const buf = await res.buffer();
-            const gr = new GifReader(buf);
-            const encoder = new GifEncoder(canvas.width, canvas.height);
-            encoder.start();
-            encoder.setRepeat(0);
-            encoder.setDelay(0);
-            encoder.setQuality(100);
-            encoder.setTransparent(null);
+    // draw circle around the avatar
+    ctx.beginPath();
+    ctx.lineWidth = 7;
+    ctx.strokeStyle = "#b7a4a4";
+    ctx.arc(canvas.width * 0.62, (canvas.height * 0.6) / 2 + canvas.height * 0.4, imageWidth / 2, 0, Math.PI * 2, false);
+    ctx.closePath();
+    ctx.stroke();
 
-            const numFrames = gr.numFrames();
-            console.log(numFrames)
-            const delay = gr.frameInfo(0).delay * 10; // frame delay in ms
 
-            const frames = [];
-
-            for (let i = 0; i < numFrames; i++) {
-                const frameData = gr.frameInfo(i);
-                const pixels = new Uint8Array(gr.width * gr.height * 4);
-                gr.decodeAndBlitFrameRGBA(i, pixels);
-                const canvas = createCanvas(gr.width, gr.height);
-                const ctx = canvas.getContext('2d');
-                const imageData = ctx.createImageData(gr.width, gr.height);
-                imageData.data.set(pixels);
-                ctx.putImageData(imageData, 0, 0);
-                frames.push({
-                    canvas,
-                    delay,
-                });
-            }
-
-            for (const frame of frames) {
-                ctx.drawImage(frame.canvas, canvas.width * 0.62 - canvas.height * 0.27, ((canvas.height * 0.6) / 2) + canvas.height * 0.4 - canvas.height * 0.27, canvas.height * 0.54, canvas.height * 0.54);
-                encoder.addFrame(ctx);
-            }
-
-            encoder.finish();
-            const buffer = encoder.out.getData();
-            return new AttachmentBuilder(buffer, {name: 'rank_card.gif'});
-        } catch (err) {
-            console.error(err);
-        }
-
-    } else {
-        ctx.drawImage(avatar, canvas.width * 0.62 - canvas.height * 0.27, ((canvas.height * 0.6) / 2) + canvas.height * 0.4 - canvas.height * 0.27, canvas.height * 0.54, canvas.height * 0.54);
-        return new AttachmentBuilder(canvas.toBuffer(), {name: 'rank_card.png'});
+    const serverIconUrl = interaction.guild.iconURL({ extension: 'png', forceStatic: false } as BaseImageURLOptions);
+    let serverIcon;
+    async function loadServerIcon(): Promise<void> {
+        serverIcon = await loadImage(serverIconUrl);
     }
+    await loadServerIcon();
+
+
+    // draw server icon inside the circle
+    ctx.beginPath();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "#b7a4a4";
+    ctx.drawImage(serverIcon, canvas.width * 0.8, canvas.height * 0.7, 40, 40);
+    ctx.arc(canvas.width * 0.8 + 20, canvas.height * 0.7 + 20, 20, 0, Math.PI * 2, false);
+    ctx.closePath();
+    ctx.stroke();
+
+
+    // draw the text inside the card
+    ctx.fillStyle = "#ffffff";
+    let font: [string, number] = getFontSize(ctx, canvas.width * 0.2, `${interaction.user.username}`, 75);
+    ctx.font = font[0];
+    ctx.fillText(`${interaction.user.username}`, canvas.width * 0.025, canvas.height * 0.45);
+
+
+    // draw xp bar
+    await drawXpBar(ctx, canvas, data);
+
+
+    return new AttachmentBuilder(canvas.toBuffer(), {name: 'rank_card.png'});
+
 
 }
 
@@ -180,11 +247,12 @@ exports.default = new SlashCommand({
     description: 'Display the rank card',
     run: async ({interaction}) => {
 
+        await interaction.deferReply();
+
         // creating context
         const canvas = createCanvas(670, 270)
-        const ctx = canvas.getContext("2d");
-
-
+        // make canvas transparent
+        const ctx: CanvasRenderingContext2D = canvas.getContext("2d");
 
         new Promise(async (resolve, reject) => {
             let data = await RDB.findOne({
@@ -215,11 +283,10 @@ exports.default = new SlashCommand({
                 // drawing card
                 let card = await drawCard(ctx, canvas, data, interaction);
                 console.log(card)
-                await interaction.reply({files: [card]});
+                await interaction.editReply({files: [card]});
             })
             .catch(async (err) => {
-                console.log(err);
-                await interaction.reply({content: "An error occured while fetching data from the database", ephemeral: true});
+                await interaction.editReply({content: `An error occurred: ${err}`});
             });
 
     }
