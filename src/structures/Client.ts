@@ -13,6 +13,7 @@ import { Event } from "./Event"
 
 export class ExtendedClient extends Client {
     commands: Collection<string, CommandType> = new Collection();
+    lastMessageTimestamp: number;
 
     constructor() {
         super({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'GuildMessageReactions', 'MessageContent', 'DirectMessages',

@@ -1,8 +1,13 @@
 import {SlashCommand} from "../../structures/SlashCommand";
-import {ExtendedInteraction} from "../../typings/SlashCommand";
-import {AttachmentBuilder} from "discord.js";
-import {createCanvas} from "canvas";
+import {AttachmentBuilder, BaseImageURLOptions} from "discord.js";
+import {createCanvas, Image, loadImage} from "canvas";
+import * as fs from "fs";
+const GifEncoder = require('gif-encoder-2');
+const { GifReader } = require('omggif');
+const jimp = require('jimp');
+const fetch = require('node-fetch');
 
+const RDB = require("../../assets/utils/models/rank.js");
 
 const getFontSize = async (ctx, maxwidth, text, initialFontSize) => {
 
@@ -18,10 +23,10 @@ const getFontSize = async (ctx, maxwidth, text, initialFontSize) => {
 }
 
 
-const drawCard = async (ctx, canvas) => {
+const drawCard = async (ctx, canvas, data: any, interaction) => {
 
 
-
+    ctx.save();
     // left side
     ctx.beginPath();
     ctx.strokeStyle = "#ffffff";
@@ -40,11 +45,15 @@ const drawCard = async (ctx, canvas) => {
     // --------------------
     ctx.lineTo(0, 0);
 
+    ctx.restore();
     // --------------------
     // PROFILE PIC
     ctx.moveTo(canvas.width * 0.62, ((canvas.height * 0.6) / 2) + canvas.height * 0.4) // go to the middle of the profile pic
     ctx.arc(canvas.width * 0.62, ((canvas.height * 0.6) / 2) + canvas.height * 0.4, canvas.height * 0.27, 0, Math.PI * 2, false);
+
+
     ctx.stroke();
+
 
 
     // --------------------
@@ -80,18 +89,88 @@ const drawCard = async (ctx, canvas) => {
 
 
 
+
+
     // global form before clipping on it
     // rectangle
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     // clip form on the black rectangle
 
+    // check if user has animated avatar
 
 
+    const avatarUrl = interaction.user.displayAvatarURL({ forceStatic: false } as BaseImageURLOptions);
 
+    let extension = 'png';
+    try {
+        // try loading the avatar image with the 'gif' extension
+        await loadImage(avatarUrl + '?format=gif');
+        extension = 'gif';
+    } catch (error) {
+        // ignore the error, extension will be 'png' if GIF format is not supported
+    }
 
+    // construct the final avatar URL with the correct extension
+    const finalAvatarUrl = interaction.user.displayAvatarURL({ extension } as BaseImageURLOptions);
 
-    return new AttachmentBuilder(canvas.toBuffer(), {name: 'rank_card.png'});
+    console.log(finalAvatarUrl);
+    let avatar;
+    async function loadAvatar(): Promise<void> {
+        avatar = await loadImage(finalAvatarUrl);
+    }
+    await loadAvatar();
+
+    if (extension === 'gif') {
+        try {
+            const res = await fetch(finalAvatarUrl);
+            const buf = await res.buffer();
+            const gr = new GifReader(buf);
+            const encoder = new GifEncoder(canvas.width, canvas.height);
+            encoder.start();
+            encoder.setRepeat(0);
+            encoder.setDelay(0);
+            encoder.setQuality(100);
+            encoder.setTransparent(null);
+
+            const numFrames = gr.numFrames();
+            console.log(numFrames)
+            const delay = gr.frameInfo(0).delay * 10; // frame delay in ms
+
+            const frames = [];
+
+            for (let i = 0; i < numFrames; i++) {
+                const frameData = gr.frameInfo(i);
+                const pixels = new Uint8Array(gr.width * gr.height * 4);
+                gr.decodeAndBlitFrameRGBA(i, pixels);
+                const canvas = createCanvas(gr.width, gr.height);
+                const ctx = canvas.getContext('2d');
+                const imageData = ctx.createImageData(gr.width, gr.height);
+                imageData.data.set(pixels);
+                ctx.putImageData(imageData, 0, 0);
+                frames.push({
+                    canvas,
+                    delay,
+                });
+            }
+
+            for (const frame of frames) {
+                ctx.drawImage(frame.canvas, canvas.width * 0.62 - canvas.height * 0.27, ((canvas.height * 0.6) / 2) + canvas.height * 0.4 - canvas.height * 0.27, canvas.height * 0.54, canvas.height * 0.54);
+                encoder.addFrame(ctx);
+            }
+
+            encoder.finish();
+            const buffer = encoder.out.getData();
+            return new AttachmentBuilder(buffer, {name: 'rank_card.gif'});
+        } catch (err) {
+            console.error(err);
+        }
+
+    } else {
+        ctx.drawImage(avatar, canvas.width * 0.62 - canvas.height * 0.27, ((canvas.height * 0.6) / 2) + canvas.height * 0.4 - canvas.height * 0.27, canvas.height * 0.54, canvas.height * 0.54);
+        return new AttachmentBuilder(canvas.toBuffer(), {name: 'rank_card.png'});
+    }
+
 }
 
 
@@ -105,10 +184,43 @@ exports.default = new SlashCommand({
         const canvas = createCanvas(670, 270)
         const ctx = canvas.getContext("2d");
 
-        // drawing card
-        let card = await drawCard(ctx, canvas);
 
-        await interaction.reply({files: [card]});
+
+        new Promise(async (resolve, reject) => {
+            let data = await RDB.findOne({
+                server_id: `${interaction.guild.id}`,
+                user_id: `${interaction.user.id}`
+            })
+                .catch(err => {
+                    reject(err);
+                });
+
+            if (!data) {
+                data = await RDB.create({
+                    server_id: `${interaction.guild.id}`,
+                    user_id: `${interaction.user.id}`,
+                    xp_msg: 0,
+                    level_msg: 1,
+                    xp_vocal: 0,
+                    level_vocal: 1
+                });
+
+                resolve(data);
+            }
+            else {
+                resolve(data)
+            }
+        })
+            .then(async (data: any) => {
+                // drawing card
+                let card = await drawCard(ctx, canvas, data, interaction);
+                console.log(card)
+                await interaction.reply({files: [card]});
+            })
+            .catch(async (err) => {
+                console.log(err);
+                await interaction.reply({content: "An error occured while fetching data from the database", ephemeral: true});
+            });
 
     }
 });

@@ -3,10 +3,79 @@ import {client} from "../../index";
 import {Message, EmbedBuilder, AuditLogEvent, TextChannel, Channel, VoiceState} from "discord.js";
 const LG = require("../../assets/utils/models/logger.js");
 import colors from "../../assets/data/colors.json";
+const RDB = require("../../assets/utils/models/rank.js");
+
+const updateRank = async (newState, timer) => {
+
+    // check if rank exists in db
+    let data = await RDB.findOne({
+        server_id: `${newState.guild.id}`,
+        user_id: `${newState.member.user.id}`
+    });
+
+    new Promise(async (resolve, reject) => {
+        if (!data) {
+            await new RDB({
+                server_id: `${newState.guild.id}`,
+                user_id: `${newState.member.user.id}`,
+                xp_msg: 0,
+                level_msg: 1,
+                xp_vocal: 0,
+                level_vocal: 1
+            }).save();
+
+            data = await RDB.findOne({
+                server_id: `${newState.guild.id}`,
+                user_id: `${newState.member.user.id}`
+            });
+            resolve(data);
+        }
+        else {
+            resolve(data);
+        }
+    })
+        .then(async (data: any) => {
+            // console log xp and level before update
+            console.log(`xp: ${data.xp_vocal} | level: ${data.level_vocal}`);
+
+            // = 25 * (curLvl ^ 2) + 15 * curLvl + 25 = nextLvlXp
+            // xp win: 2*(min)
+            const nextLvlXp = 25 * (data.level_vocal ** 2) + 15 * data.level_vocal + 25;
+
+            // if user has enough xp to level up
+            if (data.xp_vocal >= nextLvlXp) {
+                data.level_vocal += 1;
+                data.xp_vocal = 0;
+                await data.save();
+            }
+            else {
+                // take xp like 2 times the time spent in the channel in minutes
+                data.xp_vocal += 2 * timer;
+                await data.save();
+            }
+
+            // console log xp and level after update
+            console.log(`xp: ${data.xp_vocal} | level: ${data.level_vocal}`);
+
+        })
+
+}
 
 export default new Event('voiceStateUpdate', async (oldState: VoiceState, newState: VoiceState) => {
 
     if (!oldState.guild) return;
+    if (oldState.member.user.bot) return;
+
+    // xp system
+    let timer: number = null;
+
+    if (newState.channelId && !oldState.channelId) {
+        setInterval(async () => {
+            if (!newState.channelId || ((newState.channelId !== oldState.channelId) && oldState.channelId)) return clearInterval(timer);
+            timer++;
+            await updateRank(newState, timer);
+        }, 10000);
+    }
 
     try {
         let data = await LG.findOne({
@@ -18,7 +87,6 @@ export default new Event('voiceStateUpdate', async (oldState: VoiceState, newSta
                     let color = data.color;
                     // find the channel by id using client.channels.fetch()
                     const logger = await client.channels.fetch(channelId) as TextChannel;
-
 
                     if (logger !== undefined && data.notifType !== "no_voice_logs") {
                         let memberState;
