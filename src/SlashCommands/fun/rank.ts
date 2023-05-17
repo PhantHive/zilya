@@ -23,7 +23,7 @@ const getFontSize = (ctx: CanvasRenderingContext2D, maxwidth: number, text: stri
 const drawShape = async (ctx: CanvasRenderingContext2D, canvas) => {
 
     ctx.strokeStyle = "#b7a4a4";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1.2;
 
     // left side
     ctx.beginPath();
@@ -46,7 +46,7 @@ const drawShape = async (ctx: CanvasRenderingContext2D, canvas) => {
     // --------------------
     // PROFILE PIC
     ctx.moveTo(canvas.width * 0.62, ((canvas.height * 0.6) / 2) + canvas.height * 0.4) // go to the middle of the profile pic
-    ctx.arc(canvas.width * 0.62, ((canvas.height * 0.6) / 2) + canvas.height * 0.4, canvas.height * 0.24, 0, Math.PI * 2, false);
+    ctx.arc(canvas.width * 0.62, ((canvas.height * 0.6) / 2) + canvas.height * 0.4, canvas.height * 0.3, 0, Math.PI * 2, false);
 
     // --------------------
 
@@ -185,25 +185,33 @@ const drawCard = async (ctx, canvas, data: any, interaction) => {
     ctx.save();
     // draw the avatar
 
+    let avatarCanvas = createCanvas(canvas.width, canvas.height);
+    let avatarCtx = avatarCanvas.getContext("2d");
+
     const avatarUrl = interaction.member.displayAvatarURL({ extension: 'png', forceStatic: false, size: 2048 } as BaseImageURLOptions);
     let avatar;
     async function loadAvatar(): Promise<void> {
         avatar = await loadImage(avatarUrl);
     }
     await loadAvatar();
-    const imageWidth = canvas.height * 0.49;
-    const imageHeight = canvas.height * 0.49;
+    const imageWidth = canvas.height * 0.6;
+    const imageHeight = canvas.height * 0.6;
     const offsetX = canvas.width * 0.62 - imageWidth / 2;
     const offsetY = ((canvas.height * 0.6) / 2) + canvas.height * 0.4 - imageHeight / 2;
-    ctx.drawImage(avatar, offsetX, offsetY, imageWidth, imageHeight);
 
-    // draw circle around the avatar
-    ctx.beginPath();
-    ctx.lineWidth = 7;
-    ctx.strokeStyle = "#b7a4a4";
-    ctx.arc(canvas.width * 0.62, (canvas.height * 0.6) / 2 + canvas.height * 0.4, imageWidth / 2, 0, Math.PI * 2, false);
-    ctx.closePath();
-    ctx.stroke();
+    // create canvas for the avatar
+
+    avatarCtx.beginPath();
+    avatarCtx.lineWidth = 2;
+    avatarCtx.strokeStyle = "#b7a4a4";
+    avatarCtx.arc(canvas.width * 0.62, (canvas.height * 0.6) / 2 + canvas.height * 0.4, imageWidth / 2, 0, Math.PI * 2, false);
+    avatarCtx.closePath();
+    avatarCtx.stroke();
+    avatarCtx.clip();
+
+    avatarCtx.drawImage(avatar, offsetX, offsetY, imageWidth, imageHeight);
+
+    ctx.drawImage(avatarCanvas, 0, 0, canvas.width, canvas.height);
 
 
     const serverIconUrl = interaction.guild.iconURL({ extension: 'png', forceStatic: false } as BaseImageURLOptions);
@@ -216,7 +224,7 @@ const drawCard = async (ctx, canvas, data: any, interaction) => {
 
     // draw server icon inside the circle
     ctx.beginPath();
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.strokeStyle = "#b7a4a4";
     ctx.drawImage(serverIcon, canvas.width * 0.8, canvas.height * 0.7, 40, 40);
     ctx.arc(canvas.width * 0.8 + 20, canvas.height * 0.7 + 20, 20, 0, Math.PI * 2, false);
