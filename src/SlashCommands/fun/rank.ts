@@ -5,22 +5,20 @@ import * as fs from "fs";
 const GifEncoder = require('gif-encoder-2');
 const { GifReader } = require('omggif');
 const fetch = require('node-fetch');
-
 const RDB = require("../../assets/utils/models/rank.js");
 
 const getFontSize = (ctx: CanvasRenderingContext2D, maxwidth: number, text: string, initialFontSize: number): [string, number] => {
     let font = initialFontSize;
 
     do {
-        font -= 10;
+        font -= 5;
         ctx.font = `${font}px "Apocs" "Arial" normal`;
     } while (ctx.measureText(text).width > maxwidth);
 
     return [ctx.font, ctx.measureText(text).width];
 };
 
-
-const drawShape = async (ctx: CanvasRenderingContext2D, canvas) => {
+const drawShape = async (ctx: CanvasRenderingContext2D, canvas): Promise<void> => {
 
     ctx.strokeStyle = "#b7a4a4";
     ctx.lineWidth = 1.2;
@@ -87,24 +85,29 @@ const drawShape = async (ctx: CanvasRenderingContext2D, canvas) => {
 }
 
 const drawBar = (ctx, x, y, width, height, fillColor) => {
-
     // Draw bar
+    // if width is less than 0.002% of the canvas width, don't draw it
+    if (width < 0.002 * ctx.canvas.width) return;
+
+    // adjust corenerRadius if the width is too small
+    const cornerRadius = width < height ? width / 2 : height / 2;
+
     ctx.fillStyle = fillColor;
     ctx.beginPath();
-    ctx.moveTo(x + height / 2, y + height / 2);
-    ctx.quadraticCurveTo(x + height / 2, y, x + height, y);
-    ctx.lineTo(x + width - height, y);
-    ctx.quadraticCurveTo(x + width - height / 2, y, x + width - height / 2, y + height / 2);
-    ctx.lineTo(x + width - height / 2, y + height / 2);
-    ctx.quadraticCurveTo(x + width - height / 2, y + height, x + width - height, y + height);
-    ctx.lineTo(x + height, y + height);
-    ctx.quadraticCurveTo(x + height / 2, y + height, x + height / 2, y + height / 2);
+    ctx.moveTo(x, y + cornerRadius);
+    ctx.quadraticCurveTo(x, y, x + cornerRadius, y);
+    ctx.lineTo(x + width - cornerRadius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + cornerRadius);
+    ctx.lineTo(x + width, y + height - cornerRadius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - cornerRadius, y + height);
+    ctx.lineTo(x + cornerRadius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - cornerRadius);
     ctx.closePath();
     ctx.fill();
 };
 
 
-const drawXpBar = async (ctx, canvas, data: any) => {
+const drawXpBar = async (ctx, canvas, data: any): Promise<void> => {
     let font;
     const nextLvlXpMsg = 25 * (data.level_msg ** 2) + 15 * data.level_msg + 25;
     const currentXpMsg = data.xp_msg;
@@ -119,44 +122,44 @@ const drawXpBar = async (ctx, canvas, data: any) => {
 
     // MSG XP BAR
     ctx.globalAlpha = 1;
-    await drawBar(ctx, canvas.width * 0.035, canvas.height * 0.65, canvas.width * 0.35, 17, "rgba(0,0,0,0.5)")
+    await drawBar(ctx, canvas.width * 0.04, canvas.height * 0.65, canvas.width * 0.33, 17, "rgba(0,0,0,0.5)")
     // draw the xp bar
-    await drawBar(ctx, canvas.width * 0.035, canvas.height * 0.65, canvas.width * 0.35 * percentageMsg, 17, "rgba(145,127,127,0.9)")
+    await drawBar(ctx, canvas.width * 0.04, canvas.height * 0.65, canvas.width * 0.33 * percentageMsg, 17, "rgba(145,127,127,0.9)")
 
 
     // VOCAL XP BAR
-    await drawBar(ctx, canvas.width * 0.035, canvas.height * 0.85, canvas.width * 0.35, 17, "rgba(0,0,0,0.5)")
+    await drawBar(ctx, canvas.width * 0.04, canvas.height * 0.85, canvas.width * 0.33, 17, "rgba(0,0,0,0.5)")
     // draw the xp bar
-    await drawBar(ctx, canvas.width * 0.035, canvas.height * 0.85, canvas.width * 0.35 * percentageVocal, 17, "rgba(145,127,127,0.9)")
+    await drawBar(ctx, canvas.width * 0.04, canvas.height * 0.85, canvas.width * 0.33 * percentageVocal, 17, "rgba(145,127,127,0.9)")
 
 
     // draw the xp emoji on the left side
-    ctx.drawImage(msgXpEmoji, canvas.width * 0.01, canvas.height * 0.64, 20, 20);
-    ctx.drawImage(vocalXpEmoji, canvas.width * 0.001, canvas.height * 0.82, 35, 30);
+    ctx.drawImage(msgXpEmoji, canvas.width * 0.005, canvas.height * 0.64, 20, 20);
+    ctx.drawImage(vocalXpEmoji, canvas.width * 0.0002, canvas.height * 0.82, 35, 30);
 
 
     // draw the xp text on the center of each bar "currentXpMsg + "/" + nextLvlXpMsg"
     // max width of the text need to be 0.4 of the bar width
     let xpMsgTxt: string = `${currentXpMsg}/${nextLvlXpMsg}`;
-    font = getFontSize(ctx, (canvas.width * 0.35) * 0.4, xpMsgTxt as string, 25);
+    font = getFontSize(ctx, (canvas.width * 0.35) * 0.37, xpMsgTxt as string, 24);
     font[0] = font[0].replace("normal", "bold");
     ctx.font = font[0];
     ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
-    ctx.fillText(xpMsgTxt, canvas.width * 0.2, canvas.height * 0.7);
+    ctx.fillText(xpMsgTxt, canvas.width * 0.2, canvas.height * 0.705);
 
     let xpVocalTxt: string = `${currentXpVocal}/${nextLvlXpVocal}`;
-    font = getFontSize(ctx, (canvas.width * 0.35) * 0.4, xpVocalTxt, 25);
+    font = getFontSize(ctx, (canvas.width * 0.35) * 0.37, xpVocalTxt, 24);
     font[0] = font[0].replace("normal", "bold");
     ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
-    ctx.fillText(xpVocalTxt, canvas.width * 0.2, canvas.height * 0.9);
+    ctx.fillText(xpVocalTxt, canvas.width * 0.2, canvas.height * 0.905);
 
     ctx.restore();
 
     // add the level text on top left of each bar
     let levelMsgTxt: string = `Lvl: ${data.level_msg}`;
-    font = getFontSize(ctx, canvas.width * 0.3, levelMsgTxt, 30);
+    font = getFontSize(ctx, canvas.width * 0.15, levelMsgTxt, 27);
     ctx.font = font[0];
     ctx.fillStyle = "#ffffff";
     // top right of the bar
@@ -164,7 +167,7 @@ const drawXpBar = async (ctx, canvas, data: any) => {
     ctx.fillText(levelMsgTxt, canvas.width * 0.36, canvas.height * 0.63);
 
     let levelVocalTxt: string = `Lvl: ${data.level_vocal}`;
-    font = getFontSize(ctx, canvas.width * 0.3, levelVocalTxt, 30);
+    font = getFontSize(ctx, canvas.width * 0.15, levelVocalTxt, 27);
     ctx.font = font[0];
     ctx.fillStyle = "#ffffff";
     // top right
@@ -172,12 +175,45 @@ const drawXpBar = async (ctx, canvas, data: any) => {
     ctx.fillText(levelVocalTxt, canvas.width * 0.36, canvas.height * 0.83);
 
 
+    // ----------------- RANK -----------------
+    let rankMsgTxt: string = `#${data.rank_msg}`;
+    font = getFontSize(ctx, canvas.width * 0.11, rankMsgTxt, 27);
+    ctx.font = font[0];
+    ctx.fillStyle = "#ffffff";
+    // right of the msg bar
+    ctx.textAlign = "left";
+    ctx.fillText(rankMsgTxt, canvas.width * 0.38, canvas.height * 0.7);
 
+    let rankVocalTxt: string = `#${data.rank_vocal}`;
+    font = getFontSize(ctx, canvas.width * 0.11, rankVocalTxt, 27);
+    ctx.font = font[0];
+    ctx.fillStyle = "#ffffff";
+    // right of the vocal bar
+    ctx.textAlign = "left";
+    ctx.fillText(rankVocalTxt, canvas.width * 0.38, canvas.height * 0.9);
+    // -----------------------------------------
 
 
 }
 
-const drawCard = async (ctx, canvas, data: any, interaction) => {
+async function drawGlobalRank(ctx, canvas, data: any, interaction): Promise<void> {
+
+    const globalRank = (data.rank_msg + data.rank_vocal) / 2;
+
+    // draw the global rank
+    let globalRankTxt: string = `#${globalRank}`;
+    let font = getFontSize(ctx, canvas.width * 0.15, globalRankTxt, 50);
+    ctx.font = font[0];
+    ctx.fillStyle = "#ffffff";
+    // top right
+    ctx.textAlign = "left";
+    let textWidth: number = canvas.width * 0.85 - font[1] / 2;
+    ctx.fillText(globalRankTxt, textWidth, canvas.height * 0.42);
+
+
+}
+
+const drawCard = async (ctx, canvas, data: any, interaction): Promise<AttachmentBuilder> => {
 
     // draw global shape
     await drawShape(ctx, canvas);
@@ -242,6 +278,9 @@ const drawCard = async (ctx, canvas, data: any, interaction) => {
     // draw xp bar
     await drawXpBar(ctx, canvas, data);
 
+    // draw global rank of serv, msg and vocal / 2
+    await drawGlobalRank(ctx, canvas, data, interaction);
+
 
     return new AttachmentBuilder(canvas.toBuffer(), {name: 'rank_card.png'});
 
@@ -272,13 +311,21 @@ exports.default = new SlashCommand({
                 });
 
             if (!data) {
+
+                // check number of doc in db to set rank
+                const nbMembers: number = await RDB.countDocuments({
+                    server_id: `${interaction.guild.id}`
+                });
+
                 data = await RDB.create({
                     server_id: `${interaction.guild.id}`,
                     user_id: `${interaction.user.id}`,
                     xp_msg: 0,
                     level_msg: 1,
+                    rank_msg: nbMembers + 1,
                     xp_vocal: 0,
-                    level_vocal: 1
+                    level_vocal: 1,
+                    rank_vocal: nbMembers + 1
                 });
 
                 resolve(data);

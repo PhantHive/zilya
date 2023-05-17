@@ -15,17 +15,22 @@ const updateRank = async (message) => {
     });
 
 
-    // make a promise that will check if data exist, if not, create it, then
-    // update it whatever if it exists or not as it will be created
     new Promise(async (resolve, reject) => {
         if (!data) {
+            // check number of doc in db to set rank
+            const nbMembers: number = await RDB.countDocuments({
+                server_id: `${message.guild.id}`
+            });
+
             await new RDB({
                 server_id: `${message.guild.id}`,
                 user_id: `${message.author.id}`,
                 xp_msg: 0,
                 level_msg: 1,
+                rank_msg: nbMembers + 1,
                 xp_vocal: 0,
-                level_vocal: 1
+                level_vocal: 1,
+                rank_vocal: nbMembers + 1
             }).save();
 
             data = await RDB.findOne({
@@ -58,6 +63,20 @@ const updateRank = async (message) => {
             data.xp_msg += xp[random];
             await data.save();
         }
+
+        // compare all users in the server and sort them by xp_msg and level_msg then update rank_msg
+        const users = await RDB.find({
+            server_id: `${message.guild.id}`
+        }).sort([
+            ['xp_msg', 'descending'],
+            ['level_msg', 'descending']
+        ]).exec();
+
+        for (let i = 0; i < users.length; i++) {
+            users[i].rank_msg = i + 1;
+            await users[i].save();
+        }
+
 
         // console log xp and level after update
         console.log(`xp: ${data.xp_msg} | level: ${data.level_msg}`);

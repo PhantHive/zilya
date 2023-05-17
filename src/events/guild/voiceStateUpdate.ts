@@ -15,13 +15,20 @@ const updateRank = async (newState, timer) => {
 
     new Promise(async (resolve, reject) => {
         if (!data) {
+            // check number of doc in db to set rank
+            const nbMembers: number = await RDB.countDocuments({
+                server_id: `${newState.guild.id}`
+            });
+
             await new RDB({
                 server_id: `${newState.guild.id}`,
                 user_id: `${newState.member.user.id}`,
                 xp_msg: 0,
                 level_msg: 1,
+                rank_msg: nbMembers + 1,
                 xp_vocal: 0,
-                level_vocal: 1
+                level_vocal: 1,
+                rank_vocal: nbMembers + 1
             }).save();
 
             data = await RDB.findOne({
@@ -52,6 +59,19 @@ const updateRank = async (newState, timer) => {
                 // take xp like 2 times the time spent in the channel in minutes
                 data.xp_vocal += 2 * timer;
                 await data.save();
+            }
+
+            // compare all users in the server and sort them by xp_vocal and level_vocal then update rank_vocal
+            const users = await RDB.find({
+                server_id: `${newState.guild.id}`
+            }).sort([
+                ['xp_vocal', 'descending'],
+                ['level_vocal', 'descending']
+            ]).exec();
+
+            for (let i = 0; i < users.length; i++) {
+                users[i].rank_vocal = i + 1;
+                await users[i].save();
             }
 
             // console log xp and level after update

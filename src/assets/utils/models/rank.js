@@ -6,8 +6,10 @@ const guildSchema = mongoose.Schema({
     user_id: String,
     xp_msg: Number,
     level_msg: Number,
+    rank_msg: Number,
     xp_vocal: Number,
-    level_vocal: Number
+    level_vocal: Number,
+    rank_vocal: Number
 
 });
 
