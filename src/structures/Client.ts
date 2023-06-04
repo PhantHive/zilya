@@ -9,11 +9,13 @@ import { CommandType } from "../typings/SlashCommand";
 import glob from 'glob';
 import { RegisterCommandsOptions } from "../typings/client";
 import { Event } from "./Event"
+import * as superagent from 'superagent';
 
 
 export class ExtendedClient extends Client {
     commands: Collection<string, CommandType> = new Collection();
     lastMessageTimestamp: number;
+    static superagent: typeof superagent;
 
     constructor() {
         super({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'GuildMessageReactions', 'MessageContent', 'DirectMessages',

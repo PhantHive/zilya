@@ -28,9 +28,11 @@
     "gm": "^1.25.0",
     "mongoose": "^7.1.0",
     "mysql2": "^3.3.0",
+    "nekosapi": "^0.3.2",
     "omggif": "^1.0.10",
     "paladins-api": "^1.5.5",
     "paladins.js": "^2.2.2",
-    "promise-mysql": "^5.2.0"
+    "promise-mysql": "^5.2.0",
+    "superagent": "^8.0.9"
   }
 }
