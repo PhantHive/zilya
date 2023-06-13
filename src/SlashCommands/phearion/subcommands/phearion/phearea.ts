@@ -4,14 +4,15 @@ import {
     AttachmentBuilder,
     ButtonBuilder,
     ButtonStyle,
-    EmbedBuilder,
-    Interaction,
+    EmbedBuilder, GuildChannel, GuildTextBasedChannel,
+    Interaction, Message, MessageCollector,
     TextChannel
 } from "discord.js";
 import {ExtendedInteraction} from "../../../../typings/SlashCommand";
 import {client} from "../../../../index";
 const PBK = require("../../../../assets/utils/models/pheaBank.js");
 import {sqlPhearion} from "../../src/sqlPhearion";
+import interactionCreate from "../../../../events/guild/interactionCreate";
 
 exports.default = new SlashCommand({
     name: 'phearea',
@@ -103,44 +104,53 @@ exports.default = new SlashCommand({
                     await i.reply("Tag ton ami sur Discord (Il doit avoir un compte minecraft lié au Discord).")
                         .then(() => {
                             const filter = message => message.author.id === i.user.id;
-                            i.channel.awaitMessages({ filter, max: 1, time: 30000, errors: ['time'] })
-                                .then(collected => {
-                                    let m = collected.first();
-                                    let friendId = m.content.split('@')[1].split('>')[0];
-                                    if (friendId === m.author.id) return i.followUp("Tu es qui tu es mais sûrement pas un ami de toi-même.")
-                                    if (m.guild.members.cache.has(friendId)) {
-                                        PBK.findOne({
-                                                userId: friendId
-                                            },
-                                            async (err, dataFriend) => {
-                                                await client.users.fetch(friendId).then(async (user) => {
 
-                                                    if (user.bot) return i.followUp("N'essaye pas de nourrir les bots, ils ne sont pas faits pour ça.")
+                            const collector: MessageCollector = (interaction.channel as TextChannel).createMessageCollector({ filter, time: 15000 });
 
-                                                    if (!dataFriend) {
-                                                        await i.followUp("Ton ami n'a pas lié son compte minecraft!")
+                            collector.on('collect',  async  (m: Message) :  Promise<void> => {
+
+                                let friendId = m.content.split('@')[1].split('>')[0];
+                                if (friendId === m.author.id) {
+                                    await i.followUp("Tu es qui tu es mais sûrement pas un ami de toi-même.")
+                                    return;
+                                }
+                                if (m.guild.members.cache.has(friendId)) {
+                                    PBK.findOne({
+                                            userId: friendId
+                                        },
+                                        async (err, dataFriend) => {
+                                            await client.users.fetch(friendId).then(async (user) => {
+
+                                                if (user.bot) return i.followUp("N'essaye pas de nourrir les bots, ils ne sont pas faits pour ça.")
+
+                                                if (!dataFriend) {
+                                                    await i.followUp("Ton ami n'a pas lié son compte minecraft!")
+                                                    return;
+                                                }
+                                                else {
+                                                    if (data.discoins < price) {
+                                                        await i.editReply({content: "**[❌]**: Tu n'as pas assez d'argent pour faire se transfère"});
+                                                        return;
+                                                    } else {
+
+                                                        data.discoins -= price
+                                                        dataFriend.properties.push(image_name)
+                                                        data.save()
+                                                        dataFriend.save()
+                                                        await i.followUp(`<a:stevedance:879145932451639306> ${m.content} just unlocked a new area: ***${image_name}*** !!! \n *(24hours remaining before you can enter your new property)*`)
+                                                        return;
                                                     }
-                                                    else {
-                                                        if (data.discoins < price) {
-                                                            await i.editReply({content: "**[❌]**: Tu n'as pas assez d'argent pour faire se transfère"});
-                                                        } else {
+                                                }
+                                            })
 
-                                                            data.discoins -= price
-                                                            dataFriend.properties.push(image_name)
-                                                            data.save()
-                                                            dataFriend.save()
-                                                            await i.followUp(`<a:stevedance:879145932451639306> ${m.content} just unlocked a new area: ***${image_name}*** !!! \n *(24hours remaining before you can enter your new property)*`)
-                                                        }
-                                                    }
-                                                })
-
-                                            }
-                                        )
-                                    }
-                                    else {
-                                        i.followUp("Il semblerait que ton ami ne soit pas sur ce serveur.")
-                                    }
-                                })
+                                        }
+                                    )
+                                }
+                                else {
+                                    await i.followUp("Il semblerait que ton ami ne soit pas sur ce serveur.")
+                                    return;
+                                }
+                            })
                         })
                 }
                 else {

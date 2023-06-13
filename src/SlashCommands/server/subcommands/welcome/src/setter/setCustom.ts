@@ -1,4 +1,4 @@
-import {ChannelType} from "discord.js";
+import {ChannelType, Message, MessageCollector} from "discord.js";
 import {ExtendedSelectMenuInteraction} from "../../../../../../typings/SlashCommand";
 const wait = require('node:timers/promises').setTimeout;
 const { selectChannelId, selectWelcomeTheme, selectWelcomeColor } = require("../selector/selectCustom");
@@ -70,9 +70,9 @@ const setChannelId = async (data, interaction: ExtendedSelectMenuInteraction) =>
         if (interaction.values[0] === "manually") {
             // create a message collector to wait for the user to select a channel
             const filter = (m) => m.author.id === interaction.user.id;
-            const collector = interaction.channel.createMessageCollector({ filter, time: 60000, max: 1 });
+            const collector: MessageCollector = interaction.channel.createMessageCollector({ filter, time: 60000, max: 1 });
             await interaction.update({ content: "Please write the ID of the desired channel for welcome messages to appear.", components: [] });
-            collector.on('collect', async (m) => {
+            collector.on('collect', async (m: Message): Promise<void> => {
                 try {
                     await isChannelValid(m.content, "welcome");
                     data.channel_id = m.content;
