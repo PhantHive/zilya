@@ -16,7 +16,7 @@ exports.default = new SlashCommand_1.SlashCommand({
     ],
     run: async ({ interaction }) => {
         // check which subcommand was used
-        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'profile') {
+        if (interaction.options.getSubcommand() === 'profile') {
             await profile.default.run({ interaction });
         }
     }

@@ -7,6 +7,8 @@ const discord_js_1 = require("discord.js");
 const glob_1 = tslib_1.__importDefault(require("glob"));
 class ExtendedClient extends discord_js_1.Client {
     commands = new discord_js_1.Collection();
+    lastMessageTimestamp;
+    static superagent;
     constructor() {
         super({ intents: ['Guilds', 'GuildMessages', 'GuildMembers', 'GuildMessageReactions', 'MessageContent', 'DirectMessages',
                 'GuildVoiceStates'] });
@@ -16,9 +18,8 @@ class ExtendedClient extends discord_js_1.Client {
         this.login(process.env.BOT_TOKEN);
     }
     async importFiles(filePath) {
-        var _a;
         console.log(filePath);
-        const file = await (_a = filePath, Promise.resolve().then(() => tslib_1.__importStar(require(_a))));
+        const file = await Promise.resolve(`${filePath}`).then(s => tslib_1.__importStar(require(s)));
         return file?.default;
     }
     async registerCommands({ commands, guildId }) {

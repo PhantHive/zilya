@@ -4,15 +4,16 @@ const SlashCommand_1 = require("../../../../structures/SlashCommand");
 const index_1 = require("../../../../index");
 const sqlPhearion_1 = require("../../src/sqlPhearion");
 const discord_js_1 = require("discord.js");
-const PBK = require("../../../../assets/models/pheaBank.js");
+const PBK = require("../../../../assets/utils/models/pheaBank.js");
 exports.default = new SlashCommand_1.SlashCommand({
     name: 'pheabank',
     description: 'Vos informations bancaires',
     run: async ({ interaction }) => {
         await interaction.reply({ content: "Processing...", ephemeral: true });
-        PBK.findOne({
+        let data = await PBK.findOne({
             userId: interaction.user.id
-        }, async (err, data) => new Promise(async (resolve, reject) => {
+        });
+        new Promise(async (resolve, reject) => {
             // create sql entry
             const sql = await new sqlPhearion_1.sqlPhearion(interaction);
             if (!data) {
@@ -90,7 +91,7 @@ exports.default = new SlashCommand_1.SlashCommand({
             }
         })
             .catch((err) => {
-            interaction.editReply({ content: err });
-        }));
+            interaction.editReply({ content: "Something went wrong, please try again later" });
+        });
     }
 });

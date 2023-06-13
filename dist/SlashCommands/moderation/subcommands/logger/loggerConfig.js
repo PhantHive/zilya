@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const SlashCommand_1 = require("../../../../structures/SlashCommand");
 const discord_js_1 = require("discord.js");
-const LG = require("../../../../assets/models/logger.js");
+const LG = require("../../../../assets/utils/models/logger.js");
 const colors_json_1 = tslib_1.__importDefault(require("../../../../assets/data/colors.json"));
 exports.default = new SlashCommand_1.SlashCommand({
     name: 'configure',
@@ -65,26 +65,27 @@ exports.default = new SlashCommand_1.SlashCommand({
     ],
     userPermissions: ['Administrator'],
     run: async ({ interaction }) => {
-        let channelId = (interaction as ExtendedInteraction).options.get('channel_id').channel.id;
-        let notifType = (interaction as ExtendedInteraction).options.get('notif').value;
+        let channelId = interaction.options.get('channel_id').channel.id;
+        let notifType = interaction.options.get('notif').value;
         let color;
         try {
-            color = (interaction as ExtendedInteraction).options.get('color').value;
+            color = interaction.options.get('color').value;
             color = color.toUpperCase();
         }
         catch (e) {
             color = "#fee75c";
         }
         // check if the channel is type text
-        if ((interaction as ExtendedInteraction).options.get('channel_id').channel.type !== 0) {
+        if (interaction.options.get('channel_id').channel.type !== 0) {
             await interaction.reply({ content: "Please choose a text channel. Cannot log into a voice channel.", ephemeral: true });
             return;
         }
         const serverName = interaction.guild.name;
         const serverId = interaction.guild.id;
-        LG.findOne({
+        let data = await LG.findOne({
             serverId: interaction.guild.id
-        }, async (err, data) => new Promise(async (resolve) => {
+        });
+        new Promise(async (resolve) => {
             let embed;
             if (!data) {
                 await new LG({
@@ -122,6 +123,9 @@ exports.default = new SlashCommand_1.SlashCommand({
         })
             .then((result) => {
             interaction.reply({ embeds: [result] });
-        }));
+        })
+            .catch((err) => {
+            console.log(err);
+        });
     }
 });

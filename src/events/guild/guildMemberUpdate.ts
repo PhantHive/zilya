@@ -1,8 +1,8 @@
 import {Event} from "../../structures/Event";
 import {client} from "../../index";
 import {AuditLogEvent, EmbedBuilder, TextChannel} from "discord.js";
-import colors from "../../assets/data/colors.json";
 
+const colors = require("../../assets/data/colors.json");
 const LG = require("../../assets/utils/models/logger.js");
 
 function sendEmbed(logger, data, color, executor, tagName, tagValue, fieldComment, desc, changeName, oldRole) {
@@ -38,6 +38,8 @@ function sendEmbed(logger, data, color, executor, tagName, tagValue, fieldCommen
 export default new Event('guildMemberUpdate', async (oldMember, newMember) => {
 
         if (!oldMember.guild) return;
+
+        if (oldMember.user.bot) return;
 
         let data = await LG.findOne({
             serverId: newMember.guild.id

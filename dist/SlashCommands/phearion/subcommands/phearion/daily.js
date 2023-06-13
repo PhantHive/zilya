@@ -1,14 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const SlashCommand_1 = require("../../../../structures/SlashCommand");
-const PBK = require("../../../../assets/models/pheaBank.js");
+const PBK = require("../../../../assets/utils/models/pheaBank.js");
 exports.default = new SlashCommand_1.SlashCommand({
     name: 'daily',
     description: 'Gagnez 20 Discoins par jour!',
     run: async ({ interaction }) => {
-        PBK.findOne({
+        let data = await PBK.findOne({
             userId: interaction.user.id
-        }, async (err, data) => new Promise(async (resolve, reject) => {
+        });
+        new Promise(async (resolve, reject) => {
             if (!data) {
                 reject("You may want to link your discord account with your phearion account.\n*Please use: /pheabank*");
             }
@@ -41,6 +42,6 @@ exports.default = new SlashCommand_1.SlashCommand({
             }
         })
             .then((result) => interaction.reply({ content: result, ephemeral: true }))
-            .catch((err) => interaction.reply({ content: err, ephemeral: true })));
+            .catch(() => interaction.reply({ content: "Something went wrong" }));
     }
 });

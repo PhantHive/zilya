@@ -36,16 +36,16 @@ exports.default = new SlashCommand_1.SlashCommand({
     ],
     run: async ({ interaction }) => {
         // check which subcommand was used
-        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'daily') {
+        if (interaction.options.getSubcommand() === 'daily') {
             await daily.default.run({ interaction });
         }
-        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'money') {
+        if (interaction.options.getSubcommand() === 'money') {
             await money.default.run({ interaction });
         }
-        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'pheabank') {
+        if (interaction.options.getSubcommand() === 'pheabank') {
             await pheabank.default.run({ interaction });
         }
-        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'phearea') {
+        if (interaction.options.getSubcommand() === 'phearea') {
             await phearea.default.run({ interaction });
         }
     }

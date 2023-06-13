@@ -30,10 +30,10 @@ exports.default = new SlashCommand_1.SlashCommand({
     ],
     run: async ({ interaction }) => {
         // check which subcommand was used
-        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'hug') {
+        if (interaction.options.getSubcommand() === 'hug') {
             await hug.default.run({ interaction });
         }
-        else if ((interaction as ExtendedInteraction).options.getSubcommand() === 'objection') {
+        else if (interaction.options.getSubcommand() === 'objection') {
             await objection.default.run({ interaction });
         }
     }

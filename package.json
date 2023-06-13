@@ -7,7 +7,7 @@
     "start": "ts-node src/index.ts",
     "start:dev": "ts-node-dev src/index.ts",
     "start:prod": "node dist/index.js",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.json && node copy-assets.js",
     "watch": "tsc -w"
   },
   "author": "",
@@ -24,6 +24,7 @@
     "canvas-gif": "^1.0.3",
     "discord.js": "^14.11.0",
     "dotenv": "^16.1.4",
+    "fs-extra": "^11.1.1",
     "gif-encoder-2": "^1.0.5",
     "gm": "^1.25.0",
     "mongoose": "^7.2.4",

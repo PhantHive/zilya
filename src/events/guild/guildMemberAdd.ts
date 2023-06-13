@@ -280,66 +280,7 @@ export default new Event('guildMemberAdd', async (member) => {
         client.channels.fetch(system)
 
             .then((channel: TextChannel) => {
-                channel.send({ files: [attachment] }).then(r => {
-
-                    // if user is bot we don't want to send him the message
-                    if (member.user.bot) return;
-
-                    let rulesChannel = member.guild.channels.cache.find(ch => ch.name.includes('règlement') || ch.name.includes('règles'));
-                    let globalMsg;
-
-                    if (member.guild.id === "717344084695580672") {
-                        member.createDM().then(
-                            channel => {
-                                channel.send(`Salut, bienvenue sur le discord  **${member.guild.name}** 😉\n` +
-                                    '\n' +
-                                    `*Phearion t'ouvre ses portes mon jeune Pheadin 🧚‍! On se retrouvera très bientôt!*\n\n` +
-                                    `                           ***We are not just building a city.
-                                                                                    We are making a whole mini games server.*** \n ` +
-                                    '                          ***Phearion <:phearion:902330542014484480>***\n' +
-                                    '                                                 ●¸.•*¨Ƹ̵̡Ӝ̵̨̄Ʒ¨*•.¸●\n' +
-                                    '\n'
-                                ).catch(() => {});
-
-                            }).catch(() => {});
-
-                    } else if (member.guild.id === "809190693196529704") {
-                        member.createDM().then(
-                            channel => {
-                                channel.send(`L'élite est là! Bienvenue! 😉\n` +
-                                    '\n' +
-                                    `Pour avoir accès à l\'intégralité du serveur accepte le règlement ici ---> <#932996983738744844> \n` +
-                                    `                                              I.S.I.E.R procède à ta vérification...(Si tu penses que le bot ne t'as pas vérifié correctement
-                                             MP un modo).\n ` +
-                                    '\n' +
-                                    '                                                 ●¸.•*¨Ƹ̵̡Ӝ̵̨̄Ʒ¨*•.¸●\n' +
-                                    '\n'
-                                )
-                                    .catch(() => { });
-
-                            }).catch(console.error)
-                    } else {
-                        if (member.guild.id === "880491243807846450") {
-                            globalMsg = "Vous êtes sur le discord général d'IPSA, par des étudiants pour des étudiants."
-                        } else {
-                            globalMsg = "Si tu n\'es pas sur le discord global IPSA: https://discord.gg/M98V7hDRx5"
-                        }
-                        member.createDM().then(
-                            channel => {
-                                channel.send(`Salut, bienvenue sur le discord **${member.guild.name}** 😉\n` +
-                                    '\n' +
-                                    `Pour avoir accès à l\'intégralité du serveur accepte le règlement ici ---> <#${rulesChannel.id}> \n` +
-                                    `> ${globalMsg} \n ` +
-                                    '\n' +
-                                    '                                                 ●¸.•*¨Ƹ̵̡Ӝ̵̨̄Ʒ¨*•.¸●\n' +
-                                    '\n'
-                                );
-
-                            }).catch(console.error)
-                    }
-
-
-                })
+                channel.send({ files: [attachment] });
             })
 
 });
