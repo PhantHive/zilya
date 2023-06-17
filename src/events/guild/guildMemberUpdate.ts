@@ -44,7 +44,12 @@ export default new Event('guildMemberUpdate', async (oldMember, newMember) => {
         let data = await LG.findOne({
             serverId: newMember.guild.id
         });
-        new Promise(async (resolve) => {
+
+        if (!data) {
+            return;
+        }
+
+        else {
             let color = data.color;
             const channelId = data.logChannel;
             // find the channel by id using client.channels.fetch()
@@ -101,6 +106,5 @@ export default new Event('guildMemberUpdate', async (oldMember, newMember) => {
                 }
 
             }
-
-        });
+        }
 });
