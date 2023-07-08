@@ -1,6 +1,7 @@
 import {SlashCommand} from "../../../../structures/SlashCommand";
 import {EmbedBuilder} from "discord.js";
 import {ExtendedInteraction} from "../../../../typings/SlashCommand";
+import {tenorApiSearcher} from "./searcher";
 
 
 exports.default = new SlashCommand({
@@ -30,22 +31,20 @@ exports.default = new SlashCommand({
 
         // use tenor api to get a random gif of anime hug
         let search_term = "anime hug";
-        let search_hug: string = "https://g.tenor.com/v1/search?q=" + search_term + "&key=" +
-            process.env.TENOR_API + "&limit=" + 20;
+        await tenorApiSearcher(search_term)
+            .then((hug: string) => {
+                // send the embed
+                const embed = new EmbedBuilder()
+                    .setColor('#00ff9d')
+                    .setTitle(`♥ ${interaction.user.username} hugged ${huggedOne} ♥`)
+                    .setImage(hug)
+                    .setTimestamp()
 
-        let response = await fetch(search_hug);
-        let json = await response.json();
-        let index = Math.floor(Math.random() * json.results.length);
-        let hug: string = json.results[index].media[0].gif.url;
-
-        // send the embed
-        const embed = new EmbedBuilder()
-            .setColor('#00ff9d')
-            .setTitle(`♥ ${interaction.user.username} hugged ${huggedOne} ♥`)
-            .setImage(hug)
-            .setTimestamp()
-
-        await interaction.reply({embeds: [embed]});
+                interaction.reply({embeds: [embed]});
+            })
+            .catch((err: string) => {
+                console.log(err);
+            });
 
     }
 });
