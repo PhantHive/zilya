@@ -7,41 +7,40 @@ import { Document, FilterQuery, Model } from 'mongoose';
 
 // Document
 interface LoggerDocument extends Document {
-    serverId: string,
-    notifType: string,
-    logChannel: string,
-    color: string
+    serverId: string;
+    notifType: string;
+    logChannel: string;
+    color: string;
 }
 
 interface PheabankDocument extends Document {
-    userId: string,
-    mcNick: string,
-    daily: number,
-    lastDaily: number,
-    pheaCoins: number,
-    discoins: number,
-    properties: string[]
+    userId: string;
+    mcNick: string;
+    daily: number;
+    lastDaily: number;
+    pheaCoins: number;
+    discoins: number;
+    properties: string[];
 }
 
 interface RankDocument extends Document {
-    serverId: string,
-    userId: string,
-    xpMsg: number,
-    levelMsg: number,
-    rankMsg: number,
-    xpVocal: number,
-    levelVocal: number,
-    rankVocal: number
+    serverId: string;
+    userId: string;
+    xpMsg: number;
+    levelMsg: number;
+    rankMsg: number;
+    xpVocal: number;
+    levelVocal: number;
+    rankVocal: number;
 }
 
 interface WelcomeDocument extends Document {
-    serverId: string,
-    channelId: string,
-    theme: number, //image category
-    color: string, //color,
-    isEdit: boolean
+    serverId: string;
+    channelId: string;
+    theme: number; //image category
+    color: string; //color,
+    isEdit: boolean;
 }
-
 
 // Model
 interface LoggerModel extends Model<LoggerDocument> {
@@ -76,11 +75,10 @@ interface WelcomeModel extends Model<WelcomeDocument> {
     ) => Promise<WelcomeDocument>;
 }
 
-
 // Export
 export default {
     WelcomeModel: WM as WelcomeModel,
     LoggerModel: LM as LoggerModel,
     PheabankModel: PM as PheabankModel,
-    RankModel: RM as RankModel
-}
+    RankModel: RM as RankModel,
+};

@@ -1,4 +1,7 @@
-import {CommandType as SlashCommandType, RunOptions} from "../typings/SlashCommand";
+import {
+    CommandType as SlashCommandType,
+    RunOptions,
+} from '../typings/SlashCommand';
 
 export class SlashCommand {
     name: string;
@@ -8,8 +11,9 @@ export class SlashCommand {
     constructor(commandOptions: SlashCommandType) {
         Object.assign(this, commandOptions);
         if (this.subcommands) {
-            this.subcommands = this.subcommands.map(subcommand => new SlashCommand(subcommand));
+            this.subcommands = this.subcommands.map(
+                (subcommand) => new SlashCommand(subcommand)
+            );
         }
     }
 }
-

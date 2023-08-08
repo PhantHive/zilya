@@ -1,7 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
 const rankSchema = new Schema({
-
     serverId: String,
     userId: String,
     xpMsg: Number,
@@ -9,13 +8,9 @@ const rankSchema = new Schema({
     rankMsg: Number,
     xpVocal: Number,
     levelVocal: Number,
-    rankVocal: Number
-
+    rankVocal: Number,
 });
 
-const RankModel = mongoose
-    .connection
-    .useDb('rank')
-    .model('ranks', rankSchema);
+const RankModel = mongoose.connection.useDb('rank').model('ranks', rankSchema);
 
 export default RankModel;

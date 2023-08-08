@@ -1,8 +1,8 @@
-import {ExtendedInteraction} from "../../typings/SlashCommand";
+import { ExtendedInteraction } from '../../typings/SlashCommand';
 
 const hug = require('./subcommands/actions/hug');
 const objection = require('./subcommands/actions/objection');
-import {SlashCommand} from "../../structures/SlashCommand";
+import { SlashCommand } from '../../structures/SlashCommand';
 
 // create a group of commands with the name "action" and the description "Action commands"
 // add a subcommand with the name "hug" and the description "Hug someone"
@@ -18,25 +18,30 @@ exports.default = new SlashCommand({
     description: 'Action commands',
     options: [
         {
-            "name": "hug",
-            "description": "Hug someone",
-            "type": 1,
-            "options": hug.default.options
+            name: 'hug',
+            description: 'Hug someone',
+            type: 1,
+            options: hug.default.options,
         },
         {
-            "name": "objection",
-            "description": "Objection!",
-            "type": 1,
-            "options": objection.default.options
-        }
+            name: 'objection',
+            description: 'Objection!',
+            type: 1,
+            options: objection.default.options,
+        },
     ],
-    run: async ({interaction}) => {
+    run: async ({ interaction }) => {
         // check which subcommand was used
-        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'hug') {
-            await hug.default.run({interaction});
+        if (
+            (interaction as ExtendedInteraction).options.getSubcommand() ===
+            'hug'
+        ) {
+            await hug.default.run({ interaction });
+        } else if (
+            (interaction as ExtendedInteraction).options.getSubcommand() ===
+            'objection'
+        ) {
+            await objection.default.run({ interaction });
         }
-        else if ((interaction as ExtendedInteraction).options.getSubcommand() === 'objection') {
-            await objection.default.run({interaction});
-        }
-    }
+    },
 });

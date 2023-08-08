@@ -8,9 +8,10 @@ import {
     GuildMember,
     AnyComponentBuilder,
     ActionRowBuilder,
-    EmbedBuilder, BufferResolvable, AttachmentData
+    EmbedBuilder,
+    BufferResolvable,
+    AttachmentData,
 } from 'discord.js';
-
 
 export interface ExtendedInteraction extends CommandInteraction {
     member: GuildMember;
@@ -19,7 +20,7 @@ export interface ExtendedInteraction extends CommandInteraction {
     options: CommandInteractionOptionResolver & {
         getSubcommand(): string;
         get(name: string, required?: boolean): any;
-    }
+    };
 
     // configure the type of the options property
     update(options: {
@@ -27,7 +28,6 @@ export interface ExtendedInteraction extends CommandInteraction {
         embeds?: EmbedBuilder[] | null;
         components?: (AnyComponentBuilder | ActionRowBuilder)[] | null;
     }): Promise<ExtendedInteraction>;
-
 }
 
 export interface ExtendedSelectMenuInteraction extends SelectMenuInteraction {
@@ -41,10 +41,9 @@ export interface MyAttachmentData extends AttachmentData {
 }
 
 export interface RunOptions {
-    client: ExtendedClient,
-    interaction: ExtendedInteraction | ExtendedSelectMenuInteraction,
-    args: CommandInteractionOptionResolver
-
+    client: ExtendedClient;
+    interaction: ExtendedInteraction | ExtendedSelectMenuInteraction;
+    args: CommandInteractionOptionResolver;
 }
 
 type RunFunction = (options: RunOptions) => any;
@@ -52,5 +51,4 @@ type RunFunction = (options: RunOptions) => any;
 export type CommandType = {
     userPermissions?: PermissionResolvable[];
     run: RunFunction;
-
 } & ChatInputApplicationCommandData;
