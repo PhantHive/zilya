@@ -2,7 +2,7 @@ import {SlashCommand} from "../../structures/SlashCommand";
 import {ExtendedInteraction} from "../../typings/SlashCommand";
 
 const profile = require('./subcommands/profile');
-const mostPlayed = require('./subcommands/mostPlayed');
+//const mostPlayed = require('./subcommands/mostPlayed');
 
 
 exports.default = new SlashCommand({

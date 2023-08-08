@@ -1,12 +1,12 @@
 import {SlashCommand} from "../../../structures/SlashCommand";
 import {ExtendedInteraction} from "../../../typings/SlashCommand";
-const paladinsJS = require('paladins.js');
-const { createCanvas } = require("canvas");
-const { drawCard, drawStats} = require("./src/drawProfile")
-const { AttachmentBuilder } = require("discord.js");
+import { API } from 'paladins.js';
+import {createCanvas} from "canvas";
+import {drawCard, drawStats} from "./src/drawProfile";
+import {AttachmentBuilder} from "discord.js";
 
 
-let pal: any = new paladinsJS.API({
+let pal: any = new API({
     devId: process.env.DEV_ID,
     authKey: process.env.PALADINS
 }); // API loaded and ready to go.
@@ -59,72 +59,54 @@ exports.default = new SlashCommand({
             champAvatar: ""
         }
 
-        await pal.getPlayer(pseudo).then(async (res, err) => {
-            if (err) {
-                console.log("err", err)
-            }
-
-            if (res === undefined) {
-                return interaction.editReply("Impossible to get datas at the moment.")
-            } else {
-                paladinsProfile.userAvatar = res["AvatarURL"]
-                paladinsProfile.hoursPlayed = res["HoursPlayed"]
-                paladinsProfile.level = res["Level"]
-                paladinsProfile.platform = res["Platform"]
-                paladinsProfile.name = res["Name"]
-                paladinsProfile.wins = res["Wins"]
-                paladinsProfile.losses = res["Losses"]
-                paladinsProfile.title = res["Title"]
-                paladinsProfile.region = res["Region"]
-                paladinsProfile.playerId = res["ActivePlayerId"]
-            }
-
-            await pal.getPlayerChampionRanks(paladinsProfile.playerId)
-                .then((res, err) => {
-                    if (err) return console.log(err)
-
-                    paladinsProfile.mostPlayedChamp = res[0]["champion"]
-
-                })
-                .then(async () => {
-                    await pal.getChampions()
-                        .then((res, err) => {
-                            if (err) return console.log(err)
-                            if (res === undefined) {
-                                return interaction.editReply({ content: "Impossible to get datas at the moment." })
-                            }
-
-                            res.forEach(champ => {
-                                if (champ["Name"] === paladinsProfile.mostPlayedChamp) {
-                                    paladinsProfile.champAvatar = champ["ChampionIcon_URL"]
-                                }
-                            })
-                        })
-
-
-                    let attachment = await userCard(paladinsProfile)
-
-                    /*
-                    const palaEmbed = new EmbedBuilder()
-                        .setAuthor({
-                            name: interaction.user.tag,
-                            iconURL: interaction.user.displayAvatarURL()
-                        })
-                        .setTitle(paladinsProfile.title)
-                        .setImage("attachment://paladins_profile.png");
-                     */
-
-
-                    await interaction.editReply({files: [attachment]});
-
-                })
-                .catch()
-
-        }).catch(async (err) => {
-            console.log(err);
-            await interaction.editReply({
-                content: `An error has occurred, please try again later.`
+        let res;
+        try {
+            res = await pal.getPlayer(pseudo);
+        } catch (e) {
+            return await interaction.editReply({
+                content: `User not found.`
             })
-        });
+        }
+
+        if (res === undefined) {
+            return interaction.editReply("Impossible to get data at the moment.")
+        } else {
+            paladinsProfile.userAvatar = res["AvatarURL"]
+            paladinsProfile.hoursPlayed = res["HoursPlayed"]
+            paladinsProfile.level = res["Level"]
+            paladinsProfile.platform = res["Platform"]
+            paladinsProfile.name = res["Name"]
+            paladinsProfile.wins = res["Wins"]
+            paladinsProfile.losses = res["Losses"]
+            paladinsProfile.title = res["Title"]
+            paladinsProfile.region = res["Region"]
+            paladinsProfile.playerId = res["ActivePlayerId"]
+        }
+
+        try {
+            res = await pal.getPlayerChampionRanks(Number(paladinsProfile.playerId))
+        } catch (e) {
+            return interaction.editReply({
+                content: `Couldn't get champion stats.`
+            })
+        }
+        paladinsProfile.mostPlayedChamp = res[0]["champion"]
+
+
+        let champions;
+        try {
+            champions = await pal.getChampions()
+        } catch (e) {
+            return interaction.editReply({ content: "Impossible to get data at the moment." });
+        }
+
+        champions.forEach(champ => {
+            if (champ["Name"] === paladinsProfile.mostPlayedChamp) {
+                paladinsProfile.champAvatar = champ["ChampionIcon_URL"]
+            }
+        })
+
+        let attachment = await userCard(paladinsProfile)
+        await interaction.editReply({files: [attachment]});
     }
 });

@@ -45,7 +45,7 @@ const drawTopCard = async (ctx, canvas, profile) => {
 }
 
 
-module.exports = {
+export {
 
     drawTopCard
 

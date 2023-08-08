@@ -1,25 +1,21 @@
 import { SlashCommand } from "../../structures/SlashCommand";
 import { ExtendedInteraction } from "../../typings/SlashCommand";
-import { ExtendedClient } from "../../structures/Client";
 import { NekosAPI } from 'nekosapi';
+import fetch from 'node-fetch';
 
-const nekos = new NekosAPI();
 
 async function getNSFWContent(request: string): Promise<string | null> {
 
     // use nekobot.xyz api to get a random nsfw image
     const response = await fetch(`https://nekobot.xyz/api/image?type=${request}`);
     const json = await response.json();
-    console.log(json)
-
     if (json.success === true) {
         return json.message;
     }
-
     return null;
 }
 
-export default new SlashCommand({
+exports.default = new SlashCommand({
     name: 'neko',
     description: 'nekos',
     nsfw: true,

@@ -1,5 +1,5 @@
-const colors = require("./colors.json");
-const { loadImage, registerFont } = require("canvas");
+import colors from "./colors.json";
+import {loadImage, registerFont} from "canvas";
 registerFont('src/assets/fonts/Broderbund.ttf', { family: 'ApoCs' });
 
 
@@ -102,7 +102,7 @@ const drawStats = async (ctx, canvas, profile) => {
 }
 
 
-module.exports = {
+export {
 
     drawCard,
     drawStats
