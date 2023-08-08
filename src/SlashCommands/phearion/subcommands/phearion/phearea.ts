@@ -10,7 +10,7 @@ import {
 } from "discord.js";
 import {ExtendedInteraction} from "../../../../typings/SlashCommand";
 import {client} from "../../../../index";
-const PBK = require("../../../../assets/utils/models/pheaBank.js");
+const PBK = require("../../../../assets/utils/models/Pheabank");
 import {sqlPhearion} from "../../src/sqlPhearion";
 import interactionCreate from "../../../../events/guild/interactionCreate";
 

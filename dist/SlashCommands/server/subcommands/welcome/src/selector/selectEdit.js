@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.editOptions = void 0;
 const discord_js_1 = require("discord.js");
 const editOptions = async (interaction) => {
     let actionRow = new discord_js_1.ActionRowBuilder()
@@ -24,6 +25,4 @@ const editOptions = async (interaction) => {
         interaction.editReply({ content: "What do you wish to edit?", components: [actionRow] });
     });
 };
-module.exports = {
-    editOptions
-};
+exports.editOptions = editOptions;

@@ -4,18 +4,25 @@ const tslib_1 = require("tslib");
 const Event_1 = require("../../structures/Event");
 const index_1 = require("../../index");
 const discord_js_1 = require("discord.js");
-const LG = require("../../assets/utils/models/logger.js");
+const MongoTypes_1 = tslib_1.__importDefault(require("../../typings/MongoTypes"));
 const colors_json_1 = tslib_1.__importDefault(require("../../assets/data/colors.json"));
 exports.default = new Event_1.Event('roleCreate', async (role) => {
     if (!role.guild)
         return;
-    let data = await LG.findOne({
+    let data = await MongoTypes_1.default.LoggerModel.findOne({
         serverId: role.guild.id
     });
     new Promise(async (resolve) => {
         if (data) {
             const channelId = data.logChannel;
-            let color = data.color;
+            let color;
+            try {
+                color = data.color;
+            }
+            catch (e) {
+                // set to Random color
+                color = "Random";
+            }
             // find the channel by id using client.channels.fetch()
             const logger = await index_1.client.channels.fetch(channelId);
             if (logger !== undefined) {

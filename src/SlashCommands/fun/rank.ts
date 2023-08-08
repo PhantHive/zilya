@@ -1,11 +1,7 @@
 import {SlashCommand} from "../../structures/SlashCommand";
 import {AttachmentBuilder, BaseImageURLOptions} from "discord.js";
 import {createCanvas, Image, loadImage, CanvasRenderingContext2D} from "canvas";
-import * as fs from "fs";
-const GifEncoder = require('gif-encoder-2');
-const { GifReader } = require('omggif');
-const fetch = require('node-fetch');
-const RDB = require("../../assets/utils/models/rank.js");
+import Models from "../../typings/MongoTypes";
 
 const getFontSize = (ctx: CanvasRenderingContext2D, maxwidth: number, text: string, initialFontSize: number): [string, number] => {
     let font = initialFontSize;
@@ -106,15 +102,14 @@ const drawBar = (ctx, x, y, width, height, fillColor) => {
     ctx.fill();
 };
 
-
 const drawXpBar = async (ctx, canvas, data: any): Promise<void> => {
-    let font;
-    const nextLvlXpMsg = 25 * (data.level_msg ** 2) + 15 * data.level_msg + 25;
-    const currentXpMsg = data.xp_msg;
+    let font: [string, number];
+    const nextLvlXpMsg = 25 * (data.levelMsg ** 2) + 15 * data.levelMsg + 25;
+    const currentXpMsg = data.xpMsg;
     const percentageMsg = currentXpMsg / nextLvlXpMsg;
 
-    const nextLvlXpVocal = 25 * (data.level_vocal ** 2) + 15 * data.level_vocal + 25;
-    const currentXpVocal = data.xp_vocal;
+    const nextLvlXpVocal = 25 * (data.levelVocal ** 2) + 15 * data.levelVocal + 25;
+    const currentXpVocal = data.xpVocal;
     const percentageVocal = currentXpVocal / nextLvlXpVocal;
 
     const msgXpEmoji: Image = await loadImage(`${process.cwd()}/src/assets/img/rank-card/msg-xp.png`);
@@ -158,7 +153,7 @@ const drawXpBar = async (ctx, canvas, data: any): Promise<void> => {
     ctx.restore();
 
     // add the level text on top left of each bar
-    let levelMsgTxt: string = `Lvl: ${data.level_msg}`;
+    let levelMsgTxt: string = `Lvl: ${data.levelMsg}`;
     font = getFontSize(ctx, canvas.width * 0.15, levelMsgTxt, 27);
     ctx.font = font[0];
     ctx.fillStyle = "#ffffff";
@@ -166,7 +161,7 @@ const drawXpBar = async (ctx, canvas, data: any): Promise<void> => {
     ctx.textAlign = "right";
     ctx.fillText(levelMsgTxt, canvas.width * 0.36, canvas.height * 0.63);
 
-    let levelVocalTxt: string = `Lvl: ${data.level_vocal}`;
+    let levelVocalTxt: string = `Lvl: ${data.levelVocal}`;
     font = getFontSize(ctx, canvas.width * 0.15, levelVocalTxt, 27);
     ctx.font = font[0];
     ctx.fillStyle = "#ffffff";
@@ -176,7 +171,7 @@ const drawXpBar = async (ctx, canvas, data: any): Promise<void> => {
 
 
     // ----------------- RANK -----------------
-    let rankMsgTxt: string = `#${data.rank_msg}`;
+    let rankMsgTxt: string = `#${data.rankMsg}`;
     font = getFontSize(ctx, canvas.width * 0.11, rankMsgTxt, 27);
     ctx.font = font[0];
     ctx.fillStyle = "#ffffff";
@@ -184,7 +179,7 @@ const drawXpBar = async (ctx, canvas, data: any): Promise<void> => {
     ctx.textAlign = "left";
     ctx.fillText(rankMsgTxt, canvas.width * 0.38, canvas.height * 0.7);
 
-    let rankVocalTxt: string = `#${data.rank_vocal}`;
+    let rankVocalTxt: string = `#${data.rankVocal}`;
     font = getFontSize(ctx, canvas.width * 0.11, rankVocalTxt, 27);
     ctx.font = font[0];
     ctx.fillStyle = "#ffffff";
@@ -198,7 +193,7 @@ const drawXpBar = async (ctx, canvas, data: any): Promise<void> => {
 
 async function drawGlobalRank(ctx, canvas, data: any, interaction): Promise<void> {
 
-    const globalRank = (data.rank_msg + data.rank_vocal) / 2;
+    const globalRank = (data.rankMsg + data.rankVocal) / 2;
 
     // draw the global rank
     let globalRankTxt: string = `#${globalRank}`;
@@ -225,7 +220,7 @@ const drawCard = async (ctx, canvas, data: any, interaction): Promise<Attachment
     let avatarCtx = avatarCanvas.getContext("2d");
 
     const avatarUrl = interaction.member.displayAvatarURL({ extension: 'png', forceStatic: false, size: 2048 } as BaseImageURLOptions);
-    let avatar;
+    let avatar: Image;
     async function loadAvatar(): Promise<void> {
         avatar = await loadImage(avatarUrl);
     }
@@ -251,7 +246,7 @@ const drawCard = async (ctx, canvas, data: any, interaction): Promise<Attachment
 
 
     const serverIconUrl = interaction.guild.iconURL({ extension: 'png', forceStatic: false } as BaseImageURLOptions);
-    let serverIcon;
+    let serverIcon: Image;
     async function loadServerIcon(): Promise<void> {
         serverIcon = await loadImage(serverIconUrl);
     }
@@ -287,8 +282,6 @@ const drawCard = async (ctx, canvas, data: any, interaction): Promise<Attachment
 
 }
 
-
-
 exports.default = new SlashCommand({
     name: 'rank',
     description: 'Display the rank card',
@@ -302,9 +295,9 @@ exports.default = new SlashCommand({
         const ctx: CanvasRenderingContext2D = canvas.getContext("2d");
 
         new Promise(async (resolve, reject) => {
-            let data = await RDB.findOne({
-                server_id: `${interaction.guild.id}`,
-                user_id: `${interaction.user.id}`
+            let data = await Models.RankModel.findOne({
+                serverId: `${interaction.guild.id}`,
+                userId: `${interaction.user.id}`
             })
                 .catch(err => {
                     reject(err);
@@ -313,19 +306,19 @@ exports.default = new SlashCommand({
             if (!data) {
 
                 // check number of doc in db to set rank
-                const nbMembers: number = await RDB.countDocuments({
-                    server_id: `${interaction.guild.id}`
+                const nbMembers: number = await Models.RankModel.countDocuments({
+                    serverId: `${interaction.guild.id}`
                 });
 
-                data = await RDB.create({
-                    server_id: `${interaction.guild.id}`,
-                    user_id: `${interaction.user.id}`,
-                    xp_msg: 0,
-                    level_msg: 1,
-                    rank_msg: nbMembers + 1,
-                    xp_vocal: 0,
-                    level_vocal: 1,
-                    rank_vocal: nbMembers + 1
+                data = await Models.RankModel.create({
+                    serverId: `${interaction.guild.id}`,
+                    userId: `${interaction.user.id}`,
+                    xpMsg: 0,
+                    levelMsg: 1,
+                    rankMsg: nbMembers + 1,
+                    xpVocal: 0,
+                    levelVocal: 1,
+                    rankVocal: nbMembers + 1
                 });
 
                 resolve(data);

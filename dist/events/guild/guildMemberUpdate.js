@@ -4,11 +4,11 @@ const tslib_1 = require("tslib");
 const Event_1 = require("../../structures/Event");
 const index_1 = require("../../index");
 const discord_js_1 = require("discord.js");
-const colors_json_1 = tslib_1.__importDefault(require("../../assets/data/colors.json"));
-const LG = require("../../assets/utils/models/logger.js");
+const colors = require("../../assets/data/colors.json");
+const MongoTypes_1 = tslib_1.__importDefault(require("../../typings/MongoTypes"));
 function sendEmbed(logger, data, color, executor, tagName, tagValue, fieldComment, desc, changeName, oldRole) {
     return new Promise(async (resolve) => {
-        color = colors_json_1.default[data.color.toLowerCase()];
+        color = colors[data.color.toLowerCase()];
         const embed = new discord_js_1.EmbedBuilder()
             .setAuthor({ name: `Executor> ${executor.tag}`, iconURL: executor.displayAvatarURL() })
             .setTitle(tagName)
@@ -32,10 +32,15 @@ function sendEmbed(logger, data, color, executor, tagName, tagValue, fieldCommen
 exports.default = new Event_1.Event('guildMemberUpdate', async (oldMember, newMember) => {
     if (!oldMember.guild)
         return;
-    let data = await LG.findOne({
+    if (oldMember.user.bot)
+        return;
+    let data = await MongoTypes_1.default.LoggerModel.findOne({
         serverId: newMember.guild.id
     });
-    new Promise(async (resolve) => {
+    if (!data) {
+        return;
+    }
+    else {
         let color = data.color;
         const channelId = data.logChannel;
         // find the channel by id using client.channels.fetch()
@@ -87,5 +92,5 @@ exports.default = new Event_1.Event('guildMemberUpdate', async (oldMember, newMe
                 await sendEmbed(logger, data, color, executor, tagName, tagValue, fieldComment, desc, changeName, newMember);
             }
         }
-    });
+    }
 });

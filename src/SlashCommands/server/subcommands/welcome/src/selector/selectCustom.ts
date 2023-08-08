@@ -127,7 +127,7 @@ const selectWelcomeColor = async (interaction) => {
 }
 
 
-module.exports = {
+export {
     selectChannelId,
     selectWelcomeTheme,
     selectWelcomeColor

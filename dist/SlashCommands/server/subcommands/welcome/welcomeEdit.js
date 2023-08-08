@@ -1,17 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 const SlashCommand_1 = require("../../../../structures/SlashCommand");
-const WDB = require("../../../../assets/utils/models/welcome.js");
+const MongoTypes_1 = tslib_1.__importDefault(require("../../../../typings/MongoTypes"));
 const promises_1 = require("node:timers/promises");
-const { editOptions } = require("./src/selector/selectEdit");
-exports.default = new SlashCommand_1.SlashCommand({
+const selectEdit_1 = require("./src/selector/selectEdit");
+const editWelcomeCommand = new SlashCommand_1.SlashCommand({
     name: 'edit',
     description: 'Edit welcome message for the server',
     userPermissions: ['Administrator'],
     run: async ({ interaction }) => {
         new Promise(async (resolve, reject) => {
-            let data = await WDB.findOne({
-                server_id: `${interaction.guild.id}`
+            let data = await MongoTypes_1.default.WelcomeModel.findOne({
+                serverId: `${interaction.guild.id}`
             });
             if (!data) {
                 reject("Welcome message has not been configured. Please configure one first with `/welcome configure`.");
@@ -25,7 +26,7 @@ exports.default = new SlashCommand_1.SlashCommand({
                 content: res
             });
             await (0, promises_1.setTimeout)(3000);
-            await editOptions(interaction);
+            await (0, selectEdit_1.editOptions)(interaction);
         })
             .catch(async (err) => {
             await interaction.reply({
@@ -39,3 +40,4 @@ exports.default = new SlashCommand_1.SlashCommand({
         });
     }
 });
+exports.default = editWelcomeCommand;

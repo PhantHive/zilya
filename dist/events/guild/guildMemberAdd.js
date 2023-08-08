@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 const Event_1 = require("../../structures/Event");
 const fs_1 = require("fs");
 const index_1 = require("../../index");
-const Canvas = require('canvas');
-const WDB = require("../../assets/utils/models/welcome.js");
-const themes = require("../../assets/data/theme.json");
+const canvas_1 = tslib_1.__importDefault(require("canvas"));
+const MongoTypes_1 = tslib_1.__importDefault(require("../../typings/MongoTypes"));
+const theme_json_1 = tslib_1.__importDefault(require("../../assets/data/theme.json"));
 const applyText = (canvas, text, fontSize = null, maxPercentWidth = null) => {
     const ctx = canvas.getContext('2d');
     // Declare a base size of the font
@@ -24,24 +25,24 @@ const applyText = (canvas, text, fontSize = null, maxPercentWidth = null) => {
     return [ctx.font, ctx.measureText(text).width];
 };
 exports.default = new Event_1.Event('guildMemberAdd', async (member) => {
-    let data = await WDB.findOne({
-        server_id: member.guild.id
+    let data = await MongoTypes_1.default.WelcomeModel.findOne({
+        serverId: member.guild.id
     });
     if (!data)
         return console.log("no data...");
     // find absolute path of src/assets/img/welcome
-    let generalPath = `${process.cwd()}/src/assets/img/welcome/${themes[parseInt(data.theme)]["name"]}`;
+    let generalPath = `${process.cwd()}/src/assets/img/welcome/${theme_json_1.default[data.theme]["name"]}`;
     let rand_back = [];
     (0, fs_1.readdirSync)(generalPath).forEach(file => {
         rand_back.push(`${generalPath}/${file}`);
     });
-    const system = data.channel_id;
-    const canvas = Canvas.createCanvas(800, 450);
+    const system = data.channelId;
+    const canvas = canvas_1.default.createCanvas(800, 450);
     const ctx = canvas.getContext('2d');
     let background;
     let guildColor;
     let guildStroke;
-    background = await Canvas.loadImage(rand_back[Math.floor(Math.random() * rand_back.length)]);
+    background = await canvas_1.default.loadImage(rand_back[Math.floor(Math.random() * rand_back.length)]);
     guildColor = '#ffffff';
     guildStroke = data.color;
     ctx.save();
@@ -208,7 +209,7 @@ exports.default = new Event_1.Event('guildMemberAdd', async (member) => {
     ctx.closePath();
     ctx.clip();
     // ctx.shadowBlur = 0;
-    const avatar = await Canvas.loadImage(member.user.displayAvatarURL({ extension: 'png' }));
+    const avatar = await canvas_1.default.loadImage(member.user.displayAvatarURL({ extension: 'png' }));
     // draw avatar based on the circle
     ctx.drawImage(avatar, 0.12 * canvas.width, 0.28 * canvas.height, 0.25 * canvas.width, 0.25 * canvas.width);
     ctx.lineWidth = 7;
@@ -221,54 +222,6 @@ exports.default = new Event_1.Event('guildMemberAdd', async (member) => {
     };
     index_1.client.channels.fetch(system)
         .then((channel) => {
-        channel.send({ files: [attachment] }).then(r => {
-            // if user is bot we don't want to send him the message
-            if (member.user.bot)
-                return;
-            let rulesChannel = member.guild.channels.cache.find(ch => ch.name.includes('règlement') || ch.name.includes('règles'));
-            let globalMsg;
-            if (member.guild.id === "717344084695580672") {
-                member.createDM().then(channel => {
-                    channel.send(`Salut, bienvenue sur le discord  **${member.guild.name}** 😉\n` +
-                        '\n' +
-                        `*Phearion t'ouvre ses portes mon jeune Pheadin 🧚‍! On se retrouvera très bientôt!*\n\n` +
-                        `                           ***We are not just building a city.
-                                                                                    We are making a whole mini games server.*** \n ` +
-                        '                          ***Phearion <:phearion:902330542014484480>***\n' +
-                        '                                                 ●¸.•*¨Ƹ̵̡Ӝ̵̨̄Ʒ¨*•.¸●\n' +
-                        '\n').catch(() => { });
-                }).catch(() => { });
-            }
-            else if (member.guild.id === "809190693196529704") {
-                member.createDM().then(channel => {
-                    channel.send(`L'élite est là! Bienvenue! 😉\n` +
-                        '\n' +
-                        `Pour avoir accès à l\'intégralité du serveur accepte le règlement ici ---> <#932996983738744844> \n` +
-                        `                                              I.S.I.E.R procède à ta vérification...(Si tu penses que le bot ne t'as pas vérifié correctement
-                                             MP un modo).\n ` +
-                        '\n' +
-                        '                                                 ●¸.•*¨Ƹ̵̡Ӝ̵̨̄Ʒ¨*•.¸●\n' +
-                        '\n')
-                        .catch(() => { });
-                }).catch(console.error);
-            }
-            else {
-                if (member.guild.id === "880491243807846450") {
-                    globalMsg = "Vous êtes sur le discord général d'IPSA, par des étudiants pour des étudiants.";
-                }
-                else {
-                    globalMsg = "Si tu n\'es pas sur le discord global IPSA: https://discord.gg/M98V7hDRx5";
-                }
-                member.createDM().then(channel => {
-                    channel.send(`Salut, bienvenue sur le discord **${member.guild.name}** 😉\n` +
-                        '\n' +
-                        `Pour avoir accès à l\'intégralité du serveur accepte le règlement ici ---> <#${rulesChannel.id}> \n` +
-                        `> ${globalMsg} \n ` +
-                        '\n' +
-                        '                                                 ●¸.•*¨Ƹ̵̡Ӝ̵̨̄Ʒ¨*•.¸●\n' +
-                        '\n');
-                }).catch(console.error);
-            }
-        });
+        channel.send({ files: [attachment] });
     });
 });

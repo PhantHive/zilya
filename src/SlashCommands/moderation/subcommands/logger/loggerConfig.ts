@@ -1,10 +1,10 @@
 import {SlashCommand} from "../../../../structures/SlashCommand";
 import {EmbedBuilder} from "discord.js";
-const LG = require("../../../../assets/utils/models/logger.js");
+import Models from "../../../../typings/MongoTypes";
 import colors from "../../../../assets/data/colors.json";
 import {ExtendedInteraction} from "../../../../typings/SlashCommand";
 
-exports.default = new SlashCommand({
+const configureLoggerCommand = new SlashCommand({
     name: 'configure',
     description: 'Configure logger for the server',
     options: [
@@ -86,14 +86,14 @@ exports.default = new SlashCommand({
         const serverName = interaction.guild.name;
         const serverId = interaction.guild.id;
 
-        let data = await LG.findOne({
+        let data = await Models.LoggerModel.findOne({
                 serverId: interaction.guild.id
             });
 
         new Promise(async (resolve) => {
                 let embed: EmbedBuilder;
                 if (!data) {
-                    await new LG({
+                    await new Models.LoggerModel({
                         serverId: serverId,
                         notifType: notifType,
                         logChannel: channelId,
@@ -142,3 +142,5 @@ exports.default = new SlashCommand({
         })
     }
 });
+
+exports.default = configureLoggerCommand;

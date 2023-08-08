@@ -1,10 +1,10 @@
 import {ChannelType, Message, MessageCollector} from "discord.js";
 import {ExtendedSelectMenuInteraction} from "../../../../../../typings/SlashCommand";
 const wait = require('node:timers/promises').setTimeout;
-const { selectChannelId, selectWelcomeTheme, selectWelcomeColor } = require("../selector/selectCustom");
-const theme = require("../../../../../../assets/data/theme.json");
+import {selectChannelId, selectWelcomeTheme, selectWelcomeColor} from "../selector/selectCustom";
+import theme from "../../../../../../assets/data/theme.json";
 
-const isChannelValid = async (channel, configName) => new Promise((resolve, reject) => {
+const isChannelValid = async (channel: string, configName: string) => new Promise((resolve, reject) => {
 
     const id = Number(channel);
     if (Number.isInteger(id) && id !== 0 ) {
@@ -30,7 +30,7 @@ const nextStep = async (data, interaction: ExtendedSelectMenuInteraction) => {
             channels.splice(24, channels.length - 23)
         }
 
-        if (data.channel_id === "0") {
+        if (data.channelId === "0") {
             await selectChannelId(interaction, channels);
         }
         else if (data.theme === -1) {
@@ -40,8 +40,8 @@ const nextStep = async (data, interaction: ExtendedSelectMenuInteraction) => {
             await selectWelcomeColor(interaction);
         }
         else {
-            let msg = `All data are saved for <#${data.channel_id}>\n` +
-                `\`\`\`js\nChannel ID: ${data.channel_id}\n` +
+            let msg = `All data are saved for <#${data.channelId}>\n` +
+                `\`\`\`js\nChannel ID: ${data.channelId}\n` +
                 `Theme: ${theme[data.theme].name}\n` +
                 `Color: ${data.color}\`\`\`` +
                 `you can reset the welcome message with the command: \`/welcome remove\` or edit it with the command: \`/welcome edit\``
@@ -75,7 +75,7 @@ const setChannelId = async (data, interaction: ExtendedSelectMenuInteraction) =>
             collector.on('collect', async (m: Message): Promise<void> => {
                 try {
                     await isChannelValid(m.content, "welcome");
-                    data.channel_id = m.content;
+                    data.channelId = m.content;
                     data.save();
                     await wait(2000);
                     await m.delete();
@@ -91,7 +91,7 @@ const setChannelId = async (data, interaction: ExtendedSelectMenuInteraction) =>
         else {
             try {
                 await isChannelValid(interaction.values[0], "welcome");
-                data.channel_id = interaction.values[0];
+                data.channelId = interaction.values[0];
                 data.save();
                 // reply to the user that the channel is valid and that we will proceed to the next step and remove the components
                 resolve("Thank you! I will setup the welcome message in this channel. Proceeding to the next step...");
@@ -178,7 +178,7 @@ const setColor = async (data, interaction: ExtendedSelectMenuInteraction) => {
                 });
 }
 
-module.exports = {
+export {
     nextStep,
     setChannelId,
     setTheme,

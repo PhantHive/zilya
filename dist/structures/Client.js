@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExtendedClient = void 0;
 const tslib_1 = require("tslib");
-// @ts-ignore
 const discord_js_1 = require("discord.js");
 const glob_1 = tslib_1.__importDefault(require("glob"));
 class ExtendedClient extends discord_js_1.Client {

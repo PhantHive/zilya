@@ -4,7 +4,7 @@ const SlashCommand_1 = require("../../../../structures/SlashCommand");
 const index_1 = require("../../../../index");
 const sqlPhearion_1 = require("../../src/sqlPhearion");
 const discord_js_1 = require("discord.js");
-const PBK = require("../../../../assets/utils/models/pheaBank.js");
+const PBK = require("../../../../assets/utils/models/Pheabank");
 exports.default = new SlashCommand_1.SlashCommand({
     name: 'pheabank',
     description: 'Vos informations bancaires',

@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const SlashCommand_1 = require("../../../../structures/SlashCommand");
 const discord_js_1 = require("discord.js");
-const LG = require("../../../../assets/utils/models/logger.js");
+const MongoTypes_1 = tslib_1.__importDefault(require("../../../../typings/MongoTypes"));
 const colors_json_1 = tslib_1.__importDefault(require("../../../../assets/data/colors.json"));
-exports.default = new SlashCommand_1.SlashCommand({
+const configureLoggerCommand = new SlashCommand_1.SlashCommand({
     name: 'configure',
     description: 'Configure logger for the server',
     options: [
@@ -82,13 +82,13 @@ exports.default = new SlashCommand_1.SlashCommand({
         }
         const serverName = interaction.guild.name;
         const serverId = interaction.guild.id;
-        let data = await LG.findOne({
+        let data = await MongoTypes_1.default.LoggerModel.findOne({
             serverId: interaction.guild.id
         });
         new Promise(async (resolve) => {
             let embed;
             if (!data) {
-                await new LG({
+                await new MongoTypes_1.default.LoggerModel({
                     serverId: serverId,
                     notifType: notifType,
                     logChannel: channelId,
@@ -129,3 +129,4 @@ exports.default = new SlashCommand_1.SlashCommand({
         });
     }
 });
+exports.default = configureLoggerCommand;

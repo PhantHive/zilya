@@ -1,11 +1,11 @@
 import {SlashCommand} from "../../../../structures/SlashCommand";
-import {EmbedBuilder, ChannelType} from "discord.js";
-const WDB = require("../../../../assets/utils/models/welcome.js");
+import {ChannelType} from "discord.js";
+import Models from "../../../../typings/MongoTypes";
 import {setTimeout as wait} from "node:timers/promises";
-const { editOptions } = require("./src/selector/selectEdit");
+import {editOptions} from "./src/selector/selectEdit";
 
 
-exports.default = new SlashCommand({
+const editWelcomeCommand = new SlashCommand({
     name: 'edit',
     description: 'Edit welcome message for the server',
     userPermissions: ['Administrator'],
@@ -13,8 +13,8 @@ exports.default = new SlashCommand({
 
         new Promise( async (resolve, reject) => {
 
-            let data = await WDB.findOne({
-                server_id: `${interaction.guild.id}`
+            let data = await Models.WelcomeModel.findOne({
+                serverId: `${interaction.guild.id}`
             });
 
             if (!data) {
@@ -44,3 +44,5 @@ exports.default = new SlashCommand({
         });
     }
 });
+
+export default editWelcomeCommand;

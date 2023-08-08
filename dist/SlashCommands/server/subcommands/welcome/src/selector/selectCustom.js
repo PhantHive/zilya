@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.selectWelcomeColor = exports.selectWelcomeTheme = exports.selectChannelId = void 0;
 const discord_js_1 = require("discord.js");
 const selectChannelId = async (interaction, channels) => {
     const actionRow = new discord_js_1.ActionRowBuilder()
@@ -18,6 +19,7 @@ const selectChannelId = async (interaction, channels) => {
         await interaction.editReply({ content: setupMsg, components: [actionRow] });
     });
 };
+exports.selectChannelId = selectChannelId;
 const selectWelcomeTheme = async (interaction) => {
     let actionRow = new discord_js_1.ActionRowBuilder();
     actionRow.addComponents(new discord_js_1.StringSelectMenuBuilder()
@@ -54,6 +56,7 @@ const selectWelcomeTheme = async (interaction) => {
         await interaction.editReply({ content: "You may want to customize your welcome message :).", components: [actionRow] });
     });
 };
+exports.selectWelcomeTheme = selectWelcomeTheme;
 const selectWelcomeColor = async (interaction) => {
     let colorRow = new discord_js_1.ActionRowBuilder()
         .addComponents(new discord_js_1.StringSelectMenuBuilder()
@@ -90,8 +93,4 @@ const selectWelcomeColor = async (interaction) => {
         await interaction.editReply({ content: "Choose your color.", components: [colorRow] });
     });
 };
-module.exports = {
-    selectChannelId,
-    selectWelcomeTheme,
-    selectWelcomeColor
-};
+exports.selectWelcomeColor = selectWelcomeColor;

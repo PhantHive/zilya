@@ -1,9 +1,9 @@
 import {Event} from "../../structures/Event";
 import {client} from "../../index";
-import {AuditLogEvent, EmbedBuilder, TextChannel} from "discord.js";
+import {AuditLogEvent, EmbedBuilder, Role, TextChannel} from "discord.js";
 
 const colors = require("../../assets/data/colors.json");
-const LG = require("../../assets/utils/models/logger.js");
+import Models from "../../typings/MongoTypes";
 
 function sendEmbed(logger, data, color, executor, tagName, tagValue, fieldComment, desc, changeName, oldRole) {
 
@@ -41,7 +41,7 @@ export default new Event('guildMemberUpdate', async (oldMember, newMember) => {
 
         if (oldMember.user.bot) return;
 
-        let data = await LG.findOne({
+        let data = await Models.LoggerModel.findOne({
             serverId: newMember.guild.id
         });
 
@@ -69,12 +69,12 @@ export default new Event('guildMemberUpdate', async (oldMember, newMember) => {
                 // if this wasnt a role update, return
                 if (!roleUpdateLog) return;
 
-                let newRole;
-                let tagName;
-                let tagValue;
-                let fieldComment;
-                let desc;
-                let changeName;
+                let newRole: Role;
+                let tagName: string;
+                let tagValue: string;
+                let fieldComment: string;
+                let desc: string;
+                let changeName: string;
 
                 if (oldMember.roles.cache.size < newMember.roles.cache.size) {
                     newRole = newMember.roles.cache.filter(role => !oldMember.roles.cache.has(role.id)).first();

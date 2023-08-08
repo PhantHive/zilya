@@ -1,15 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 const SlashCommand_1 = require("../../../../structures/SlashCommand");
-const LG = require("../../../../assets/utils/models/logger.js");
-exports.default = new SlashCommand_1.SlashCommand({
+const MongoTypes_1 = tslib_1.__importDefault(require("../../../../typings/MongoTypes"));
+const removeLoggerCommand = new SlashCommand_1.SlashCommand({
     name: 'remove',
     description: 'Remove logger for the server',
     userPermissions: ['Administrator'],
     run: async ({ interaction }) => {
         // remove logger
         // find logger in database
-        let data = await LG.findOne({
+        let data = await MongoTypes_1.default.LoggerModel.findOne({
             serverId: interaction.guild.id
         });
         new Promise(async (resolve) => {
@@ -21,7 +22,7 @@ exports.default = new SlashCommand_1.SlashCommand({
             }
             else {
                 new Promise(async (resolve) => {
-                    await LG.findOneAndDelete({
+                    await MongoTypes_1.default.LoggerModel.findOneAndDelete({
                         serverId: interaction.guild.id
                     });
                     await interaction.reply({
@@ -41,3 +42,4 @@ exports.default = new SlashCommand_1.SlashCommand({
         });
     }
 });
+exports.default = removeLoggerCommand;

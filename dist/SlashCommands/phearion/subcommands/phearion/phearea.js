@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const SlashCommand_1 = require("../../../../structures/SlashCommand");
 const discord_js_1 = require("discord.js");
 const index_1 = require("../../../../index");
-const PBK = require("../../../../assets/utils/models/pheaBank.js");
+const PBK = require("../../../../assets/utils/models/Pheabank");
 const sqlPhearion_1 = require("../../src/sqlPhearion");
 exports.default = new SlashCommand_1.SlashCommand({
     name: 'phearea',

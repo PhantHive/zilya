@@ -1,11 +1,8 @@
 import {SlashCommand} from "../../../../structures/SlashCommand";
-import {RunOptions} from "../../../../typings/SlashCommand";
-import {ExtendedInteraction} from "../../../../typings/SlashCommand";
-import {client} from "../../../../index";
-const LG = require("../../../../assets/utils/models/logger.js");
+import Models from "../../../../typings/MongoTypes";
 
 
-exports.default = new SlashCommand({
+const removeLoggerCommand = new SlashCommand({
     name: 'remove',
     description: 'Remove logger for the server',
     userPermissions: ['Administrator'],
@@ -13,7 +10,7 @@ exports.default = new SlashCommand({
 
         // remove logger
         // find logger in database
-        let data = await LG.findOne({
+        let data = await Models.LoggerModel.findOne({
             serverId: interaction.guild.id
             });
         new Promise(async (resolve) => {
@@ -26,7 +23,7 @@ exports.default = new SlashCommand({
                 
                 new Promise(async (resolve) => {
 
-                    await LG.findOneAndDelete({
+                    await Models.LoggerModel.findOneAndDelete({
                         serverId: interaction.guild.id
                     });
 
@@ -48,3 +45,6 @@ exports.default = new SlashCommand({
     }
 
 });
+
+exports.default = removeLoggerCommand;
+

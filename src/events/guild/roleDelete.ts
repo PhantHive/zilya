@@ -1,7 +1,7 @@
 import {Event} from "../../structures/Event";
 import {client} from "../../index";
-import {Message, EmbedBuilder, AuditLogEvent, TextChannel, Channel, VoiceState} from "discord.js";
-const LG = require("../../assets/utils/models/logger.js");
+import {Message, EmbedBuilder, AuditLogEvent, TextChannel, Channel, VoiceState, ColorResolvable} from "discord.js";
+import Models from "../../typings/MongoTypes";
 import colors from "../../assets/data/colors.json";
 
 export default new Event('roleDelete', async (role) => {
@@ -9,13 +9,19 @@ export default new Event('roleDelete', async (role) => {
         if (!role.guild) return;
 
 
-        let data = await LG.findOne({
+        let data = await Models.LoggerModel.findOne({
                 serverId: role.guild.id
             })
         new Promise(async (resolve) => {
                 if (data) {
                     const channelId = data.logChannel;
-                    let color = data.color;
+                    let color: ColorResolvable;
+                    try {
+                        color = data.color as ColorResolvable;
+                    } catch (e) {
+                        // set to Random color
+                        color = "Random";
+                    }
                     // find the channel by id using client.channels.fetch()
                     const logger = await client.channels.fetch(channelId) as TextChannel;
 

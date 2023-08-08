@@ -1,27 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 const index_1 = require("../../index");
 const Event_1 = require("../../structures/Event");
 const { setChannelId, setTheme, setColor } = require("../../SlashCommands/server/subcommands/welcome/src/setter/setCustom");
 const { setEdit } = require("../../SlashCommands/server/subcommands/welcome/src/setter/setEdit");
-const WDB = require("../../assets/utils/models/welcome.js");
+const MongoTypes_1 = tslib_1.__importDefault(require("../../typings/MongoTypes"));
 exports.default = new Event_1.Event('interactionCreate', async (interaction) => {
     if (interaction.isStringSelectMenu()) {
         // ================
         // WELCOME SYSTEM
         // ================
-        let data = await WDB.findOne({
-            server_id: `${interaction.guild.id}`
+        let data = await MongoTypes_1.default.WelcomeModel.findOne({
+            serverId: `${interaction.guild.id}`
         });
         if (!data) {
-            await new WDB({
-                server_id: `${interaction.guild.id}`,
-                channel_id: "0",
+            await new MongoTypes_1.default.WelcomeModel({
+                serverId: `${interaction.guild.id}`,
+                channelId: "0",
                 theme: -1,
                 color: "#000000"
             }).save();
-            data = await WDB.findOne({
-                server_id: `${interaction.guild.id}`
+            data = await MongoTypes_1.default.WelcomeModel.findOne({
+                serverId: `${interaction.guild.id}`
             });
         }
         // setter
@@ -48,8 +49,8 @@ exports.default = new Event_1.Event('interactionCreate', async (interaction) => 
         // check if customId is welcome_remove_yes
         if (interaction.customId === "welcome_remove_yes") {
             // remove the welcome message
-            await WDB.findOneAndDelete({
-                server_id: `${interaction.guild.id}`
+            await MongoTypes_1.default.WelcomeModel.findOneAndDelete({
+                serverId: `${interaction.guild.id}`
             });
             // send a confirmation message
             await interaction.update({

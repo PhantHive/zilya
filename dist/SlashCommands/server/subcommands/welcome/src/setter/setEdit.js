@@ -1,4 +1,6 @@
-const { nextStep } = require("./setCustom");
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const setCustom_1 = require("./setCustom");
 const setEdit = async (data, interaction, value) => {
     new Promise(async (resolve, reject) => {
         if (!data) {
@@ -8,19 +10,19 @@ const setEdit = async (data, interaction, value) => {
         else {
             // set the value to default
             if (value === "edit_channel_id") {
-                data.channel_id = "0";
+                data.channelId = "0";
                 data.save();
-                await nextStep(data, interaction);
+                await (0, setCustom_1.nextStep)(data, interaction);
             }
             else if (value === "edit_theme") {
                 data.theme = -1;
                 data.save();
-                await nextStep(data, interaction);
+                await (0, setCustom_1.nextStep)(data, interaction);
             }
             else if (value === "edit_color") {
                 data.color = "#000000";
                 data.save();
-                await nextStep(data, interaction);
+                await (0, setCustom_1.nextStep)(data, interaction);
             }
         }
     })

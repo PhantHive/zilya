@@ -1,7 +1,7 @@
 import {Event} from "../../structures/Event";
 import {client} from "../../index";
-import {Message, EmbedBuilder, AuditLogEvent, TextChannel, Channel} from "discord.js";
-const LG = require("../../assets/utils/models/logger.js");
+import {Message, EmbedBuilder, AuditLogEvent, TextChannel, Channel, ColorResolvable} from "discord.js";
+import Models from "../../typings/MongoTypes";
 import colors from "../../assets/data/colors.json";
 
 export default new Event('messageUpdate', async (oldMessage: Message, newMessage: Message) => {
@@ -9,14 +9,20 @@ export default new Event('messageUpdate', async (oldMessage: Message, newMessage
         if (!oldMessage.guild) return;
         if (oldMessage.author.bot) return;
 
-        let data = await LG.findOne({
+        let data = await Models.LoggerModel.findOne({
             serverId: oldMessage.guild.id
         });
         new Promise(async (resolve) => {
             if (data) {
 
                 const channelId = data.logChannel;
-                let color = data.color;
+                let color: ColorResolvable;
+                try {
+                    color = data.color as ColorResolvable;
+                } catch (e) {
+                    // set to Random color
+                    color = "Random";
+                }
                 // find the channel by id using client.channels.fetch()
                 const logger = await client.channels.fetch(channelId) as TextChannel;
 
@@ -28,10 +34,10 @@ export default new Event('messageUpdate', async (oldMessage: Message, newMessage
                     if (!oldMessage) return console.log(`A message by ${oldMessage.author.tag} was edited, but no relevant audit logs were found.`);
 
                     // embeding
-                    let desc;
-                    let action_author;
+                    let desc: string;
+                    let actionAuthor: string;
                     desc = `A [message](https://discord.com/channels/${oldMessage.guild.id}/${oldMessage.channel.id}/${oldMessage.id}) from: **${oldMessage.author.tag}** has been edited.`
-                    action_author = oldMessage.author.id;
+                    actionAuthor = oldMessage.author.id;
 
 
                     color = colors[data.color.toLowerCase()];
@@ -44,7 +50,7 @@ export default new Event('messageUpdate', async (oldMessage: Message, newMessage
                             {name: 'Old Message', value: `${oldMessage}`},
                             {name: 'New Message', value: `${newMessage}`},
                             {
-                                name: 'All IDs', value: `\`\`\`js\nExecutor ID: ${action_author}\nChannel ID: ${oldMessage.channel.id}\nMessage ID: ${oldMessage.id}\`\`\``
+                                name: 'All IDs', value: `\`\`\`js\nExecutor ID: ${actionAuthor}\nChannel ID: ${oldMessage.channel.id}\nMessage ID: ${oldMessage.id}\`\`\``
                             }
                         )
                         .setColor(color)

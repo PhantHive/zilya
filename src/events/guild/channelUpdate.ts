@@ -1,7 +1,7 @@
 import {Event} from "../../structures/Event";
 import {client} from "../../index";
-import {Message, EmbedBuilder, AuditLogEvent, TextChannel, Channel} from "discord.js";
-const LG = require("../../assets/utils/models/logger.js");
+import {Message, EmbedBuilder, AuditLogEvent, TextChannel, Channel, ColorResolvable} from "discord.js";
+import LM from "../../assets/utils/models/Logger";
 import colors from "../../assets/data/colors.json";
 
 export default new Event('channelUpdate', async (oldChannel: TextChannel, newChannel: TextChannel) => {
@@ -9,13 +9,19 @@ export default new Event('channelUpdate', async (oldChannel: TextChannel, newCha
     if (!oldChannel.guild) return;
 
 
-    let data = await LG.findOne({
+    let data = await LM.findOne({
             serverId: oldChannel.guild.id
         })
     new Promise(async (resolve) => {
             if (data) {
                 const channelId = data.logChannel;
-                let color = data.color;
+                let color: ColorResolvable;
+                try {
+                    color = data.color as ColorResolvable;
+                } catch (e) {
+                    // set to Random color
+                    color = "Random";
+                }
                 // find the channel by id using client.channels.fetch()
                 const logger = await client.channels.fetch(channelId) as TextChannel;
 

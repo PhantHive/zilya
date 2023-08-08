@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const SlashCommand_1 = require("../../../../structures/SlashCommand");
-const PBK = require("../../../../assets/utils/models/pheaBank.js");
+const PBK = require("../../../../assets/utils/models/Pheabank");
 exports.default = new SlashCommand_1.SlashCommand({
     name: 'daily',
     description: 'Gagnez 20 Discoins par jour!',

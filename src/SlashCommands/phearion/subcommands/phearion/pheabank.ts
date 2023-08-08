@@ -3,7 +3,7 @@ import {client} from "../../../../index";
 import {sqlPhearion} from "../../src/sqlPhearion";
 import { Message, TextChannel, EmbedBuilder } from "discord.js";
 import {ExtendedInteraction} from "../../../../typings/SlashCommand";
-const PBK = require("../../../../assets/utils/models/pheaBank.js");
+const PBK = require("../../../../assets/utils/models/Pheabank");
 
 
 exports.default = new SlashCommand({

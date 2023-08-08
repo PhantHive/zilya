@@ -1,11 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.client = void 0;
+const tslib_1 = require("tslib");
 require('dotenv').config();
 const Client_1 = require("./structures/Client");
+const mongoose_1 = tslib_1.__importDefault(require("./assets/utils/mongoose"));
 exports.client = new Client_1.ExtendedClient();
-// @ts-ignore
-exports.client.mongoose = require('./assets/utils/mongoose.js');
-// @ts-ignore
-exports.client.mongoose.init();
+mongoose_1.default.init();
 exports.client.start();

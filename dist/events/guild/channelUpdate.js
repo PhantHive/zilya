@@ -4,18 +4,25 @@ const tslib_1 = require("tslib");
 const Event_1 = require("../../structures/Event");
 const index_1 = require("../../index");
 const discord_js_1 = require("discord.js");
-const LG = require("../../assets/utils/models/logger.js");
+const Logger_1 = tslib_1.__importDefault(require("../../assets/utils/models/Logger"));
 const colors_json_1 = tslib_1.__importDefault(require("../../assets/data/colors.json"));
 exports.default = new Event_1.Event('channelUpdate', async (oldChannel, newChannel) => {
     if (!oldChannel.guild)
         return;
-    let data = await LG.findOne({
+    let data = await Logger_1.default.findOne({
         serverId: oldChannel.guild.id
     });
     new Promise(async (resolve) => {
         if (data) {
             const channelId = data.logChannel;
-            let color = data.color;
+            let color;
+            try {
+                color = data.color;
+            }
+            catch (e) {
+                // set to Random color
+                color = "Random";
+            }
             // find the channel by id using client.channels.fetch()
             const logger = await index_1.client.channels.fetch(channelId);
             if (logger !== undefined) {

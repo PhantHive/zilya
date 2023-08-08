@@ -1,12 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 const SlashCommand_1 = require("../../structures/SlashCommand");
 const discord_js_1 = require("discord.js");
 const canvas_1 = require("canvas");
-const GifEncoder = require('gif-encoder-2');
-const { GifReader } = require('omggif');
-const fetch = require('node-fetch');
-const RDB = require("../../assets/utils/models/rank.js");
+const MongoTypes_1 = tslib_1.__importDefault(require("../../typings/MongoTypes"));
 const getFontSize = (ctx, maxwidth, text, initialFontSize) => {
     let font = initialFontSize;
     do {
@@ -87,11 +85,11 @@ const drawBar = (ctx, x, y, width, height, fillColor) => {
 };
 const drawXpBar = async (ctx, canvas, data) => {
     let font;
-    const nextLvlXpMsg = 25 * (data.level_msg ** 2) + 15 * data.level_msg + 25;
-    const currentXpMsg = data.xp_msg;
+    const nextLvlXpMsg = 25 * (data.levelMsg ** 2) + 15 * data.levelMsg + 25;
+    const currentXpMsg = data.xpMsg;
     const percentageMsg = currentXpMsg / nextLvlXpMsg;
-    const nextLvlXpVocal = 25 * (data.level_vocal ** 2) + 15 * data.level_vocal + 25;
-    const currentXpVocal = data.xp_vocal;
+    const nextLvlXpVocal = 25 * (data.levelVocal ** 2) + 15 * data.levelVocal + 25;
+    const currentXpVocal = data.xpVocal;
     const percentageVocal = currentXpVocal / nextLvlXpVocal;
     const msgXpEmoji = await (0, canvas_1.loadImage)(`${process.cwd()}/src/assets/img/rank-card/msg-xp.png`);
     const vocalXpEmoji = await (0, canvas_1.loadImage)(`${process.cwd()}/src/assets/img/rank-card/mic-xp.png`);
@@ -124,14 +122,14 @@ const drawXpBar = async (ctx, canvas, data) => {
     ctx.fillText(xpVocalTxt, canvas.width * 0.2, canvas.height * 0.905);
     ctx.restore();
     // add the level text on top left of each bar
-    let levelMsgTxt = `Lvl: ${data.level_msg}`;
+    let levelMsgTxt = `Lvl: ${data.levelMsg}`;
     font = getFontSize(ctx, canvas.width * 0.15, levelMsgTxt, 27);
     ctx.font = font[0];
     ctx.fillStyle = "#ffffff";
     // top right of the bar
     ctx.textAlign = "right";
     ctx.fillText(levelMsgTxt, canvas.width * 0.36, canvas.height * 0.63);
-    let levelVocalTxt = `Lvl: ${data.level_vocal}`;
+    let levelVocalTxt = `Lvl: ${data.levelVocal}`;
     font = getFontSize(ctx, canvas.width * 0.15, levelVocalTxt, 27);
     ctx.font = font[0];
     ctx.fillStyle = "#ffffff";
@@ -139,14 +137,14 @@ const drawXpBar = async (ctx, canvas, data) => {
     ctx.textAlign = "right";
     ctx.fillText(levelVocalTxt, canvas.width * 0.36, canvas.height * 0.83);
     // ----------------- RANK -----------------
-    let rankMsgTxt = `#${data.rank_msg}`;
+    let rankMsgTxt = `#${data.rankMsg}`;
     font = getFontSize(ctx, canvas.width * 0.11, rankMsgTxt, 27);
     ctx.font = font[0];
     ctx.fillStyle = "#ffffff";
     // right of the msg bar
     ctx.textAlign = "left";
     ctx.fillText(rankMsgTxt, canvas.width * 0.38, canvas.height * 0.7);
-    let rankVocalTxt = `#${data.rank_vocal}`;
+    let rankVocalTxt = `#${data.rankVocal}`;
     font = getFontSize(ctx, canvas.width * 0.11, rankVocalTxt, 27);
     ctx.font = font[0];
     ctx.fillStyle = "#ffffff";
@@ -156,7 +154,7 @@ const drawXpBar = async (ctx, canvas, data) => {
     // -----------------------------------------
 };
 async function drawGlobalRank(ctx, canvas, data, interaction) {
-    const globalRank = (data.rank_msg + data.rank_vocal) / 2;
+    const globalRank = (data.rankMsg + data.rankVocal) / 2;
     // draw the global rank
     let globalRankTxt = `#${globalRank}`;
     let font = getFontSize(ctx, canvas.width * 0.15, globalRankTxt, 50);
@@ -230,27 +228,27 @@ exports.default = new SlashCommand_1.SlashCommand({
         // make canvas transparent
         const ctx = canvas.getContext("2d");
         new Promise(async (resolve, reject) => {
-            let data = await RDB.findOne({
-                server_id: `${interaction.guild.id}`,
-                user_id: `${interaction.user.id}`
+            let data = await MongoTypes_1.default.RankModel.findOne({
+                serverId: `${interaction.guild.id}`,
+                userId: `${interaction.user.id}`
             })
                 .catch(err => {
                 reject(err);
             });
             if (!data) {
                 // check number of doc in db to set rank
-                const nbMembers = await RDB.countDocuments({
-                    server_id: `${interaction.guild.id}`
+                const nbMembers = await MongoTypes_1.default.RankModel.countDocuments({
+                    serverId: `${interaction.guild.id}`
                 });
-                data = await RDB.create({
-                    server_id: `${interaction.guild.id}`,
-                    user_id: `${interaction.user.id}`,
-                    xp_msg: 0,
-                    level_msg: 1,
-                    rank_msg: nbMembers + 1,
-                    xp_vocal: 0,
-                    level_vocal: 1,
-                    rank_vocal: nbMembers + 1
+                data = await MongoTypes_1.default.RankModel.create({
+                    serverId: `${interaction.guild.id}`,
+                    userId: `${interaction.user.id}`,
+                    xpMsg: 0,
+                    levelMsg: 1,
+                    rankMsg: nbMembers + 1,
+                    xpVocal: 0,
+                    levelVocal: 1,
+                    rankVocal: nbMembers + 1
                 });
                 resolve(data);
             }

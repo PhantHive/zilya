@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 const SlashCommand_1 = require("../../../../structures/SlashCommand");
 const discord_js_1 = require("discord.js");
-const WDB = require("../../../../assets/utils/models/welcome.js");
-const { nextStep } = require("./src/setter/setCustom");
-exports.default = new SlashCommand_1.SlashCommand({
+const MongoTypes_1 = tslib_1.__importDefault(require("../../../../typings/MongoTypes"));
+const removeWelcomeCommand = new SlashCommand_1.SlashCommand({
     name: 'remove',
     description: 'Remove welcome message for the server',
     userPermissions: ['Administrator'],
@@ -12,8 +12,8 @@ exports.default = new SlashCommand_1.SlashCommand({
         // find if there is data, if not say that there is nothing to remove otherwise send a confirmation button yes or no.
         // everything should be a Promise
         new Promise(async (resolve, reject) => {
-            let data = await WDB.findOne({
-                server_id: `${interaction.guild.id}`
+            let data = await MongoTypes_1.default.WelcomeModel.findOne({
+                serverId: `${interaction.guild.id}`
             });
             if (!data) {
                 reject("There is no welcome message to remove.\nPlease configure one first with `/welcome configure`.");
@@ -23,7 +23,7 @@ exports.default = new SlashCommand_1.SlashCommand({
             }
         })
             .then(async (res) => {
-            // create a actionrowbuilder with a ❌ button and a ✅ button
+            // create an actionrowbuilder with a ❌ button and a ✅ button
             const actionRow = new discord_js_1.ActionRowBuilder()
                 .addComponents(new discord_js_1.ButtonBuilder()
                 .setCustomId("welcome_remove_yes")
@@ -45,3 +45,4 @@ exports.default = new SlashCommand_1.SlashCommand({
         });
     }
 });
+exports.default = removeWelcomeCommand;

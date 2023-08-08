@@ -34,6 +34,6 @@ const editOptions = async (interaction) => {
 }
 
 
-module.exports = {
+export {
     editOptions
 }

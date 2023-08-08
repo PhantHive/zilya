@@ -1,5 +1,5 @@
 import {SlashCommand} from "../../../../structures/SlashCommand";
-const PBK = require("../../../../assets/utils/models/pheaBank.js");
+const PBK = require("../../../../assets/utils/models/Pheabank");
 import {sqlPhearion} from "../../src/sqlPhearion";
 
 exports.default = new SlashCommand({

@@ -1,39 +1,38 @@
 import {Event} from "../../structures/Event";
 import {client} from "../../index";
-import {Message, EmbedBuilder, AuditLogEvent, TextChannel, Channel, VoiceState} from "discord.js";
-const LG = require("../../assets/utils/models/logger.js");
+import {Message, EmbedBuilder, AuditLogEvent, TextChannel, Channel, VoiceState, ColorResolvable} from "discord.js";
+import Models from "../../typings/MongoTypes";
 import colors from "../../assets/data/colors.json";
-const RDB = require("../../assets/utils/models/rank.js");
 
 const updateRank = async (newState, timer) => {
 
     // check if rank exists in db
-    let data = await RDB.findOne({
-        server_id: `${newState.guild.id}`,
-        user_id: `${newState.member.user.id}`
+    let data = await Models.RankModel.findOne({
+        serverId: `${newState.guild.id}`,
+        userId: `${newState.member.user.id}`
     });
 
     new Promise(async (resolve, reject) => {
         if (!data) {
             // check number of doc in db to set rank
-            const nbMembers: number = await RDB.countDocuments({
-                server_id: `${newState.guild.id}`
+            const nbMembers: number = await Models.RankModel.countDocuments({
+                serverId: `${newState.guild.id}`
             });
 
-            await new RDB({
-                server_id: `${newState.guild.id}`,
-                user_id: `${newState.member.user.id}`,
-                xp_msg: 0,
-                level_msg: 1,
-                rank_msg: nbMembers + 1,
-                xp_vocal: 0,
-                level_vocal: 1,
-                rank_vocal: nbMembers + 1
+            await new Models.RankModel({
+                serverId: `${newState.guild.id}`,
+                userId: `${newState.member.user.id}`,
+                xpMsg: 0,
+                levelMsg: 1,
+                rankMsg: nbMembers + 1,
+                xpVocal: 0,
+                levelVocal: 1,
+                rankVocal: nbMembers + 1
             }).save();
 
-            data = await RDB.findOne({
-                server_id: `${newState.guild.id}`,
-                user_id: `${newState.member.user.id}`
+            data = await Models.RankModel.findOne({
+                serverId: `${newState.guild.id}`,
+                userId: `${newState.member.user.id}`
             });
             resolve(data);
         }
@@ -43,39 +42,39 @@ const updateRank = async (newState, timer) => {
     })
         .then(async (data: any) => {
             // console log xp and level before update
-            console.log(`xp: ${data.xp_vocal} | level: ${data.level_vocal}`);
+            console.log(`xp: ${data.xpVocal} | level: ${data.levelVocal}`);
 
             // = 25 * (curLvl ^ 2) + 15 * curLvl + 25 = nextLvlXp
             // xp win: 2*(min)
-            const nextLvlXp = 25 * (data.level_vocal ** 2) + 15 * data.level_vocal + 25;
+            const nextLvlXp = 25 * (data.levelVocal ** 2) + 15 * data.levelVocal + 25;
 
             // if user has enough xp to level up
-            if (data.xp_vocal >= nextLvlXp) {
-                data.level_vocal += 1;
-                data.xp_vocal = 0;
+            if (data.xpVocal >= nextLvlXp) {
+                data.levelVocal += 1;
+                data.xpVocal = 0;
                 await data.save();
             }
             else {
                 // take xp like 2 times the time spent in the channel in minutes
-                data.xp_vocal += 2 * timer;
+                data.xpVocal += 2 * timer;
                 await data.save();
             }
 
             // compare all users in the server and sort them by xp_vocal and level_vocal then update rank_vocal
-            const users = await RDB.find({
-                server_id: `${newState.guild.id}`
+            const users = await Models.RankModel.find({
+                serverId: `${newState.guild.id}`
             }).sort([
-                ['xp_vocal', 'descending'],
-                ['level_vocal', 'descending']
+                ['xpVocal', 'descending'],
+                ['levelVocal', 'descending']
             ]).exec();
 
             for (let i = 0; i < users.length; i++) {
-                users[i].rank_vocal = i + 1;
+                users[i].rankVocal = i + 1;
                 await users[i].save();
             }
 
             // console log xp and level after update
-            console.log(`xp: ${data.xp_vocal} | level: ${data.level_vocal}`);
+            console.log(`xp: ${data.xpVocal} | level: ${data.levelVocal}`);
 
         })
 
@@ -98,22 +97,28 @@ export default new Event('voiceStateUpdate', async (oldState: VoiceState, newSta
     }
 
     try {
-        let data = await LG.findOne({
+        let data = await Models.LoggerModel.findOne({
                 serverId: oldState.guild.id
             })
         new Promise(async (resolve) => {
                 if (data) {
                     const channelId = data.logChannel;
-                    let color = data.color;
+                    let color: ColorResolvable;
+                    try {
+                        color = data.color as ColorResolvable;
+                    } catch (e) {
+                        // set to Random color
+                        color = "Random";
+                    }
                     // find the channel by id using client.channels.fetch()
                     const logger = await client.channels.fetch(channelId) as TextChannel;
 
                     if (logger !== undefined && data.notifType !== "no_voice_logs") {
-                        let memberState;
-                        let channelId;
-                        let fieldComment;
-                        let tagValue;
-                        let tagName;
+                        let memberState: string;
+                        let channelId: string;
+                        let fieldComment: string;
+                        let tagValue: string;
+                        let tagName: string;
 
                         if (newState.channelId && !oldState.channelId) {
                             memberState = "joined";

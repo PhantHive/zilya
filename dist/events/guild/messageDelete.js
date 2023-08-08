@@ -4,18 +4,25 @@ const tslib_1 = require("tslib");
 const Event_1 = require("../../structures/Event");
 const index_1 = require("../../index");
 const discord_js_1 = require("discord.js");
-const LG = require("../../assets/utils/models/logger.js");
+const MongoTypes_1 = tslib_1.__importDefault(require("../../typings/MongoTypes"));
 const colors_json_1 = tslib_1.__importDefault(require("../../assets/data/colors.json"));
 exports.default = new Event_1.Event('messageDelete', async (message) => {
     if (!message.guild)
         return;
-    let data = await LG.findOne({
+    let data = await MongoTypes_1.default.LoggerModel.findOne({
         serverId: message.guild.id
     });
     new Promise(async (resolve) => {
         if (data) {
             const channelId = data.logChannel;
-            let color = data.color;
+            let color;
+            try {
+                color = data.color;
+            }
+            catch (e) {
+                // set to Random color
+                color = "Random";
+            }
             // find the channel by id using client.channels.fetch()
             const logger = await index_1.client.channels.fetch(channelId);
             if (logger !== undefined) {
@@ -34,14 +41,14 @@ exports.default = new Event_1.Event('messageDelete', async (message) => {
                 const { executor, target } = deletionLog;
                 // embeding
                 let desc;
-                let action_author;
+                let actionAuthor;
                 if (target.id === message.author.id) {
                     desc = `**${executor.tag}** deleted a message from: **${message.author.tag}**.`;
-                    action_author = executor.id;
+                    actionAuthor = executor.id;
                 }
                 else {
                     desc = `A message from: **${message.author.tag}** has been deleted.`;
-                    action_author = "Unknown";
+                    actionAuthor = "Unknown";
                 }
                 color = colors_json_1.default[data.color.toLowerCase()];
                 const deleteLog = new discord_js_1.EmbedBuilder()
@@ -49,12 +56,11 @@ exports.default = new Event_1.Event('messageDelete', async (message) => {
                     .setTitle('LOG: Deleted Message')
                     .setDescription(desc)
                     .addFields({ name: 'Channel TAG', value: `<#${message.channel.id}>` }, { name: 'Message', value: `> ${message}` }, {
-                    name: 'All IDs', value: `\`\`\`js\nExecutor ID: ${action_author}\nTarget ID: ${message.author.id}\nChannel ID: ${message.channel.id}\`\`\``
+                    name: 'All IDs', value: `\`\`\`js\nExecutor ID: ${actionAuthor}\nTarget ID: ${message.author.id}\nChannel ID: ${message.channel.id}\`\`\``
                 })
                     .setColor(color)
                     .setTimestamp()
                     .setFooter({ text: `by PhearionNetwork. Sever: ${message.guild.name}`, iconURL: index_1.client.user.displayAvatarURL() });
-                console.log("sending");
                 await logger.send({ embeds: [deleteLog] });
             }
         }

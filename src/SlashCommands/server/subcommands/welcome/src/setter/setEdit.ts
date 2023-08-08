@@ -1,4 +1,4 @@
-const { nextStep } = require("./setCustom");
+import {nextStep} from "./setCustom";
 
 const setEdit = async (data, interaction, value) => {
 
@@ -11,7 +11,7 @@ const setEdit = async (data, interaction, value) => {
         else {
             // set the value to default
             if (value === "edit_channel_id") {
-                data.channel_id = "0";
+                data.channelId = "0";
                 data.save();
                 await nextStep(data, interaction);
 

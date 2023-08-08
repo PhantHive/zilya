@@ -7,9 +7,9 @@ import {
 import {readdirSync} from "fs";
 import {client} from "../../index";
 import {MyAttachmentData} from "../../typings/SlashCommand";
-const Canvas = require('canvas');
-const WDB = require("../../assets/utils/models/welcome.js");
-const themes = require("../../assets/data/theme.json");
+import Canvas from "canvas";
+import Models from "../../typings/MongoTypes";
+import themes from "../../assets/data/theme.json";
 
 const applyText = (canvas, text: string, fontSize: number=null, maxPercentWidth: number=null) => {
     const ctx = canvas.getContext('2d');
@@ -33,27 +33,26 @@ const applyText = (canvas, text: string, fontSize: number=null, maxPercentWidth:
 };
 
 export default new Event('guildMemberAdd', async (member) => {
-    let data = await WDB.findOne({
-            server_id: member.guild.id
+    let data = await Models.WelcomeModel.findOne({
+            serverId: member.guild.id
         });
 
         if (!data) return console.log("no data...");
 
         // find absolute path of src/assets/img/welcome
-        let generalPath = `${process.cwd()}/src/assets/img/welcome/${themes[parseInt(data.theme)]["name"]}`;
-        let rand_back = []
+        let generalPath = `${process.cwd()}/src/assets/img/welcome/${themes[data.theme]["name"]}`;
+        let rand_back: string[] = []
         readdirSync(generalPath).forEach(file => {
             rand_back.push(`${generalPath}/${file}`);
         })
 
-        const system = data.channel_id;
+        const system = data.channelId;
 
         const canvas  = Canvas.createCanvas(800, 450);
         const ctx = canvas.getContext('2d');
-        let background;
-        let guildColor;
-
-        let guildStroke;
+        let background: Canvas.Image;
+        let guildColor: string;
+        let guildStroke: string;
 
         background = await Canvas.loadImage(rand_back[Math.floor(Math.random() * rand_back.length)]);
         guildColor = '#ffffff';
