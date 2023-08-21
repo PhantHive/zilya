@@ -135,7 +135,7 @@ const drawStats = async (ctx, canvas, profile) => {
         canvas.height * 0.18 - 215 + actualHeight
     );
 
-    ctx.font = '105px "ApoCs"';
+    ctx.font = '105px "ApoCs" "Arial"';
     ctx.fillText(
         `Lvl: ${profile.level}`,
         canvas.width * 0.22 - 435 / 2,

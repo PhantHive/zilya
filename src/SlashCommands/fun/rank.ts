@@ -4,10 +4,14 @@ import {
     createCanvas,
     Image,
     loadImage,
-    CanvasRenderingContext2D,
+    CanvasRenderingContext2D, registerFont,
 } from 'canvas';
 import Models from '../../typings/MongoTypes';
 import path from 'path';
+registerFont(
+    path.join(__dirname, '../../assets/fonts/Broderbund.ttf'),
+    { family: 'Broderbund' }
+);
 
 const getFontSize = (
     ctx: CanvasRenderingContext2D,
@@ -19,7 +23,7 @@ const getFontSize = (
 
     do {
         font -= 5;
-        ctx.font = `${font}px "Apocs" "Arial" normal`;
+        ctx.font = `normal ${font}px Broderbund Arial`;
     } while (ctx.measureText(text).width > maxwidth);
 
     return [ctx.font, ctx.measureText(text).width];
