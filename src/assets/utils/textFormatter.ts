@@ -1,7 +1,7 @@
 import {CanvasRenderingContext2D, registerFont} from "canvas";
 import path from "path";
 registerFont(
-    path.join(__dirname, '../../../../assets/fonts/Broderbund.ttf'),
+    path.join(__dirname, '../fonts/Broderbund.ttf'),
     { family: 'Broderbund' }
 );
 

@@ -4,7 +4,7 @@ import DrawCardShape from "./canvasModules/drawCardShape";
 import DrawAvatars from "./canvasModules/drawAvatars";
 import DrawBarsLevel from "./canvasModules/drawBarsLevel";
 import {ExtendedInteraction} from "../../../../typings/SlashCommand";
-import {TextFormatter} from "./textFormatter";
+import {TextFormatter} from "../../../../assets/utils/textFormatter";
 
 class DrawRankCard extends TextFormatter {
 

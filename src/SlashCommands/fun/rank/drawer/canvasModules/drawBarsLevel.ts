@@ -1,6 +1,6 @@
 import {Canvas, CanvasRenderingContext2D, Image, loadImage} from "canvas";
 import path from "path";
-import {TextFormatter} from "../textFormatter";
+import {TextFormatter} from "../../../../../assets/utils/textFormatter";
 
 class DrawBarsLevel extends TextFormatter {
 

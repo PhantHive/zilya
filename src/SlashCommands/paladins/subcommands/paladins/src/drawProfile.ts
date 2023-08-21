@@ -1,24 +1,17 @@
 import colors from '../../../../../assets/data/paladinsColors.json';
 import { loadImage, registerFont } from 'canvas';
+import {TextFormatter} from "../../../../../assets/utils/textFormatter";
 import path from 'path';
 registerFont(
     path.join(__dirname, '../../../../../assets/fonts/Broderbund.ttf'),
     { family: 'ApoCs' }
 );
 
-const getFontSize = async (ctx, maxwidth, text, initialFontSize) => {
-    let font = initialFontSize;
 
-    do {
-        font -= 10;
-        ctx.font = `${font}px "ApoCs" "Arial"`;
-    } while (ctx.measureText(text).width > maxwidth);
-
-    return [ctx.font, ctx.measureText(text).width];
-};
 
 const drawCard = async (ctx, canvas, profile) => {
     const topChampAvatar = await loadImage(profile.champAvatar);
+    const textFormatter = new TextFormatter(ctx);
 
     ctx.save();
     ctx.moveTo(5, 0);
@@ -62,8 +55,7 @@ const drawCard = async (ctx, canvas, profile) => {
     ctx.clip();
     ctx.fillStyle = colors['card']['text'];
 
-    let font = await getFontSize(
-        ctx,
+    let font = await textFormatter.getFontSize(
         canvas.width * 0.4,
         profile.mostPlayedChamp,
         200
@@ -88,6 +80,7 @@ const drawCard = async (ctx, canvas, profile) => {
 
 const drawStats = async (ctx, canvas, profile) => {
     const playerAvatar = await loadImage(profile.userAvatar);
+    const textFormatter = new TextFormatter(ctx);
 
     ctx.beginPath();
     ctx.save();
@@ -124,7 +117,7 @@ const drawStats = async (ctx, canvas, profile) => {
     ctx.fillStyle = colors['card']['text'];
 
     // nickname
-    let font = await getFontSize(ctx, canvas.width * 0.4, profile.name, 155);
+    let font = await textFormatter.getFontSize(canvas.width * 0.4, profile.name, 155);
     ctx.font = font[0];
     const metrics = ctx.measureText(profile.name);
     const actualHeight =
