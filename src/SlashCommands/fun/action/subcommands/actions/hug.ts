@@ -1,6 +1,6 @@
-import { SlashCommand } from '../../../../structures/SlashCommand';
-import { EmbedBuilder } from 'discord.js';
-import { ExtendedInteraction } from '../../../../typings/SlashCommand';
+import { SlashCommand } from '../../../../../structures/SlashCommand';
+import {EmbedBuilder, User} from 'discord.js';
+import { ExtendedInteraction } from '../../../../../typings/SlashCommand';
 import { tenorApiSearcher } from './searcher';
 
 exports.default = new SlashCommand({
@@ -18,7 +18,7 @@ exports.default = new SlashCommand({
         const user = (interaction as ExtendedInteraction).options.getUser(
             'user'
         );
-        let huggedOne;
+        let huggedOne: User | string;
 
         if (user.id === interaction.user.id) {
             huggedOne = 'him/herself';

@@ -1,4 +1,4 @@
-import { SlashCommand } from '../../../../structures/SlashCommand';
+import { SlashCommand } from '../../../../../structures/SlashCommand';
 import { EmbedBuilder } from 'discord.js';
 import { tenorApiSearcher } from './searcher';
 
