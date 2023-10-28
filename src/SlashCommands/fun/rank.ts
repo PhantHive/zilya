@@ -2,9 +2,7 @@ import { SlashCommand } from '../../structures/SlashCommand';
 import {DrawRankCard} from "./rank/drawer/drawCard";
 import {
     createCanvas,
-    Image,
-    loadImage,
-    CanvasRenderingContext2D, registerFont,
+    CanvasRenderingContext2D
 } from 'canvas';
 import Models from '../../typings/MongoTypes';
 import path from 'path';
@@ -35,7 +33,7 @@ exports.default = new SlashCommand({
                 const nbMembers: number = await Models.RankModel.countDocuments(
                     {
                         serverId: `${interaction.guild.id}`,
-                    }
+                    },
                 );
 
                 data = await Models.RankModel.create({
@@ -58,8 +56,6 @@ exports.default = new SlashCommand({
                 // drawing card
                 let card = new DrawRankCard(ctx, canvas, data, interaction as ExtendedInteraction);
                 let cardBuffer = await card.drawCard();
-
-                console.log(cardBuffer);
                 await interaction.editReply({ files: [cardBuffer] });
             })
             .catch(async (err) => {

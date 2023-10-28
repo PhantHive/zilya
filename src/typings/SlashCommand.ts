@@ -48,7 +48,15 @@ export interface RunOptions {
 
 type RunFunction = (options: RunOptions) => any;
 
-export type CommandType = {
+export type SubCommandType = {
+    name: string;
+    description: string;
+    options?: ChatInputApplicationCommandData['options'];
+    run: RunFunction;
+}
+
+export type SlashCommandType = {
     userPermissions?: PermissionResolvable[];
+    subcommands?: SubCommandType[];
     run: RunFunction;
 } & ChatInputApplicationCommandData;

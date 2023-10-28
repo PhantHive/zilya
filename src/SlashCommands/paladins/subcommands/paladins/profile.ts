@@ -1,9 +1,9 @@
-import { SlashCommand } from '../../../../structures/SlashCommand';
+import { SubCommand } from '../../../../structures/SlashCommand';
 import { ExtendedInteraction } from '../../../../typings/SlashCommand';
 import { API } from 'paladins.js';
 import { createCanvas } from 'canvas';
 import { drawCard, drawStats } from './src/drawProfile';
-import { AttachmentBuilder } from 'discord.js';
+import { AttachmentBuilder, BooleanCache, CacheType, Message } from 'discord.js';
 
 let pal: any = new API({
     devId: process.env.DEV_ID,
@@ -25,20 +25,14 @@ const userCard = async (paladinsProfile) => {
     });
 };
 
-exports.default = new SlashCommand({
+export const profileSubCommand = new SubCommand({
     name: 'profile',
     description: 'Get user profile',
-    options: [
-        {
-            name: 'nickname',
-            description: 'Nickname of the player',
-            type: 3,
-            required: true,
-        },
-    ],
-    run: async ({ interaction }) => {
+    options: undefined,
+    run: async ({ interaction }): Promise<Message<BooleanCache<CacheType>>> => {
+
         const pseudo = (interaction as ExtendedInteraction).options.get(
-            'nickname'
+            'nickname',
         ).value as string;
 
         await interaction.deferReply();
@@ -69,7 +63,7 @@ exports.default = new SlashCommand({
 
         if (res === undefined) {
             return interaction.editReply(
-                'Impossible to get data at the moment.'
+                'Impossible to get data at the moment.',
             );
         } else {
             paladinsProfile.userAvatar = res['AvatarURL'];
@@ -86,7 +80,7 @@ exports.default = new SlashCommand({
 
         try {
             res = await pal.getPlayerChampionRanks(
-                Number(paladinsProfile.playerId)
+                Number(paladinsProfile.playerId),
             );
         } catch (e) {
             return interaction.editReply({
@@ -114,3 +108,4 @@ exports.default = new SlashCommand({
         await interaction.editReply({ files: [attachment] });
     },
 });
+

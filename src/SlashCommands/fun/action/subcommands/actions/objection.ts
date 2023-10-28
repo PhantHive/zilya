@@ -1,10 +1,10 @@
-import { SlashCommand } from '../../../../../structures/SlashCommand';
+import { SlashCommand, SubCommand } from '../../../../../structures/SlashCommand';
 import { EmbedBuilder } from 'discord.js';
 import { tenorApiSearcher } from './searcher';
 
-exports.default = new SlashCommand({
-    name: 'hug',
-    description: 'Hug someone',
+export const objectionSubCommand = new SubCommand({
+    name: 'objection',
+    description: 'Object someone',
     run: async ({ interaction }) => {
         // use tenor api to get a random gif of anime hug
         let search_term = 'objection';

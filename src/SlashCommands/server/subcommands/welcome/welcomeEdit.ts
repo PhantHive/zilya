@@ -16,11 +16,11 @@ const editWelcomeCommand = new SlashCommand({
 
             if (!data) {
                 reject(
-                    'Welcome message has not been configured. Please configure one first with `/welcome configure`.'
+                    'Welcome message has not been configured. Please configure one first with `/welcome configure`.',
                 );
             } else {
                 resolve(
-                    'Welcome message can be edited now. Proceeding to edit options...'
+                    'Welcome message can be edited now. Proceeding to edit options...',
                 );
             }
         })

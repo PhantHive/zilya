@@ -16,7 +16,7 @@ const removeWelcomeCommand = new SlashCommand({
 
             if (!data) {
                 reject(
-                    'There is no welcome message to remove.\nPlease configure one first with `/welcome configure`.'
+                    'There is no welcome message to remove.\nPlease configure one first with `/welcome configure`.',
                 );
             } else {
                 resolve('Are you sure you want to remove the welcome message?');
@@ -33,7 +33,7 @@ const removeWelcomeCommand = new SlashCommand({
                         new ButtonBuilder()
                             .setCustomId('welcome_remove_no')
                             .setLabel('❌')
-                            .setStyle(ButtonStyle.Secondary)
+                            .setStyle(ButtonStyle.Secondary),
                     );
 
                 // send the message

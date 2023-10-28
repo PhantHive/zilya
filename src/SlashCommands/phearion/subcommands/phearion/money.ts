@@ -29,7 +29,7 @@ exports.default = new SlashCommand({
             .then((res) => {
                 const date = new Date(parseInt(res['last_seen']));
                 const money = new Intl.NumberFormat('fr-FR').format(
-                    res['money']
+                    res['money'],
                 );
                 const embed = new EmbedBuilder()
                     .setColor('#fffb00')
@@ -53,7 +53,7 @@ exports.default = new SlashCommand({
                             name: '|Last update <a:minecraftclock:879146014232170506>|',
                             value: ` ${date.toLocaleString()} `,
                             inline: true,
-                        }
+                        },
                     )
                     .setTimestamp()
                     .setThumbnail(interaction.client.user.displayAvatarURL());

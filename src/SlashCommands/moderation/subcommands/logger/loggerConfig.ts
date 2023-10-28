@@ -1,10 +1,10 @@
-import { SlashCommand } from '../../../../structures/SlashCommand';
+import { SlashCommand, SubCommand } from '../../../../structures/SlashCommand';
 import { EmbedBuilder } from 'discord.js';
 import Models from '../../../../typings/MongoTypes';
 import colors from '../../../../assets/data/canvasColors.json';
 import { ExtendedInteraction } from '../../../../typings/SlashCommand';
 
-const configureLoggerCommand = new SlashCommand({
+export const configureLoggerCommand = new SubCommand({
     name: 'configure',
     description: 'Configure logger for the server',
     options: [
@@ -62,13 +62,12 @@ const configureLoggerCommand = new SlashCommand({
             ],
         },
     ],
-    userPermissions: ['Administrator'],
     run: async ({ interaction }) => {
         let channelId = (interaction as ExtendedInteraction).options.get(
-            'channel_id'
+            'channel_id',
         ).channel.id;
         let notifType = (interaction as ExtendedInteraction).options.get(
-            'notif'
+            'notif',
         ).value as string;
         let color;
         try {
@@ -137,7 +136,7 @@ const configureLoggerCommand = new SlashCommand({
                 .setColor(colors[data.color.toLowerCase()])
                 .setTitle(`${serverId}: ${serverName}`)
                 .setDescription(
-                    `This server already has a log channel. \`/logger remove\` to change it.`
+                    `This server already has a log channel. \`/logger remove\` to change it.`,
                 );
 
             return resolve(embed);

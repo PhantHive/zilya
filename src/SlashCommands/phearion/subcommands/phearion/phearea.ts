@@ -68,7 +68,7 @@ exports.default = new SlashCommand({
 
         if (!data) {
             await interaction.followUp(
-                'You may want to link your discord account with your phearion account.\n*Please use: /pheabank*'
+                'You may want to link your discord account with your phearion account.\n*Please use: /pheabank*',
             );
         } else {
             data.properties.forEach((property) => {
@@ -108,7 +108,7 @@ exports.default = new SlashCommand({
                 if (i.customId === 'buy_friend') {
                     await i
                         .reply(
-                            'Tag ton ami sur Discord (Il doit avoir un compte minecraft lié au Discord).'
+                            'Tag ton ami sur Discord (Il doit avoir un compte minecraft lié au Discord).',
                         )
                         .then(() => {
                             const filter = (message) =>
@@ -126,7 +126,7 @@ exports.default = new SlashCommand({
                                         .split('>')[0];
                                     if (friendId === m.author.id) {
                                         await i.followUp(
-                                            'Tu es qui tu es mais sûrement pas un ami de toi-même.'
+                                            'Tu es qui tu es mais sûrement pas un ami de toi-même.',
                                         );
                                         return;
                                     }
@@ -141,12 +141,12 @@ exports.default = new SlashCommand({
                                                     .then(async (user) => {
                                                         if (user.bot)
                                                             return i.followUp(
-                                                                "N'essaye pas de nourrir les bots, ils ne sont pas faits pour ça."
+                                                                'N\'essaye pas de nourrir les bots, ils ne sont pas faits pour ça.',
                                                             );
 
                                                         if (!dataFriend) {
                                                             await i.followUp(
-                                                                "Ton ami n'a pas lié son compte minecraft!"
+                                                                'Ton ami n\'a pas lié son compte minecraft!',
                                                             );
                                                             return;
                                                         } else {
@@ -157,40 +157,40 @@ exports.default = new SlashCommand({
                                                                 await i.editReply(
                                                                     {
                                                                         content:
-                                                                            "**[❌]**: Tu n'as pas assez d'argent pour faire se transfère",
-                                                                    }
+                                                                            '**[❌]**: Tu n\'as pas assez d\'argent pour faire se transfère',
+                                                                    },
                                                                 );
                                                                 return;
                                                             } else {
                                                                 data.discoins -=
                                                                     price;
                                                                 dataFriend.properties.push(
-                                                                    image_name
+                                                                    image_name,
                                                                 );
                                                                 data.save();
                                                                 dataFriend.save();
                                                                 await i.followUp(
-                                                                    `<a:stevedance:879145932451639306> ${m.content} just unlocked a new area: ***${image_name}*** !!! \n *(24hours remaining before you can enter your new property)*`
+                                                                    `<a:stevedance:879145932451639306> ${m.content} just unlocked a new area: ***${image_name}*** !!! \n *(24hours remaining before you can enter your new property)*`,
                                                                 );
                                                                 return;
                                                             }
                                                         }
                                                     });
-                                            }
+                                            },
                                         );
                                     } else {
                                         await i.followUp(
-                                            'Il semblerait que ton ami ne soit pas sur ce serveur.'
+                                            'Il semblerait que ton ami ne soit pas sur ce serveur.',
                                         );
                                         return;
                                     }
-                                }
+                                },
                             );
                         });
                 } else {
                     if (data.discoins < price) {
                         await i.reply(
-                            "**[❌]**: You don't have enough money to make this transfer."
+                            '**[❌]**: You don\'t have enough money to make this transfer.',
                         );
                     } else {
                         await sql
@@ -209,7 +209,7 @@ exports.default = new SlashCommand({
 
                                     row = new ActionRowBuilder().addComponents(
                                         buyArea,
-                                        buyFriend
+                                        buyFriend,
                                     );
 
                                     await i.update({ components: [row] });

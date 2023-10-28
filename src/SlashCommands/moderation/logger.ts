@@ -1,39 +1,25 @@
 import { SlashCommand } from '../../structures/SlashCommand';
 import { ExtendedInteraction } from '../../typings/SlashCommand';
-const configureLoggerCommand = require('./subcommands/logger/loggerConfig');
-const removeLoggerCommand = require('./subcommands/logger/loggerRemove');
+import { configureLoggerCommand } from './subcommands/logger/loggerConfig';
+import { removeLoggerCommand } from './subcommands/logger/loggerRemove';
 
 // create logger command that will have 2 subcommands
-exports.default = new SlashCommand({
+export const logger = new SlashCommand({
     name: 'logger',
     description: 'Configure logger for the server',
-    options: [
-        {
-            name: 'configure',
-            description: 'Configure logger for the server',
-            type: 1,
-            options: configureLoggerCommand.default.options,
-        },
-        {
-            name: 'remove',
-            description: 'Remove logger for the server',
-            type: 1,
-            options: removeLoggerCommand.default.options,
-        },
-    ],
+    userPermissions: ['Administrator'],
     run: async ({ interaction }) => {
-        // check which subcommand was used
-        if (
-            (interaction as ExtendedInteraction).options.getSubcommand() ===
-            'configure'
-        ) {
-            await configureLoggerCommand.default.run({ interaction });
+        await interaction.deferReply();
+        let subcommand;
+
+        if ('options' in interaction) {
+            const subcommandName = interaction.options.getSubcommand();
+            subcommand = logger.subcommands.find(cmd => cmd.name === subcommandName);
         }
-        if (
-            (interaction as ExtendedInteraction).options.getSubcommand() ===
-            'remove'
-        ) {
-            await removeLoggerCommand.default.run({ interaction });
+        if (subcommand) {
+            await subcommand.run({ interaction });
+        } else {
+            await interaction.reply('Subcommand not found!');
         }
     },
 });

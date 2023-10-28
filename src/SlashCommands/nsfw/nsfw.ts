@@ -15,7 +15,7 @@ async function getNSFWContent(request: string): Promise<string | null> {
     return null;
 }
 
-exports.default = new SlashCommand({
+export const nsfw = new SlashCommand({
     name: 'neko',
     description: 'nekos',
     nsfw: true,
@@ -31,7 +31,7 @@ exports.default = new SlashCommand({
         await interaction.deferReply();
 
         const request = (interaction as ExtendedInteraction).options.getString(
-            'sfw'
+            'sfw',
         );
 
         const url = await getNSFWContent(request);

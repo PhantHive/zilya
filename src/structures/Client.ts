@@ -4,14 +4,14 @@ import {
     Collection,
     ClientEvents,
 } from 'discord.js';
-import { CommandType } from '../typings/SlashCommand';
+import { SlashCommandType } from '../typings/SlashCommand';
 import glob from 'glob';
 import { RegisterCommandsOptions } from '../typings/client';
 import { Event } from './Event';
 import * as superagent from 'superagent';
 
 export class ExtendedClient extends Client {
-    commands: Collection<string, CommandType> = new Collection();
+    commands: Collection<string, SlashCommandType> = new Collection();
     lastMessageTimestamp: number;
     static superagent: typeof superagent;
 
@@ -31,7 +31,11 @@ export class ExtendedClient extends Client {
 
     start() {
         this.registerModules();
-        this.login(process.env.BOT_TOKEN);
+        this.login(process.env.BOT_TOKEN).catch((err) => {
+            setTimeout(() => {
+                this.login(process.env.BOT_TOKEN);
+            }, 5000);
+        });
     }
 
     async importFiles(filePath: string) {
@@ -72,16 +76,23 @@ export class ExtendedClient extends Client {
         // register global commands
         let c = 1;
         for (const filePath of filteredGlobalFiles) {
-            const command: CommandType = await this.importFiles(filePath);
-            if (!command.name) continue;
-            this.commands.set(command.name, command);
-            slashCommands.push(command);
-            c++;
+            try {
+                const command: SlashCommandType | undefined = await this.importFiles(filePath);
+                if (!command || !command.name) {
+                    console.error(`Command not found or invalid command structure in file: ${filePath}`);
+                    continue;
+                }
+                this.commands.set(command.name, command);
+                slashCommands.push(command);
+                c++;
+            } catch (error) {
+                console.error(`Error loading command from file: ${filePath}`, error);
+            }
         }
 
         // register Phearion guild commands
         for (const filePath of filteredCommandFiles) {
-            const command: CommandType = await this.importFiles(filePath);
+            const command: SlashCommandType = await this.importFiles(filePath);
             if (!command.name) continue;
             this.commands.set(command.name, command);
             phearionSlashCommands.push(command);

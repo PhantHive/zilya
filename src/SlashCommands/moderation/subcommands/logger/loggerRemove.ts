@@ -1,10 +1,9 @@
-import { SlashCommand } from '../../../../structures/SlashCommand';
+import { SlashCommand, SubCommand } from '../../../../structures/SlashCommand';
 import Models from '../../../../typings/MongoTypes';
 
-const removeLoggerCommand = new SlashCommand({
+export const removeLoggerCommand = new SubCommand({
     name: 'remove',
     description: 'Remove logger for the server',
-    userPermissions: ['Administrator'],
     run: async ({ interaction }) => {
         // remove logger
         // find logger in database

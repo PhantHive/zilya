@@ -1,9 +1,9 @@
-import { SlashCommand } from '../../../../../structures/SlashCommand';
+import { SlashCommand, SubCommand } from '../../../../../structures/SlashCommand';
 import {EmbedBuilder, User} from 'discord.js';
 import { ExtendedInteraction } from '../../../../../typings/SlashCommand';
 import { tenorApiSearcher } from './searcher';
 
-exports.default = new SlashCommand({
+export const hugSubCommand = new SubCommand({
     name: 'hug',
     description: 'Hug someone',
     options: [
@@ -16,7 +16,7 @@ exports.default = new SlashCommand({
     ],
     run: async ({ interaction }) => {
         const user = (interaction as ExtendedInteraction).options.getUser(
-            'user'
+            'user',
         );
         let huggedOne: User | string;
 
@@ -36,7 +36,7 @@ exports.default = new SlashCommand({
                 const embed = new EmbedBuilder()
                     .setColor('#00ff9d')
                     .setTitle(
-                        `♥ ${interaction.user.username} hugged ${huggedOne} ♥`
+                        `♥ ${interaction.user.username} hugged ${huggedOne} ♥`,
                     )
                     .setImage(hug)
                     .setTimestamp();

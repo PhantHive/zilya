@@ -2,12 +2,6 @@ import colors from '../../../../../assets/data/paladinsColors.json';
 import { loadImage, registerFont } from 'canvas';
 import {TextFormatter} from "../../../../../assets/utils/textFormatter";
 import path from 'path';
-registerFont(
-    path.join(__dirname, '../../../../../assets/fonts/Broderbund.ttf'),
-    { family: 'ApoCs' }
-);
-
-
 
 const drawCard = async (ctx, canvas, profile) => {
     const topChampAvatar = await loadImage(profile.champAvatar);
@@ -128,7 +122,7 @@ const drawStats = async (ctx, canvas, profile) => {
         canvas.height * 0.18 - 215 + actualHeight
     );
 
-    ctx.font = '105px "ApoCs" "Arial"';
+    ctx.font = await textFormatter.getFontSize(canvas.width * 0.4, `Lvl: ${profile.level}`, 100)[0];
     ctx.fillText(
         `Lvl: ${profile.level}`,
         canvas.width * 0.22 - 435 / 2,

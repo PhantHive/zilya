@@ -17,7 +17,7 @@ exports.default = new SlashCommand({
         new Promise(async (resolve, reject) => {
             // create sql entry
             const sql = await new sqlPhearion(
-                interaction as ExtendedInteraction
+                interaction as ExtendedInteraction,
             );
 
             if (!data) {
@@ -37,7 +37,7 @@ exports.default = new SlashCommand({
                             return (
                                 m.author.id === '732984718378795120' &&
                                 m['content'].includes(
-                                    `verify bank account ${randomNb}`
+                                    `verify bank account ${randomNb}`,
                                 )
                             );
                         };
@@ -70,12 +70,12 @@ exports.default = new SlashCommand({
                                 }).save();
                             } catch (e) {
                                 reject(
-                                    'Error while getting bank infos from sql'
+                                    'Error while getting bank infos from sql',
                                 );
                             }
 
                             resolve(
-                                `*${interaction.user.tag} discord account has been linked to: ${mcName}'s minecraft account*`
+                                `*${interaction.user.tag} discord account has been linked to: ${mcName}'s minecraft account*`,
                             );
                         });
                     });
@@ -96,10 +96,10 @@ exports.default = new SlashCommand({
                 }
 
                 const fPheaCoins = new Intl.NumberFormat('fr-FR').format(
-                    data.pheaCoins
+                    data.pheaCoins,
                 );
                 const fDiscoins = new Intl.NumberFormat('fr-FR').format(
-                    data.discoins
+                    data.discoins,
                 );
 
                 if (data.daily === 1) {
@@ -116,7 +116,7 @@ exports.default = new SlashCommand({
                 const embed = new EmbedBuilder()
                     .setColor('#FEE75C')
                     .setTitle(
-                        '<a:money:904801914041032796> PheaBank, We are there for YOU! <a:money:904801914041032796>'
+                        '<a:money:904801914041032796> PheaBank, We are there for YOU! <a:money:904801914041032796>',
                     )
                     .addFields(
                         {
@@ -143,7 +143,7 @@ exports.default = new SlashCommand({
                             name: 'Daily (availability)   ',
                             value: ` **${daily}** `,
                             inline: false,
-                        }
+                        },
                     )
                     .setTimestamp()
                     .setThumbnail(interaction.user.displayAvatarURL());
