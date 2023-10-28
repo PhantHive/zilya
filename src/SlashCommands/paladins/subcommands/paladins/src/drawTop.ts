@@ -1,10 +1,8 @@
-const colors = require("./colors.json");
-const { loadImage } = require("canvas");
+import colors from '../../../../../assets/data/paladinsColors.json';
+import { loadImage } from 'canvas';
 
 const drawTopCard = async (ctx, canvas, profile) => {
-
-    const topChampAvatar = await loadImage(profile.champAvatar)
-
+    const topChampAvatar = await loadImage(profile.champAvatar);
 
     ctx.save();
     ctx.moveTo(5, 0);
@@ -15,18 +13,28 @@ const drawTopCard = async (ctx, canvas, profile) => {
     ctx.clip();
 
     ctx.beginPath();
-    ctx.fillStyle = colors["topCard"]["main"]
+    ctx.fillStyle = colors['topCard']['main'];
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.closePath();
 
     ctx.beginPath();
     ctx.lineWidth = 25;
-    ctx.strokeStyle = colors["topCard"]["lines"];
+    ctx.strokeStyle = colors['topCard']['lines'];
     ctx.moveTo(0, canvas.height * 0.1);
-    ctx.quadraticCurveTo(canvas.width * 0.5, canvas.height * 0.20, canvas.width, canvas.height * 0.1);
+    ctx.quadraticCurveTo(
+        canvas.width * 0.5,
+        canvas.height * 0.2,
+        canvas.width,
+        canvas.height * 0.1
+    );
     ctx.moveTo(canvas.width, canvas.height * 0.1);
-    ctx.lineTo(canvas.width, canvas.height * 0.90);
-    ctx.quadraticCurveTo(canvas.width * 0.5, canvas.height * 0.80, 0, canvas.height * 0.90);
+    ctx.lineTo(canvas.width, canvas.height * 0.9);
+    ctx.quadraticCurveTo(
+        canvas.width * 0.5,
+        canvas.height * 0.8,
+        0,
+        canvas.height * 0.9
+    );
     ctx.lineTo(0, canvas.height * 0.1);
     //temp
     /*
@@ -35,18 +43,17 @@ const drawTopCard = async (ctx, canvas, profile) => {
     ctx.quadraticCurveTo(canvas.width * 0.5, canvas.height * 0.95, canvas.width, canvas.height * 0.85);
     ctx.stroke();*/
     ctx.stroke();
-    ctx.clip()
+    ctx.clip();
 
-    ctx.drawImage(topChampAvatar, 0, canvas.height * 0.1, canvas.width, canvas.height);
+    ctx.drawImage(
+        topChampAvatar,
+        0,
+        canvas.height * 0.1,
+        canvas.width,
+        canvas.height
+    );
 
     ctx.closePath();
+};
 
-
-}
-
-
-module.exports = {
-
-    drawTopCard
-
-}
+export { drawTopCard };

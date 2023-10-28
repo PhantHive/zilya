@@ -1,12 +1,13 @@
 import { client } from '../../index';
-import { Event } from "../../structures/Event";
-import { ActivityType } from "discord.js";
+import { Event } from '../../structures/Event';
+import { ActivityType } from 'discord.js';
 
-export default new Event ('ready', () => {
+export default new Event('ready', () => {
     console.log(`Logged in as ${client.user?.tag}!`);
     client.user.setPresence({
-        activities: [{ name: 'PHEARION NETWORK',  type: ActivityType.Competing }],
-        status: 'dnd'
+        activities: [
+            { name: 'PHEARION NETWORK', type: ActivityType.Competing },
+        ],
+        status: 'dnd',
     });
 });
-

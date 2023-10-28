@@ -11,14 +11,12 @@ interface DbConnectOptions extends ConnectOptions {
 }
 
 const dbConnect = {
-
     init: async () => {
-
         const options: DbConnectOptions = {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             autoIndex: false,
-            connectTimeoutMS: 20000,
+            connectTimeoutMS: 100000,
             maxPoolSize: 100,
             family: 4,
         };
@@ -34,16 +32,14 @@ const dbConnect = {
             console.log('Connected to MongoDB!');
         });
 
-        mongoose.connection.on('error', error => {
+        mongoose.connection.on('error', (error) => {
             console.error('MongoDB Connection Error: ', error);
         });
 
         mongoose.connection.on('disconnected', () => {
             console.warn('Disconnected from MongoDB');
         });
-
-    }
-
+    },
 };
 
 export default dbConnect;

@@ -1,16 +1,13 @@
-import mongoose, {Schema} from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const loggerSchema = new Schema({
-
     serverId: String,
     notifType: String,
     logChannel: String,
-    color: String
-
+    color: String,
 });
 
-const LoggerModel = mongoose
-    .connection
+const LoggerModel = mongoose.connection
     .useDb('logger')
     .model('logs', loggerSchema);
 

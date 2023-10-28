@@ -1,14 +1,13 @@
-import {SlashCommand} from "../../../../structures/SlashCommand";
-import {EmbedBuilder} from "discord.js";
-import {tenorApiSearcher} from "./searcher";
+import { SlashCommand, SubCommand } from '../../../../../structures/SlashCommand';
+import { EmbedBuilder } from 'discord.js';
+import { tenorApiSearcher } from './searcher';
 
-exports.default = new SlashCommand({
-    name: 'hug',
-    description: 'Hug someone',
-    run: async ({interaction}) => {
-
+export const objectionSubCommand = new SubCommand({
+    name: 'objection',
+    description: 'Object someone',
+    run: async ({ interaction }) => {
         // use tenor api to get a random gif of anime hug
-        let search_term = "objection";
+        let search_term = 'objection';
         await tenorApiSearcher(search_term)
             .then((objection: string) => {
                 // send the embed
@@ -16,13 +15,12 @@ exports.default = new SlashCommand({
                     .setColor('#00ff9d')
                     .setTitle(`${interaction.user.username} Objected!`)
                     .setImage(objection)
-                    .setTimestamp()
+                    .setTimestamp();
 
-                interaction.reply({embeds: [embed]});
+                interaction.reply({ embeds: [embed] });
             })
             .catch((err: string) => {
                 console.log(err);
             });
-
-    }
+    },
 });

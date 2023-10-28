@@ -1,34 +1,41 @@
-import {SlashCommand} from "../../structures/SlashCommand";
-import {ExtendedInteraction} from "../../typings/SlashCommand";
-const configureLoggerCommand = require("./subcommands/logger/loggerConfig");
-const removeLoggerCommand = require("./subcommands/logger/loggerRemove");
+import { SlashCommand } from '../../structures/SlashCommand';
+import { configureLoggerCommand } from './subcommands/logger/loggerConfig';
+import { removeLoggerCommand } from './subcommands/logger/loggerRemove';
 
 // create logger command that will have 2 subcommands
-exports.default = new SlashCommand({
+const loggerCommand = new SlashCommand({
     name: 'logger',
     description: 'Configure logger for the server',
     options: [
         {
-            "name": "configure",
-            "description": "Configure logger for the server",
-            "type": 1,
-            "options": configureLoggerCommand.default.options
+            type: 1, // 1 is for sub command
+            name: 'config',
+            description: 'Configure logger',
+            options: configureLoggerCommand.options,
         },
         {
-            "name": "remove",
-            "description": "Remove logger for the server",
-            "type": 1,
-            "options": removeLoggerCommand.default.options
-        }
+            type: 1, // 1 is for sub command
+            name: 'remove',
+            description: 'Remove logger',
+            options: removeLoggerCommand.options,
+        },
     ],
-    run: async ({interaction}) => {
-        // check which subcommand was used
-        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'configure') {
-            await configureLoggerCommand.default.run({interaction});
+    userPermissions: ['Administrator'],
+    subcommands: [configureLoggerCommand, removeLoggerCommand],
+    run: async ({ interaction }) => {
+        let subcommand;
+
+        if ('options' in interaction) {
+            const subcommandName = interaction.options.getSubcommand();
+            subcommand = loggerCommand.subcommands.find(cmd => cmd.name === subcommandName);
         }
-        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'remove') {
-            await removeLoggerCommand.default.run({interaction});
+        if (subcommand) {
+            await subcommand.run({ interaction });
+        } else {
+            await interaction.reply('Subcommand not found!');
         }
-    }
+    },
 });
+
+export default loggerCommand;
 

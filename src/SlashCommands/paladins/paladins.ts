@@ -1,25 +1,32 @@
-import {SlashCommand} from "../../structures/SlashCommand";
-import {ExtendedInteraction} from "../../typings/SlashCommand";
+import { SlashCommand } from '../../structures/SlashCommand';
+import { profileSubCommand } from './subcommands/paladins/profile';
 
-const profile = require('./subcommands/profile');
-const mostPlayed = require('./subcommands/mostPlayed');
-
-
-exports.default = new SlashCommand({
-    name: "paladins",
-    description: "Paladins infos (PC players only).",
+const paladinsCommand = new SlashCommand({
+    name: 'paladins',
+    description: 'Paladins infos (PC players only).',
     options: [
         {
-            "name": "profile",
-            "description": "Get user profile",
-            "type": 1,
-            "options": profile.default.options
+            type: 1, // 1 is for sub command
+            name: 'profile',
+            description: 'Get paladins profile infos',
+            options: profileSubCommand.options,
         }
     ],
-    run: async ({interaction}) => {
-        // check which subcommand was used
-        if ((interaction as ExtendedInteraction).options.getSubcommand() === 'profile') {
-            await profile.default.run({interaction});
+    subcommands: [profileSubCommand],
+    run: async ({ interaction }) => {
+        await interaction.deferReply();
+        let subcommand;
+
+        if ('options' in interaction) {
+            const subcommandName = interaction.options.getSubcommand();
+            subcommand = paladinsCommand.subcommands.find(cmd => cmd.name === subcommandName);
         }
-    }
+        if (subcommand) {
+            await subcommand.run({ interaction });
+        } else {
+            await interaction.reply('Subcommand not found!');
+        }
+    },
 });
+
+export default paladinsCommand;

@@ -3,5 +3,6 @@
   "blue": "#0000ff",
   "aqua": "#00ffff",
   "green": "#00ff00",
-  "luminous_vivid_pink": "#ff00ff"
+  "luminous_vivid_pink": "#ff00ff",
+  "default": "#fee75c"
 }
