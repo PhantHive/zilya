@@ -1,11 +1,17 @@
 import { SlashCommand } from '../../structures/SlashCommand';
-
 import { profileSubCommand } from './subcommands/paladins/profile';
 
-export const paladinsCommand = new SlashCommand({
+const paladinsCommand = new SlashCommand({
     name: 'paladins',
     description: 'Paladins infos (PC players only).',
-    options: undefined,
+    options: [
+        {
+            type: 1, // 1 is for sub command
+            name: 'profile',
+            description: 'Get paladins profile infos',
+            options: profileSubCommand.options,
+        }
+    ],
     subcommands: [profileSubCommand],
     run: async ({ interaction }) => {
         await interaction.deferReply();
@@ -22,3 +28,5 @@ export const paladinsCommand = new SlashCommand({
         }
     },
 });
+
+export default paladinsCommand;

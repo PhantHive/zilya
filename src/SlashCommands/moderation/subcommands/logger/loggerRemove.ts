@@ -44,4 +44,3 @@ export const removeLoggerCommand = new SubCommand({
     },
 });
 
-exports.default = removeLoggerCommand;

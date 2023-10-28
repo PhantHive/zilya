@@ -1,11 +1,11 @@
-import { SlashCommand } from '../../../../structures/SlashCommand';
+import { SubCommand } from '../../../../structures/SlashCommand';
 import { client } from '../../../../index';
 import { sqlPhearion } from '../../src/sqlPhearion';
 import { Message, TextChannel, EmbedBuilder } from 'discord.js';
 import { ExtendedInteraction } from '../../../../typings/SlashCommand';
-const PBK = require('../../../../assets/utils/models/Pheabank');
+import PBK from '../../../../assets/utils/models/Pheabank';
 
-exports.default = new SlashCommand({
+export const pheabankSubCommand = new SubCommand({
     name: 'pheabank',
     description: 'Vos informations bancaires',
     run: async ({ interaction }) => {
@@ -16,7 +16,7 @@ exports.default = new SlashCommand({
 
         new Promise(async (resolve, reject) => {
             // create sql entry
-            const sql = await new sqlPhearion(
+            const sql = new sqlPhearion(
                 interaction as ExtendedInteraction,
             );
 
@@ -60,7 +60,7 @@ exports.default = new SlashCommand({
                             try {
                                 let result = await sql.getBankInfos(mcName);
                                 console.log(result);
-                                new PBK({
+                                await new PBK({
                                     userId: interaction.user.id,
                                     mcNick: mcName,
                                     daily: 0,

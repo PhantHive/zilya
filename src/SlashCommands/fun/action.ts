@@ -1,5 +1,3 @@
-import { ExtendedInteraction } from '../../typings/SlashCommand';
-
 import { hugSubCommand } from './action/subcommands/actions/hug';
 import { objectionSubCommand } from './action/subcommands/actions/objection';
 import { SlashCommand } from '../../structures/SlashCommand';

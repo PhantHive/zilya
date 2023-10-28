@@ -1,11 +1,11 @@
-import { SlashCommand, SubCommand } from '../../../../structures/SlashCommand';
+import { SubCommand } from '../../../../structures/SlashCommand';
 import { EmbedBuilder } from 'discord.js';
 import Models from '../../../../typings/MongoTypes';
 import colors from '../../../../assets/data/canvasColors.json';
 import { ExtendedInteraction } from '../../../../typings/SlashCommand';
 
 export const configureLoggerCommand = new SubCommand({
-    name: 'configure',
+    name: 'config',
     description: 'Configure logger for the server',
     options: [
         {
@@ -71,11 +71,11 @@ export const configureLoggerCommand = new SubCommand({
         ).value as string;
         let color;
         try {
+            if (!color)
             color = (interaction as ExtendedInteraction).options.get('color')
                 .value as string;
-            color = color.toUpperCase();
         } catch (e) {
-            color = '#fee75c';
+            color = 'default';
         }
 
         // check if the channel is type text
@@ -133,7 +133,7 @@ export const configureLoggerCommand = new SubCommand({
             }
 
             embed = new EmbedBuilder()
-                .setColor(colors[data.color.toLowerCase()])
+                .setColor(colors[color.toLowerCase()])
                 .setTitle(`${serverId}: ${serverName}`)
                 .setDescription(
                     `This server already has a log channel. \`/logger remove\` to change it.`,
@@ -150,4 +150,3 @@ export const configureLoggerCommand = new SubCommand({
     },
 });
 
-exports.default = configureLoggerCommand;

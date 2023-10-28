@@ -1,9 +1,9 @@
-import { SlashCommand } from '../../../../structures/SlashCommand';
+import { SubCommand } from '../../../../structures/SlashCommand';
 import { sqlPhearion } from '../../src/sqlPhearion';
 import { EmbedBuilder } from 'discord.js';
 import { ExtendedInteraction } from '../../../../typings/SlashCommand';
 
-exports.default = new SlashCommand({
+export const moneySubCommand = new SubCommand({
     name: 'money',
     options: [
         {

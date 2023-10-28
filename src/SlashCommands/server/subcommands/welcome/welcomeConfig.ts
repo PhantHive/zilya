@@ -1,12 +1,11 @@
-import { SlashCommand } from '../../../../structures/SlashCommand';
+import { SubCommand } from '../../../../structures/SlashCommand';
 import Models from '../../../../typings/MongoTypes';
 import { nextStep } from './src/setter/setCustom';
 import { ExtendedSelectMenuInteraction } from '../../../../typings/SlashCommand';
 
-const configureWelcomeCommand = new SlashCommand({
+export const configureWelcomeCommand = new SubCommand({
     name: 'configure',
     description: 'Configure welcome message for the server',
-    userPermissions: ['Administrator'],
     run: async ({ interaction }) => {
         let data = await Models.WelcomeModel.findOne({
             serverId: `${interaction.guild.id}`,
@@ -31,4 +30,3 @@ const configureWelcomeCommand = new SlashCommand({
     },
 });
 
-export default configureWelcomeCommand;

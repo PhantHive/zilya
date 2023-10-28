@@ -1,24 +1,20 @@
-import { SlashCommand } from '../../../../structures/SlashCommand';
+import { SubCommand } from '../../../../structures/SlashCommand';
 import {
     ActionRowBuilder,
     AttachmentBuilder,
     ButtonBuilder,
     ButtonStyle,
     EmbedBuilder,
-    GuildChannel,
-    GuildTextBasedChannel,
-    Interaction,
     Message,
     MessageCollector,
     TextChannel,
 } from 'discord.js';
 import { ExtendedInteraction } from '../../../../typings/SlashCommand';
 import { client } from '../../../../index';
-const PBK = require('../../../../assets/utils/models/Pheabank');
+import PBK from '../../../../assets/utils/models/Pheabank';
 import { sqlPhearion } from '../../src/sqlPhearion';
-import interactionCreate from '../../../../events/guild/interactionCreate';
 
-exports.default = new SlashCommand({
+export const pheareaSubCommand = new SubCommand({
     name: 'phearea',
     description: 'Faites partie des propriétaires de la ville!',
     options: [

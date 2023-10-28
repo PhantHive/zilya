@@ -1,12 +1,12 @@
 import { SlashCommand } from '../../structures/SlashCommand';
 import { ExtendedInteraction } from '../../typings/SlashCommand';
 
-const daily = require('./subcommands/phearion/daily');
-const money = require('./subcommands/phearion/money');
-const pheabank = require('./subcommands/phearion/pheabank');
-const phearea = require('./subcommands/phearion/phearea');
+import { dailySubCommand } from './subcommands/phearion/daily';
+import { moneySubCommand } from './subcommands/phearion/money';
+import { pheabankSubCommand } from './subcommands/phearion/pheabank';
+import { pheareaSubCommand } from './subcommands/phearion/phearea';
 
-exports.default = new SlashCommand({
+const phearionCommand = new SlashCommand({
     name: 'phearion',
     description: 'All Phearion commands',
     options: [
@@ -14,52 +14,41 @@ exports.default = new SlashCommand({
             name: 'daily',
             description: 'Get your daily reward',
             type: 1,
-            options: daily.default.options,
+            options: dailySubCommand.options,
         },
         {
             name: 'money',
             description: 'Check your money',
             type: 1,
-            options: money.default.options,
+            options: moneySubCommand.options,
         },
         {
             name: 'pheabank',
             description: 'Check your pheabank',
             type: 1,
-            options: pheabank.default.options,
+            options: pheabankSubCommand.options,
         },
         {
             name: 'phearea',
             description: 'Check your phearea',
             type: 1,
-            options: phearea.default.options,
+            options: pheareaSubCommand.options,
         },
     ],
     run: async ({ interaction }) => {
-        // check which subcommand was used
-        if (
-            (interaction as ExtendedInteraction).options.getSubcommand() ===
-            'daily'
-        ) {
-            await daily.default.run({ interaction });
+        await interaction.deferReply();
+        let subcommand;
+
+        if ('options' in interaction) {
+            const subcommandName = interaction.options.getSubcommand();
+            subcommand = phearionCommand.subcommands.find(cmd => cmd.name === subcommandName);
         }
-        if (
-            (interaction as ExtendedInteraction).options.getSubcommand() ===
-            'money'
-        ) {
-            await money.default.run({ interaction });
-        }
-        if (
-            (interaction as ExtendedInteraction).options.getSubcommand() ===
-            'pheabank'
-        ) {
-            await pheabank.default.run({ interaction });
-        }
-        if (
-            (interaction as ExtendedInteraction).options.getSubcommand() ===
-            'phearea'
-        ) {
-            await phearea.default.run({ interaction });
+        if (subcommand) {
+            await subcommand.run({ interaction });
+        } else {
+            await interaction.reply('Subcommand not found!');
         }
     },
 });
+
+export default phearionCommand;

@@ -28,7 +28,14 @@ const userCard = async (paladinsProfile) => {
 export const profileSubCommand = new SubCommand({
     name: 'profile',
     description: 'Get user profile',
-    options: undefined,
+    options: [
+        {
+            name: 'nickname',
+            description: 'User nickname',
+            type: 3,
+            required: true,
+        }
+    ],
     run: async ({ interaction }): Promise<Message<BooleanCache<CacheType>>> => {
 
         const pseudo = (interaction as ExtendedInteraction).options.get(

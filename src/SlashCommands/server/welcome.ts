@@ -1,11 +1,11 @@
 import { SlashCommand } from '../../structures/SlashCommand';
 import { ExtendedInteraction } from '../../typings/SlashCommand';
-const configureWelcomeCommand = require('./subcommands/welcome/welcomeConfig');
-const removeWelcomeCommand = require('./subcommands/welcome/welcomeRemove');
-const editWelcomeCommand = require('./subcommands/welcome/welcomeEdit');
+import { configureWelcomeCommand } from './subcommands/welcome/welcomeConfig';
+import { removeWelcomeCommand } from './subcommands/welcome/welcomeRemove';
+import { editWelcomeCommand } from './subcommands/welcome/welcomeEdit';
 
 // create logger command that will have 2 subcommands
-exports.default = new SlashCommand({
+const welcomeCommand = new SlashCommand({
     name: 'welcome',
     description: 'Configure welcome message for the server',
     options: [
@@ -13,40 +13,37 @@ exports.default = new SlashCommand({
             name: 'configure',
             description: 'Configure welcome message for the server',
             type: 1,
-            options: configureWelcomeCommand.default.options,
+            options: configureWelcomeCommand.options,
         },
         {
             name: 'remove',
             description: 'Remove welcome message for the server',
             type: 1,
-            options: removeWelcomeCommand.default.options,
+            options: removeWelcomeCommand.options,
         },
         {
             name: 'edit',
             description: 'Edit welcome message for the server',
             type: 1,
-            options: editWelcomeCommand.default.options,
+            options: editWelcomeCommand.options,
         },
     ],
+    userPermissions: ['Administrator'],
+    subcommands: [configureWelcomeCommand, removeWelcomeCommand, editWelcomeCommand],
     run: async ({ interaction }) => {
-        // check which subcommand was used
-        if (
-            (interaction as ExtendedInteraction).options.getSubcommand() ===
-            'configure'
-        ) {
-            await configureWelcomeCommand.default.run({ interaction });
+        await interaction.deferReply();
+        let subcommand;
+
+        if ('options' in interaction) {
+            const subcommandName = interaction.options.getSubcommand();
+            subcommand = welcomeCommand.subcommands.find(cmd => cmd.name === subcommandName);
         }
-        if (
-            (interaction as ExtendedInteraction).options.getSubcommand() ===
-            'remove'
-        ) {
-            await removeWelcomeCommand.default.run({ interaction });
-        }
-        if (
-            (interaction as ExtendedInteraction).options.getSubcommand() ===
-            'edit'
-        ) {
-            await editWelcomeCommand.default.run({ interaction });
+        if (subcommand) {
+            await subcommand.run({ interaction });
+        } else {
+            await interaction.reply('Subcommand not found!');
         }
     },
 });
+
+export default welcomeCommand;

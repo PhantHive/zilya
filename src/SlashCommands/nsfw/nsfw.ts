@@ -15,7 +15,7 @@ async function getNSFWContent(request: string): Promise<string | null> {
     return null;
 }
 
-export const nsfw = new SlashCommand({
+const nsfw = new SlashCommand({
     name: 'neko',
     description: 'nekos',
     nsfw: true,
@@ -43,3 +43,5 @@ export const nsfw = new SlashCommand({
         }
     },
 });
+
+//export default nsfw;

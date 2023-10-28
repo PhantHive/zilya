@@ -1,8 +1,7 @@
-import { SlashCommand } from '../../../../structures/SlashCommand';
-const PBK = require('../../../../assets/utils/models/Pheabank');
-import { sqlPhearion } from '../../src/sqlPhearion';
+import { SubCommand } from '../../../../structures/SlashCommand';
+import PBK from '../../../../assets/utils/models/Pheabank';
 
-exports.default = new SlashCommand({
+export const dailySubCommand = new SubCommand({
     name: 'daily',
     description: 'Gagnez 20 Discoins par jour!',
     run: async ({ interaction }) => {

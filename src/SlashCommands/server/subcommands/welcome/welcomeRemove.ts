@@ -1,11 +1,10 @@
-import { SlashCommand } from '../../../../structures/SlashCommand';
+import { SubCommand } from '../../../../structures/SlashCommand';
 import { ActionRowBuilder, ButtonStyle, ButtonBuilder } from 'discord.js';
 import Models from '../../../../typings/MongoTypes';
 
-const removeWelcomeCommand = new SlashCommand({
+export const removeWelcomeCommand = new SubCommand({
     name: 'remove',
     description: 'Remove welcome message for the server',
-    userPermissions: ['Administrator'],
     run: async ({ interaction }) => {
         // find if there is data, if not say that there is nothing to remove otherwise send a confirmation button yes or no.
         // everything should be a Promise
@@ -49,5 +48,3 @@ const removeWelcomeCommand = new SlashCommand({
             });
     },
 });
-
-export default removeWelcomeCommand;

@@ -9,7 +9,7 @@ import path from 'path';
 import {ExtendedInteraction} from "../../typings/SlashCommand";
 
 
-exports.default = new SlashCommand({
+const rankCommand = new SlashCommand({
     name: 'rank',
     description: 'Display the rank card',
     run: async ({ interaction }) => {
@@ -65,3 +65,5 @@ exports.default = new SlashCommand({
             });
     },
 });
+
+export default rankCommand;
