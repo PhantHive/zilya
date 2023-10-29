@@ -1,25 +1,32 @@
-import { Event } from '../../structures/Event';
-import { client } from '../../index';
+import type {
+    ColorResolvable,
+    TextChannel,
+} from 'discord.js';
 import {
     EmbedBuilder,
     AuditLogEvent,
-    TextChannel,
-    ColorResolvable,
 } from 'discord.js';
-import Models from '../../typings/MongoTypes';
-import colors from '../../assets/data/canvasColors.json';
+import colors from '../../assets/data/canvasColors.json' assert { type: 'json' };
+import LoggerModel from '../../assets/utils/models/Logger';
+import { client } from '../../index';
+import { Event } from '../../structures/Event';
+import type { ILoggerDocument } from '../../typings/MongoTypes';
 
 export default new Event('roleCreate', async (role) => {
     if (!role.guild) return;
+    if (!client.user) return;
 
     try {
-        const data = await Models.LoggerModel.findOne({
+        const data = await LoggerModel.findOne<ILoggerDocument>({
             serverId: role.guild.id,
         });
 
         if (data) {
             const channelId = data.logChannel;
-            const color = colors[data.color.toLowerCase()] || 'RANDOM';
+
+            let colorName = data.color.toLowerCase() as keyof typeof colors;
+            if (!colors[colorName]) colorName = 'default';
+            const color = colors[colorName];
 
             const logger = (await client.channels.fetch(
                 channelId
@@ -34,6 +41,7 @@ export default new Event('roleCreate', async (role) => {
 
                 if (roleCreateLog) {
                     const { executor } = roleCreateLog;
+                    if (!executor) return;
 
                     const embed = new EmbedBuilder()
                         .setAuthor({
@@ -44,7 +52,7 @@ export default new Event('roleCreate', async (role) => {
                         .setDescription(
                             `**${executor.tag}** created a role: **${role.name}**.`
                         )
-                        .setColor(color)
+                        .setColor(color as ColorResolvable)
                         .addFields(
                             {
                                 name: 'Role Name',

@@ -1,41 +1,37 @@
+import type { CommandInteractionOptionResolver } from 'discord.js';
+import { setChannelId, setTheme, setColor } from '../../SlashCommands/server/subcommands/welcome/src/setter/setCustom';
+import { setEdit } from '../../SlashCommands/server/subcommands/welcome/src/setter/setEdit';
+import WelcomeModel from '../../assets/utils/models/Welcome';
 import { client } from '../../index';
 import { Event } from '../../structures/Event';
-import {
+import type { IWelcomeDocument } from '../../typings/MongoTypes';
+import type {
     ExtendedInteraction,
     ExtendedSelectMenuInteraction,
 } from '../../typings/SlashCommand';
-import { CommandInteractionOptionResolver } from 'discord.js';
-const {
-    setChannelId,
-    setTheme,
-    setColor,
-} = require('../../SlashCommands/server/subcommands/welcome/src/setter/setCustom');
-const {
-    setEdit,
-} = require('../../SlashCommands/server/subcommands/welcome/src/setter/setEdit');
-import Models from '../../typings/MongoTypes';
 
 export default new Event('interactionCreate', async (interaction) => {
     if (interaction.isStringSelectMenu()) {
+
+        if (!interaction.guild) return;
         // ================
         // WELCOME SYSTEM
         // ================
-
-        let data = await Models.WelcomeModel.findOne({
+        let data = await WelcomeModel.findOne<IWelcomeDocument>({
             serverId: `${interaction.guild.id}`,
-        });
+        }) as IWelcomeDocument;
 
         if (!data) {
-            await new Models.WelcomeModel({
+            await new WelcomeModel({
                 serverId: `${interaction.guild.id}`,
                 channelId: '0',
                 theme: -1,
                 color: '#000000',
             }).save();
 
-            data = await Models.WelcomeModel.findOne({
+            data = await WelcomeModel.findOne<IWelcomeDocument>({
                 serverId: `${interaction.guild.id}`,
-            });
+            }) as IWelcomeDocument;
         }
 
         // setter
@@ -62,17 +58,18 @@ export default new Event('interactionCreate', async (interaction) => {
             // get value that need to be edited
             const value = (interaction as ExtendedSelectMenuInteraction)
                 .values[0];
+            if (!value) return;
             await setEdit(data, interaction, value);
         }
     } else if (interaction.isButton()) {
+        if (!interaction.guild) return;
         // ================
         // WELCOME SYSTEM
         // ================
-
         // check if customId is welcome_remove_yes
         if (interaction.customId === 'welcome_remove_yes') {
             // remove the welcome message
-            await Models.WelcomeModel.findOneAndDelete({
+            await WelcomeModel.findOneAndDelete<IWelcomeDocument>({
                 serverId: `${interaction.guild.id}`,
             });
 
@@ -95,12 +92,13 @@ export default new Event('interactionCreate', async (interaction) => {
     const command = client.commands.get(interaction.commandName);
     if (!command) return;
 
+    console.log('Exec command', command);
     await command.run({
-        args: (interaction as ExtendedInteraction)
-            .options as CommandInteractionOptionResolver,
-        client,
         interaction: interaction as
             | ExtendedInteraction
             | ExtendedSelectMenuInteraction,
+        _args: (interaction as ExtendedInteraction)
+            .options as CommandInteractionOptionResolver,
+        _client: client,
     });
 });

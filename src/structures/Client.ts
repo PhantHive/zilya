@@ -1,126 +1,96 @@
-import {
-    ApplicationCommandDataResolvable,
-    Client,
-    Collection,
-    ClientEvents,
-} from 'discord.js';
-import { SlashCommandType } from '../typings/SlashCommand';
-import glob from 'glob';
-import { RegisterCommandsOptions } from '../typings/client';
-import { Event } from './Event';
-import * as superagent from 'superagent';
+import { dirname } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import type { ApplicationCommandDataResolvable, ClientEvents } from 'discord.js';
+import { Client, Collection } from 'discord.js';
+import * as glob from 'glob';
+import type { SlashCommandType } from '../typings/SlashCommand';
+import type { RegisterCommandsOptions } from '../typings/client';
+import type { Event } from './Event';
 
 export class ExtendedClient extends Client {
-    commands: Collection<string, SlashCommandType> = new Collection();
-    lastMessageTimestamp: number;
-    static superagent: typeof superagent;
+	public commands: Collection<string, SlashCommandType> = new Collection();
 
-    constructor() {
-        super({
-            intents: [
-                'Guilds',
-                'GuildMessages',
-                'GuildMembers',
-                'GuildMessageReactions',
-                'MessageContent',
-                'DirectMessages',
-                'GuildVoiceStates',
-            ],
-        });
-    }
+	public lastMessageTimestamp: number | undefined;
 
-    start() {
-        this.registerModules();
-        this.login(process.env.BOT_TOKEN).catch((err) => {
-            setTimeout(() => {
-                this.login(process.env.BOT_TOKEN);
-            }, 5000);
-        });
-    }
+	// public static superagent: typeof superagent;
 
-    async importFiles(filePath: string) {
-        console.log(filePath);
-        const file = await import(filePath);
-        return file?.default;
-    }
+	public constructor() {
+		super({
+			intents: [
+				'Guilds',
+				'GuildMessages',
+				'GuildMembers',
+				'GuildMessageReactions',
+				'MessageContent',
+				'DirectMessages',
+				'GuildVoiceStates',
+			],
+		});
+	}
 
-    async registerCommands({ commands, guildId }: RegisterCommandsOptions) {
-        if (guildId) {
-            await this.guilds.cache.get(guildId)?.commands.set(commands);
-        } else {
-            await this.application?.commands.set(commands);
-        }
-    }
+	public async start() {
+		await this.registerModules();
 
-    async registerModules() {
-        // Commands global
-        const slashCommands: ApplicationCommandDataResolvable[] = [];
-        const phearionSlashCommands: ApplicationCommandDataResolvable[] = [];
+		await this.login(process.env.BOT_TOKEN);
+	}
 
-        // get list of all ts and js file within subfolder of SlashCommands
-        const commandFiles = glob.sync(
-            `${__dirname}/../SlashCommands/*/*{.ts,.js}`.replace(/\\/g, '/')
-        );
-        // keep only commands within Phearion folder (global commands only here)
-        const filteredCommandFiles = commandFiles.filter((file) =>
-            file.includes('phearion')
-        );
+	public async importFiles(filePath: string) {
+		const fileURL = pathToFileURL(filePath);
+		const file = await import(fileURL.href);
+		return file?.default;
+	}
 
-        // in slashCommands, filter out Phearion commands
-        const filteredGlobalFiles = commandFiles.filter(
-            (file) => !file.includes('phearion')
-        );
+	public async registerCommands({ commands, guildId }: RegisterCommandsOptions) {
+		if (guildId) {
+			await this.guilds.cache.get(guildId)?.commands.set(commands);
+		} else {
+			await this.application?.commands.set(commands);
+		}
+	}
 
-        console.log('Phearion commands: ', filteredCommandFiles);
+	public async registerModules() {
+		// Commands global
+		const slashCommands: ApplicationCommandDataResolvable[] = [];
 
-        // register global commands
-        let c = 1;
-        for (const filePath of filteredGlobalFiles) {
-            try {
-                const command: SlashCommandType | undefined = await this.importFiles(filePath);
-                if (!command || !command.name) {
-                    console.error(`Command not found or invalid command structure in file: ${filePath}`);
-                    continue;
-                }
-                this.commands.set(command.name, command);
-                slashCommands.push(command);
-                c++;
-            } catch (error) {
-                console.error(`Error loading command from file: ${filePath}`, error);
-            }
-        }
+		// get list of all ts and js file within subfolder of SlashCommands
+		const __filename = fileURLToPath(import.meta.url);
+		const __dirname = dirname(__filename);
+		const commandFiles = glob.sync(
+			`${__dirname}/../SlashCommands/*/*{.ts,.js}`.replaceAll('\\', '/'),
+		);
 
-        // register Phearion guild commands
-        for (const filePath of filteredCommandFiles) {
-            const command: SlashCommandType = await this.importFiles(filePath);
-            if (!command.name) continue;
-            this.commands.set(command.name, command);
-            phearionSlashCommands.push(command);
-            c++;
-        }
+		// register global commands
+		let count = 1;
+		for (const filePath of commandFiles) {
+			try {
+				const command: SlashCommandType | undefined = await this.importFiles(filePath);
+				if (!command || !command.name) {
+					console.error(`Command not found or invalid command structure in file: ${filePath}`);
+					continue;
+				}
 
-        this.on('ready', () => {
-            this.registerCommands({
-                commands: slashCommands,
-                guildId: null,
-            });
-            this.registerCommands({
-                commands: phearionSlashCommands,
-                guildId: process.env.GUILD_ID,
-            });
-        });
+				this.commands.set(command.name, command);
+				slashCommands.push(command as ApplicationCommandDataResolvable);
+				count++;
+			} catch (error) {
+				console.error(`Error loading command from file: ${filePath}`, error);
+			}
+		}
 
-        // Event
-        const eventFiles = glob.sync(
-            `${__dirname}/../events/*/*{.ts,.js}`.replace(/\\/g, '/')
-        );
-        c = 1;
-        for (const filePath of eventFiles) {
-            const event: Event<keyof ClientEvents> = await this.importFiles(
-                filePath
-            );
-            this.on(event.event, event.run);
-            c++;
-        }
-    }
+		this.on('ready', async () => {
+			await this.registerCommands({
+				commands: slashCommands,
+				guildId: '',
+			});
+		});
+
+		// Event
+		const eventFiles = glob.sync(`${__dirname}/../events/*/*{.ts,.js}`.replaceAll('\\', '/'));
+		count = 1;
+		for (const filePath of eventFiles) {
+			const event: Event<keyof ClientEvents> = await this.importFiles(filePath);
+			this.on(event.event, event.run);
+			count++;
+		}
+	}
 }

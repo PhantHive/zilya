@@ -1,44 +1,41 @@
-import {
-    ActionRow,
-    ActionRowBuilder,
-    StringSelectMenuBuilder,
-} from 'discord.js';
+import { ActionRowBuilder, StringSelectMenuBuilder } from 'discord.js';
+import type { ExtendedSelectMenuInteraction } from '../../../../../../typings/SlashCommand';
 
-const editOptions = async (interaction) => {
-    let actionRow: ActionRowBuilder = new ActionRowBuilder().addComponents(
-        new StringSelectMenuBuilder()
-            .setCustomId('edit_welcome')
-            .setPlaceholder('Choose an option')
-            .addOptions(
-                {
-                    label: 'Edit channel id',
-                    emoji: '📝',
-                    value: 'edit_channel_id',
-                },
-                {
-                    label: 'Edit color',
-                    emoji: '🎨',
-                    value: 'edit_color',
-                },
-                {
-                    label: 'Edit theme',
-                    emoji: '🦄',
-                    value: 'edit_theme',
-                }
-            )
-    );
+const editOptions = async (interaction: ExtendedSelectMenuInteraction) => {
+	const actionRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+		new StringSelectMenuBuilder()
+			.setCustomId('edit_welcome')
+			.setPlaceholder('Choose an option')
+			.addOptions(
+				{
+					label: 'Edit channel id',
+					emoji: '📝',
+					value: 'edit_channel_id',
+				},
+				{
+					label: 'Edit color',
+					emoji: '🎨',
+					value: 'edit_color',
+				},
+				{
+					label: 'Edit theme',
+					emoji: '🦄',
+					value: 'edit_theme',
+				},
+			),
+	);
 
-    await interaction
-        .reply({
-            content: 'What do you wish to edit?',
-            components: [actionRow],
-        })
-        .catch(() => {
-            interaction.editReply({
-                content: 'What do you wish to edit?',
-                components: [actionRow],
-            });
-        });
+	try {
+		await interaction.reply({
+			content: 'What do you wish to edit?',
+			components: [actionRow],
+		});
+	} catch (error) {
+		console.error('An error occurred:', error);
+		await interaction.reply({
+			content: 'An unexpected error occurred. Please try again later.',
+		});
+	}
 };
 
 export { editOptions };
