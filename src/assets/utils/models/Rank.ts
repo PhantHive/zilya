@@ -13,12 +13,12 @@ const rankSchema = new Schema<IRankDocument>({
 });
 
 rankSchema.statics.findOneOrCreate = async function findOneOrCreate(
-	this: mongoose.Model<any>,
-	filter: mongoose.FilterQuery<any>,
+	this: mongoose.Model<IRankDocument>,
+	filter: mongoose.FilterQuery<IRankDocument>,
 	doc: mongoose.Document,
 ) {
 	const one = await this.findOne(filter);
-	return one || this.create(doc);
+	return one ?? await this.create(doc);
 };
 
 const RankModel = mongoose.connection.useDb('rank').model('ranks', rankSchema);

@@ -1,6 +1,7 @@
 import type { Canvas, CanvasRenderingContext2D } from 'canvas';
 import { AttachmentBuilder } from 'discord.js';
 import { TextFormatter } from '../../../../assets/utils/textFormatter';
+import type { IRankDocument } from '../../../../typings/MongoTypes.ts';
 import type { ExtendedInteraction } from '../../../../typings/SlashCommand';
 import DrawAvatars from './canvasModules/drawAvatars';
 import DrawBarsLevel from './canvasModules/drawBarsLevel';
@@ -9,14 +10,14 @@ import DrawCardShape from './canvasModules/drawCardShape';
 class DrawRankCard extends TextFormatter {
 	public canvas: Canvas;
 
-	public data: any;
+	public data: IRankDocument;
 
 	public interaction: ExtendedInteraction;
 
 	public constructor(
 		ctx: CanvasRenderingContext2D,
 		canvas: Canvas,
-		data: any,
+		data: IRankDocument,
 		interaction: ExtendedInteraction,
 	) {
 		super(ctx);

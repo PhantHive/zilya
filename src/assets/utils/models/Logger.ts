@@ -9,12 +9,12 @@ const loggerSchema = new Schema<ILoggerDocument>({
 });
 
 loggerSchema.statics.findOneOrCreate = async function findOneOrCreate(
-	this: mongoose.Model<any>,
-	filter: mongoose.FilterQuery<any>,
+	this: mongoose.Model<ILoggerDocument>,
+	filter: mongoose.FilterQuery<ILoggerDocument>,
 	doc: mongoose.Document,
 ) {
 	const one = await this.findOne(filter);
-	return one || this.create(doc);
+	return one ?? await this.create(doc);
 };
 
 const LoggerModel = mongoose.connection.useDb('logger').model('logs', loggerSchema);

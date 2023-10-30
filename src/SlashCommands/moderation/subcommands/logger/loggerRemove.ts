@@ -5,6 +5,7 @@ import type { ILoggerDocument } from '../../../../typings/MongoTypes';
 export const removeLoggerCommand = new SubCommand({
 	name: 'remove',
 	description: 'Remove logger for the server',
+	options: [],
 	run: async ({ interaction }) => {
 		if (!interaction.guild) return interaction.reply('This command can only be used in a server.');
 
@@ -14,7 +15,7 @@ export const removeLoggerCommand = new SubCommand({
 
 		try {
 			if (!data) {
-				await interaction.reply({
+				return await interaction.reply({
 					content: 'Logger is not configured for this server.',
 					ephemeral: true,
 				});
@@ -23,19 +24,16 @@ export const removeLoggerCommand = new SubCommand({
 					serverId: interaction.guild.id,
 				});
 
-				await interaction.reply({
+				return await interaction.reply({
 					content: 'Logger has been removed.',
 					ephemeral: true,
 				});
 			}
 		} catch {
-			await interaction.reply({
+			return await interaction.reply({
 				content: 'Error trying to remove logger.',
 				ephemeral: true,
 			});
 		}
-
-		return;
-		
 	},
 });

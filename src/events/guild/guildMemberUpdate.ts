@@ -1,22 +1,22 @@
-import type { ColorResolvable, GuildMember, Role, TextChannel } from 'discord.js';
+import type { ColorResolvable, GuildMember, Role, TextChannel, User } from 'discord.js';
 import { AuditLogEvent, EmbedBuilder } from 'discord.js';
 import colors from '../../assets/data/canvasColors.json' assert { type: 'json' };
 import LoggerModel from '../../assets/utils/models/Logger';
+import type { ExtendedClient } from '../../structures/Client.ts';
 import { Event } from '../../structures/Event';
 import type { ILoggerDocument } from '../../typings/MongoTypes';
-import { ExtendedClient } from '../../structures/Client.ts';
 
 async function sendEmbed(
 	client: ExtendedClient,
 	logger: TextChannel,
 	color: string,
-	executor: any,
+	executor: User,
 	tagName: string,
 	tagValue: string,
 	fieldComment: string,
 	desc: string,
 	changeName: string,
-	oldRole: GuildMember,
+	newMember: GuildMember,
 ) {
 	if (!client.user) return;
 
@@ -44,7 +44,7 @@ async function sendEmbed(
 		)
 		.setTimestamp()
 		.setFooter({
-			text: `by PhearionNetwork. Sever: ${oldRole.guild.name}`,
+			text: `by PhearionNetwork. Sever: ${newMember.guild.name}`,
 			iconURL: client.user.displayAvatarURL(),
 		});
 
@@ -77,6 +77,7 @@ export default new Event('guildMemberUpdate', async (client, oldMember, newMembe
 		if (!auditLog) return;
 		// grab the user object of the person who updated the member
 		const { executor } = auditLog;
+		if (!executor) return;
 
 		let newRole: Role | undefined;
 		let tagName: string;

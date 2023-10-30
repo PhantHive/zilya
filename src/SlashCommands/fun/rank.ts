@@ -9,6 +9,7 @@ import { DrawRankCard } from './rank/drawer/drawCard';
 const rankCommand = new SlashCommand({
 	name: 'rank',
 	description: 'Display the rank card',
+	options: [],
 	run: async ({ interaction }) => {
 		if (!interaction.guild) {
 			return interaction.reply('This command can only be used in a server.');
@@ -46,17 +47,20 @@ const rankCommand = new SlashCommand({
 
 				const card = new DrawRankCard(ctx, canvas, data, interaction as ExtendedInteraction);
 				const cardBuffer = await card.drawCard();
-				await interaction.editReply({ files: [cardBuffer] });
+				return await interaction.editReply({ files: [cardBuffer] });
 			} else {
 				const card = new DrawRankCard(ctx, canvas, data, interaction as ExtendedInteraction);
 				const cardBuffer = await card.drawCard();
-				await interaction.editReply({ files: [cardBuffer] });
+				return await interaction.editReply({ files: [cardBuffer] });
 			}
 		} catch (error) {
 			console.error(error);
+			return interaction.editReply({
+				content: 'Error trying to draw rank card.'
+			});
 		}
 
-		return;
+		
 	},
 });
 

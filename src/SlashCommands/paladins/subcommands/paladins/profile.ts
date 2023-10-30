@@ -7,7 +7,7 @@ import type { PaladinsProfile } from '../../../../typings/PaladinsTypes';
 import type { ExtendedInteraction } from '../../../../typings/SlashCommand';
 import { drawCard, drawStats } from './src/drawProfile';
 
-const pal: any = new API({
+const pal = new API({
 	devId: process.env.DEV_ID,
 	authKey: process.env.PALADINS,
 }); // API loaded and ready to go.
@@ -31,8 +31,6 @@ export const profileSubCommand = new SubCommand({
 	name: 'profile',
 	description: 'Get user profile',
 	run: async ({ interaction }): Promise<Message<BooleanCache<CacheType>>> => {
-		await interaction.deferReply();
-
 		if (!(interaction as ExtendedInteraction).options.getString('nickname')) {
 			return interaction.editReply({
 				content: `You need to provide a nickname.`,
@@ -40,6 +38,11 @@ export const profileSubCommand = new SubCommand({
 		}
 
 		const pseudo = (interaction as ExtendedInteraction).options.getString('nickname');
+		if (!pseudo) {
+			return interaction.editReply({
+				content: `You need to provide a nickname.`,
+			});
+		}
 
 		const paladinsProfile: PaladinsProfile = {
 			userAvatar: '',
@@ -58,7 +61,8 @@ export const profileSubCommand = new SubCommand({
 
 		let res;
 		try {
-			res = await pal.getPlayer(pseudo);
+			const playerId = await pal.getPlayerIdByName(pseudo);
+			res = await pal.getPlayer(playerId);
 		} catch {
 			return await interaction.editReply({
 				content: `User not found.`,

@@ -14,7 +14,8 @@ import type {
 	CacheType,
 	BooleanCache,
 	Message,
-	InteractionResponse, ApplicationCommandSubCommandData,
+	InteractionResponse,
+	ApplicationCommandSubCommandData,
 } from 'discord.js';
 import type { ExtendedClient } from '../structures/Client';
 
@@ -23,7 +24,7 @@ export interface ExtendedInteraction extends CommandInteraction {
 	member: GuildMember;
 
 	options: CommandInteractionOptionResolver & {
-		get(name: string, required?: boolean): any;
+		get(name: string, required?: boolean): CommandInteractionOptionResolver;
 		getSubcommand(): string;
 	};
 

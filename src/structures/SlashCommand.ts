@@ -4,9 +4,9 @@ import type {
 	CacheType,
 	InteractionResponse,
 	Message,
+	ApplicationCommandSubCommandData,
 } from 'discord.js';
 import type { RunOptions, SlashCommandType, SubCommandType } from '../typings/SlashCommand';
-import { ApplicationCommandSubCommandData } from 'discord.js';
 
 export class SubCommand implements SubCommandType {
 	public name: string;

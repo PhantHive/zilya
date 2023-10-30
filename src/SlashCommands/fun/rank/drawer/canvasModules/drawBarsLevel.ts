@@ -1,14 +1,19 @@
-import path from 'node:path';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { Canvas, CanvasRenderingContext2D, Image } from 'canvas';
 import { loadImage } from 'canvas';
 import { TextFormatter } from '../../../../../assets/utils/textFormatter';
+import type { IRankDocument } from '../../../../../typings/MongoTypes.ts';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class DrawBarsLevel extends TextFormatter {
-	public canvas: any;
+	public canvas: Canvas;
 
-	public data: any;
+	public data: IRankDocument;
 
-	public constructor(ctx: CanvasRenderingContext2D, canvas: Canvas, data: any) {
+	public constructor(ctx: CanvasRenderingContext2D, canvas: Canvas, data: IRankDocument) {
 		super(ctx);
 		this.ctx = ctx;
 		this.canvas = canvas;

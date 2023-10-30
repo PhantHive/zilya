@@ -1,11 +1,15 @@
-import path from 'node:path';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { Canvas, CanvasRenderingContext2D } from 'canvas';
 import { loadImage } from 'canvas';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class DrawCardShape {
 	public ctx: CanvasRenderingContext2D;
 
-	public canvas: any;
+	public canvas: Canvas;
 
 	public constructor(ctx: CanvasRenderingContext2D, canvas: Canvas) {
 		this.ctx = ctx;

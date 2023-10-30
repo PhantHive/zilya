@@ -12,19 +12,6 @@ interface TenorApiResponse {
 	results: TenorGif[];
 }
 
-function isTenorApiResponse(obj: any): obj is TenorApiResponse {
-	return (
-		Array.isArray(obj.results) &&
-		obj.results.every((result: any) => {
-			return (
-				typeof result.media_formats === 'object' &&
-				typeof result.media_formats.gif === 'object' &&
-				typeof result.media_formats.gif.url === 'string'
-			);
-		})
-	);
-}
-
 const tenorApiSearcher = async (query: string): Promise<string | null> => {
 	const searcher = `https://g.tenor.com/v2/search?q=${encodeURIComponent(query)}&key=${
 		process.env.TENOR_API
@@ -37,11 +24,7 @@ const tenorApiSearcher = async (query: string): Promise<string | null> => {
 			return null;
 		}
 
-		const json = await response.json();
-		if (!isTenorApiResponse(json)) {
-			console.error('Invalid response format from Tenor API');
-			return null;
-		}
+		const json = (await response.json()) as TenorApiResponse;
 
 		if (json.results.length === 0) {
 			console.error('No results found from Tenor API');

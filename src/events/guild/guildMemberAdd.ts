@@ -1,5 +1,6 @@
 import { readdir } from 'node:fs/promises';
-import path from 'node:path';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { Canvas, Image } from 'canvas';
 import { createCanvas, loadImage } from 'canvas';
 import { TextChannel } from 'discord.js';
@@ -8,6 +9,9 @@ import WelcomeModel from '../../assets/utils/models/Welcome';
 import { Event } from '../../structures/Event';
 import type { IWelcomeDocument } from '../../typings/MongoTypes';
 import type { MyAttachmentData } from '../../typings/SlashCommand';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const applyText = (
 	canvas: Canvas,

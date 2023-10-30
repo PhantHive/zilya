@@ -7,6 +7,7 @@ import { nextStep } from './src/setter/setCustom';
 export const configureWelcomeCommand = new SubCommand({
 	name: 'configure',
 	description: 'Configure welcome message for the server',
+	options: [],
 	run: async ({ interaction }) => {
 		if (!interaction.guild) return interaction.reply('This command can only be used in a server.');
 		let data = await WelcomeModel.findOne<IWelcomeDocument>({
@@ -18,6 +19,7 @@ export const configureWelcomeCommand = new SubCommand({
 				serverId: `${interaction.guild.id}`,
 				channelId: '0',
 				theme: -1,
+				isEdit: false,
 				color: '#000000',
 			}).save();
 
@@ -30,11 +32,9 @@ export const configureWelcomeCommand = new SubCommand({
 					content: 'Error trying to configure welcome message.',
 					ephemeral: true,
 				});
-			await nextStep(data, interaction as ExtendedSelectMenuInteraction);
+			await nextStep(data, interaction as ExtendedSelectMenuInteraction); 
 		} else {
-			await nextStep(data, interaction as ExtendedSelectMenuInteraction);
+			await nextStep(data, interaction as ExtendedSelectMenuInteraction); 
 		}
-
-		return;
 	},
 });

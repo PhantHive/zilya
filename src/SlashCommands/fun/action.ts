@@ -1,7 +1,7 @@
+import type { ApplicationCommandSubCommandData } from 'discord.js';
 import { SlashCommand } from '../../structures/SlashCommand';
 import { hugSubCommand } from './action/subcommands/actions/hug';
 import { objectionSubCommand } from './action/subcommands/actions/objection';
-import { ApplicationCommandSubCommandData } from 'discord.js';
 
 const actionCommand = new SlashCommand({
 	name: 'action',

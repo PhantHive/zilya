@@ -34,12 +34,6 @@ const nextStep = async (data: IWelcomeDocument, interaction: ExtendedSelectMenuI
 			channels.splice(24, channels.length - 23);
 		}
 
-		const theme = themes.find((theme) => theme.value === data.theme);
-		if (!theme) {
-			console.log('theme not found...');
-			return;
-		}
-
 		if (data.channelId === '0') {
 			await selectChannelId(interaction, channels);
 		} else if (data.theme === -1) {
@@ -47,19 +41,25 @@ const nextStep = async (data: IWelcomeDocument, interaction: ExtendedSelectMenuI
 		} else if (data.color === '#000000') {
 			await selectWelcomeColor(interaction);
 		} else {
+			const theme = themes.find((theme) => theme.value === data.theme);
+			if (!theme) {
+				console.log('theme not found...');
+				return;
+			}
+
 			const msg =
 				`All data are saved for <#${data.channelId}>\n` +
 				`\`\`\`js\nChannel ID: ${data.channelId}\n` +
 				`Theme: ${theme.name}\n` +
 				`Color: ${data.color}\`\`\`` +
 				`you can reset the welcome message with the command: \`/welcome remove\` or edit it with the command: \`/welcome edit\``;
-			await interaction.reply({
+			await interaction.editReply({
 				content: msg,
 			});
 		}
 	} catch (error) {
 		console.error('An error occurred while handling the next step:', error);
-		await interaction.reply('An unexpected error occurred. Please try again later.');
+		await interaction.editReply('An unexpected error occurred. Please try again later.');
 	}
 };
 
@@ -126,7 +126,8 @@ const setTheme = async (data: IWelcomeDocument, interaction: ExtendedSelectMenuI
 
 	try {
 		if (choosedTheme >= 0 && choosedTheme <= 5) {
-			await data.updateOne({ _id: data._id }, { $set: { theme: choosedTheme } });
+			data.theme = choosedTheme;
+			await data.save();
 			const response = `You chose the theme: **${themeName}**, I will set up the welcome message with this theme.\n Proceeding to the next step...`;
 			await interaction.update({ content: response, components: [] });
 			await setTimeout(2_000);
@@ -146,10 +147,12 @@ const setTheme = async (data: IWelcomeDocument, interaction: ExtendedSelectMenuI
 const setColor = async (data: IWelcomeDocument, interaction: ExtendedSelectMenuInteraction) => {
 	// make it a promises, if the set fail then warn the user and abort the command
 	const choosedColor = interaction.values[0];
+	if (!choosedColor) throw new Error('An unexpected error occurred. Please try again later.');
 
 	try {
 		if (choosedColor !== '#000000') {
-			await data.updateOne({ _id: data._id }, { $set: { color: choosedColor } });
+			data.color = choosedColor;
+			await data.save();
 			const response = `You chose the color: **${choosedColor}**, I will set up the welcome message with this color.\n Proceeding to the next step...`;
 			await interaction.update({ content: response, components: [] });
 			await setTimeout(2_000);
@@ -161,7 +164,7 @@ const setColor = async (data: IWelcomeDocument, interaction: ExtendedSelectMenuI
 		}
 	} catch (error) {
 		console.error('An error occurred while handling the color choice:', error);
-		await interaction.reply('An unexpected error occurred. Please try again later.');
+		await interaction.editReply('An unexpected error occurred. Please try again later.');
 	}
 };
 
