@@ -8,7 +8,6 @@ import {
 import colors from '../../assets/data/canvasColors.json' assert { type: 'json' };
 import LoggerModel from '../../assets/utils/models/Logger';
 import RankModel from '../../assets/utils/models/Rank';
-import { client } from '../../index';
 import { Event } from '../../structures/Event';
 import type { ILoggerDocument, IRankDocument } from '../../typings/MongoTypes';
 
@@ -90,7 +89,7 @@ const updateRank = async (newState: VoiceState, timer: number) => {
 
 export default new Event(
     'voiceStateUpdate',
-    async (oldState: VoiceState, newState: VoiceState) => {
+    async (client, oldState: VoiceState, newState: VoiceState) => {
         if (!oldState.guild || !oldState.member || !newState.member) return;
         if (oldState.member.user.bot) return;
 

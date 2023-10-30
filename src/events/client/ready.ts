@@ -1,8 +1,7 @@
 import { ActivityType } from 'discord.js';
-import { client } from '../../index';
 import { Event } from '../../structures/Event';
 
-export default new Event('ready', () => {
+export default new Event('ready', async (client) => {
 	console.log(`Logged in as ${client.user?.tag}!`);
 	if (!client.user) return;
 	client.user.setPresence({

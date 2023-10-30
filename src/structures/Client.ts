@@ -1,14 +1,17 @@
-import { dirname } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { ApplicationCommandDataResolvable, ClientEvents } from 'discord.js';
 import { Client, Collection } from 'discord.js';
 import * as glob from 'glob';
 import type { SlashCommandType } from '../typings/SlashCommand';
 import type { RegisterCommandsOptions } from '../typings/client';
 import type { Event } from './Event';
+import { fileURLToPath, pathToFileURL } from 'url';
+import { dirname, join } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export class ExtendedClient extends Client {
 	public commands: Collection<string, SlashCommandType> = new Collection();
+	public events: Collection<string, Event<keyof ClientEvents>> = new Collection();
 
 	public lastMessageTimestamp: number | undefined;
 
@@ -30,15 +33,20 @@ export class ExtendedClient extends Client {
 
 	public async start() {
 		await this.registerModules();
-
 		await this.login(process.env.BOT_TOKEN);
 	}
 
 	public async importFiles(filePath: string) {
-		const fileURL = pathToFileURL(filePath);
-		const file = await import(fileURL.href);
-		return file?.default;
+		try {
+			const fileURL = pathToFileURL(filePath);
+			const file = await import(fileURL.href)
+			return file.default;
+		} catch (error) {
+			console.error(`Error importing file from path: ${filePath}`, error);
+			return undefined;
+		}
 	}
+
 
 	public async registerCommands({ commands, guildId }: RegisterCommandsOptions) {
 		if (guildId) {
@@ -52,17 +60,13 @@ export class ExtendedClient extends Client {
 		// Commands global
 		const slashCommands: ApplicationCommandDataResolvable[] = [];
 
-		// get list of all ts and js file within subfolder of SlashCommands
-		const __filename = fileURLToPath(import.meta.url);
-		const __dirname = dirname(__filename);
-		const commandFiles = glob.sync(
-			`${__dirname}/../SlashCommands/*/*{.ts,.js}`.replaceAll('\\', '/'),
-		);
+		const commandFiles = glob.sync(join(__dirname, '../SlashCommands/*/*{.ts,.js}').replaceAll('\\', '/'));
 
 		// register global commands
 		let count = 1;
 		for (const filePath of commandFiles) {
 			try {
+				console.log(`Loading slash command from file: ${filePath}`)
 				const command: SlashCommandType | undefined = await this.importFiles(filePath);
 				if (!command || !command.name) {
 					console.error(`Command not found or invalid command structure in file: ${filePath}`);
@@ -70,7 +74,7 @@ export class ExtendedClient extends Client {
 				}
 
 				this.commands.set(command.name, command);
-				slashCommands.push(command as ApplicationCommandDataResolvable);
+				slashCommands.push(command);
 				count++;
 			} catch (error) {
 				console.error(`Error loading command from file: ${filePath}`, error);
@@ -82,15 +86,26 @@ export class ExtendedClient extends Client {
 				commands: slashCommands,
 				guildId: '',
 			});
+			console.log(`Registered ${slashCommands.length} slash commands`)
 		});
 
-		// Event
-		const eventFiles = glob.sync(`${__dirname}/../events/*/*{.ts,.js}`.replaceAll('\\', '/'));
-		count = 1;
+
+		// Events
+		const eventFiles = glob.sync(join(__dirname, '../events/*/*{.ts,.js}').replaceAll('\\', '/'));
 		for (const filePath of eventFiles) {
-			const event: Event<keyof ClientEvents> = await this.importFiles(filePath);
-			this.on(event.event, event.run);
-			count++;
+			try {
+				console.log(`Loading event from file: ${filePath}`)
+				const event: Event<keyof ClientEvents> | undefined = await this.importFiles(filePath);
+				if (!event || !event.name) {
+					console.error(`Event not found or invalid event structure in file: ${filePath}`);
+					continue;
+				}
+
+				this.events.set(event.name, event);
+				this.on(event.name, (...args) => event.run(this, ...args));
+			} catch (error) {
+				console.error(`Error loading event from file: ${filePath}`, error);
+			}
 		}
 	}
 }

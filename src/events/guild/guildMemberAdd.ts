@@ -5,7 +5,6 @@ import { createCanvas, loadImage } from 'canvas';
 import { TextChannel } from 'discord.js';
 import themes from '../../assets/data/theme.json' assert { type: 'json' };
 import WelcomeModel from '../../assets/utils/models/Welcome';
-import { client } from '../../index';
 import { Event } from '../../structures/Event';
 import type { IWelcomeDocument } from '../../typings/MongoTypes';
 import type { MyAttachmentData } from '../../typings/SlashCommand';
@@ -36,7 +35,7 @@ const applyText = (
 	return [ctx.font, ctx.measureText(text).width];
 };
 
-export default new Event('guildMemberAdd', async (member) => {
+export default new Event('guildMemberAdd', async (client, member) => {
 	const data = await WelcomeModel.findOne<IWelcomeDocument>({
 		serverId: member.guild.id,
 	});

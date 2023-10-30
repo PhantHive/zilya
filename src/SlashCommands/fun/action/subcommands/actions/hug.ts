@@ -7,6 +7,14 @@ import { tenorApiSearcher } from './searcher';
 export const hugSubCommand = new SubCommand({
 	name: 'hug',
 	description: 'Hug someone',
+	options: [
+		{
+			name: 'user',
+			description: 'User to hug',
+			type: 6,
+			required: true,
+		},
+	],
 	run: async ({ interaction }) => {
 		const user = (interaction as ExtendedInteraction).options.getUser('user');
 		let huggedOne: User | string;

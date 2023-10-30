@@ -7,11 +7,10 @@ import {
 } from 'discord.js';
 import colors from '../../assets/data/canvasColors.json' assert { type: 'json' };
 import LoggerModel from '../../assets/utils/models/Logger';
-import { client } from '../../index';
 import { Event } from '../../structures/Event';
 import type { ILoggerDocument } from '../../typings/MongoTypes';
 
-export default new Event('messageDelete', async (message) => {
+export default new Event('messageDelete', async (client, message) => {
     if (!message.guild) return;
     if (!message.author) return;
     if (message.author.bot) return;

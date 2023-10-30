@@ -2,7 +2,6 @@ import type { CommandInteractionOptionResolver } from 'discord.js';
 import { setChannelId, setTheme, setColor } from '../../SlashCommands/server/subcommands/welcome/src/setter/setCustom';
 import { setEdit } from '../../SlashCommands/server/subcommands/welcome/src/setter/setEdit';
 import WelcomeModel from '../../assets/utils/models/Welcome';
-import { client } from '../../index';
 import { Event } from '../../structures/Event';
 import type { IWelcomeDocument } from '../../typings/MongoTypes';
 import type {
@@ -10,7 +9,7 @@ import type {
     ExtendedSelectMenuInteraction,
 } from '../../typings/SlashCommand';
 
-export default new Event('interactionCreate', async (interaction) => {
+export default new Event('interactionCreate', async (client, interaction) => {
     if (interaction.isStringSelectMenu()) {
 
         if (!interaction.guild) return;

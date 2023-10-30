@@ -6,13 +6,14 @@ import type {
 	Message,
 } from 'discord.js';
 import type { RunOptions, SlashCommandType, SubCommandType } from '../typings/SlashCommand';
+import { ApplicationCommandSubCommandData } from 'discord.js';
 
 export class SubCommand implements SubCommandType {
 	public name: string;
 
 	public description: string;
 
-	public options?: readonly ApplicationCommandOptionData[];
+	public options?: ApplicationCommandOptionData[];
 
 	public run: (
 		options: RunOptions,
@@ -31,7 +32,7 @@ export class SlashCommand implements SlashCommandType {
 
 	public description: string;
 
-	public options?: readonly ApplicationCommandOptionData[];
+	public options?: ApplicationCommandOptionData[] | ApplicationCommandSubCommandData[];
 
 	public subcommands?: SubCommandType[];
 

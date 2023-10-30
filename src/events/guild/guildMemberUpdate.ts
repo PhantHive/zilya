@@ -2,11 +2,12 @@ import type { ColorResolvable, GuildMember, Role, TextChannel } from 'discord.js
 import { AuditLogEvent, EmbedBuilder } from 'discord.js';
 import colors from '../../assets/data/canvasColors.json' assert { type: 'json' };
 import LoggerModel from '../../assets/utils/models/Logger';
-import { client } from '../../index';
 import { Event } from '../../structures/Event';
 import type { ILoggerDocument } from '../../typings/MongoTypes';
+import { ExtendedClient } from '../../structures/Client.ts';
 
 async function sendEmbed(
+	client: ExtendedClient,
 	logger: TextChannel,
 	color: string,
 	executor: any,
@@ -50,7 +51,7 @@ async function sendEmbed(
 	await logger.send({ embeds: [embed] });
 }
 
-export default new Event('guildMemberUpdate', async (oldMember, newMember) => {
+export default new Event('guildMemberUpdate', async (client, oldMember, newMember) => {
 	if (!oldMember.guild) return;
 
 	if (oldMember.user.bot) return;
@@ -93,6 +94,7 @@ export default new Event('guildMemberUpdate', async (oldMember, newMember) => {
 			desc = `**${newMember.user.tag}** was given the **${newRole.name}** role.`;
 			changeName = 'Role Added';
 			await sendEmbed(
+				client,
 				logger,
 				color,
 				executor,
@@ -112,6 +114,7 @@ export default new Event('guildMemberUpdate', async (oldMember, newMember) => {
 			desc = `**${newMember.user.tag}** was removed from the **${newRole.name}** role.`;
 			changeName = 'Role Removed';
 			await sendEmbed(
+				client,
 				logger,
 				color,
 				executor,
@@ -131,6 +134,7 @@ export default new Event('guildMemberUpdate', async (oldMember, newMember) => {
 			desc = `**${newMember.user.tag}**'s nickname was changed.`;
 			changeName = 'Nickname Changed';
 			await sendEmbed(
+				client,
 				logger,
 				color,
 				executor,

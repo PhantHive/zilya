@@ -2,10 +2,9 @@ import type { ColorResolvable, TextChannel } from 'discord.js';
 import { EmbedBuilder, AuditLogEvent } from 'discord.js';
 import colors from '../../assets/data/canvasColors.json' assert { type: 'json' };
 import LM from '../../assets/utils/models/Logger';
-import { client } from '../../index';
 import { Event } from '../../structures/Event';
 
-export default new Event('channelUpdate', async (oldChannel, newChannel) => {
+export default new Event('channelUpdate', async (client, oldChannel, newChannel) => {
 	const oldTextChannel = oldChannel as TextChannel;
 	const newTextChannel = newChannel as TextChannel;
 

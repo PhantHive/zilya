@@ -1,6 +1,7 @@
 import { SlashCommand } from '../../structures/SlashCommand';
 import { hugSubCommand } from './action/subcommands/actions/hug';
 import { objectionSubCommand } from './action/subcommands/actions/objection';
+import { ApplicationCommandSubCommandData } from 'discord.js';
 
 const actionCommand = new SlashCommand({
 	name: 'action',
@@ -10,21 +11,14 @@ const actionCommand = new SlashCommand({
 			type: 1,
 			name: 'hug',
 			description: 'Hug someone',
-			options: [
-				{
-					name: 'user',
-					description: 'User to hug',
-					type: 6,
-					required: true,
-				},
-			],
+			options: hugSubCommand.options ?? [],
 		},
 		{
 			type: 1, // 1 is for sub command
 			name: 'objection',
 			description: 'Objection someone',
 		},
-	],
+	] as ApplicationCommandSubCommandData[],
 	subcommands: [hugSubCommand, objectionSubCommand],
 	run: async ({ interaction }) => {
 		let subcommand;

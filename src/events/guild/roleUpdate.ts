@@ -7,12 +7,13 @@ import {
 } from 'discord.js';
 import colors from '../../assets/data/canvasColors.json' assert { type: 'json' };
 import LoggerModel from '../../assets/utils/models/Logger';
-import { client } from '../../index';
 import { Event } from '../../structures/Event';
 import type { ILoggerDocument } from '../../typings/MongoTypes';
+import { ExtendedClient } from '../../structures/Client.ts';
 
 // function promises to send embeds to the log channel
 async function sendEmbed(
+    client: ExtendedClient,
     logger: TextChannel,
     color: ColorResolvable,
     executor: any,
@@ -55,7 +56,7 @@ async function sendEmbed(
     await logger.send({ embeds: [embed] });
 }
 
-export default new Event('roleUpdate', async (oldRole, newRole) => {
+export default new Event('roleUpdate', async (client, oldRole, newRole) => {
     if (!oldRole.guild) return;
 
     const data = await LoggerModel.findOne<ILoggerDocument>({
@@ -104,6 +105,7 @@ export default new Event('roleUpdate', async (oldRole, newRole) => {
                 fieldComment = `\`\`\`js\nRole ID: ${newRole.id}\nExecutor ID: ${executor.id}\`\`\``;
                 desc = `**${executor.tag}** changed the name of the role: **${oldRole.name}** to **${newRole.name}**.`;
                 await sendEmbed(
+                    client,
                     logger,
                     color,
                     executor,
@@ -123,6 +125,7 @@ export default new Event('roleUpdate', async (oldRole, newRole) => {
                 fieldComment = `\`\`\`js\nRole ID: ${newRole.id}\nExecutor ID: ${executor.id}\`\`\``;
                 desc = `**${executor.tag}** changed the color of the role: **${oldRole.hexColor}** to **${newRole.hexColor}**.`;
                 await sendEmbed(
+                    client,
                     logger,
                     color,
                     executor,
@@ -142,6 +145,7 @@ export default new Event('roleUpdate', async (oldRole, newRole) => {
                 fieldComment = `\`\`\`js\nRole ID: ${newRole.id}\nExecutor ID: ${executor.id}\`\`\``;
                 desc = `**${executor.tag}** changed the hoist of the role: **${oldRole.hoist}** to **${newRole.hoist}**.`;
                 await sendEmbed(
+                    client,
                     logger,
                     color,
                     executor,
@@ -161,6 +165,7 @@ export default new Event('roleUpdate', async (oldRole, newRole) => {
                 fieldComment = `\`\`\`js\nRole ID: ${newRole.id}\nExecutor ID: ${executor.id}\`\`\``;
                 desc = `**${executor.tag}** changed the mentionable of the role: **${oldRole.mentionable}** to **${newRole.mentionable}**.`;
                 await sendEmbed(
+                    client,
                     logger,
                     color,
                     executor,
@@ -184,6 +189,7 @@ export default new Event('roleUpdate', async (oldRole, newRole) => {
                 fieldComment = `\`\`\`js\nRole ID: ${newRole.id}\nExecutor ID: ${executor.id}\`\`\``;
                 desc = `**${executor.tag}** added a/multiple permission(s) on **${oldRole.name}** role`;
                 await sendEmbed(
+                    client,
                     logger,
                     color,
                     executor,
@@ -206,6 +212,7 @@ export default new Event('roleUpdate', async (oldRole, newRole) => {
                 fieldComment = `\`\`\`js\nRole ID: ${newRole.id}\nExecutor ID: ${executor.id}\`\`\``;
                 desc = `**${executor.tag}** removed a/multiple permission(s) on **${oldRole.name}** role`;
                 await sendEmbed(
+                    client,
                     logger,
                     color,
                     executor,

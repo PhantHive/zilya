@@ -14,7 +14,7 @@ import type {
 	CacheType,
 	BooleanCache,
 	Message,
-	InteractionResponse,
+	InteractionResponse, ApplicationCommandSubCommandData,
 } from 'discord.js';
 import type { ExtendedClient } from '../structures/Client';
 
@@ -58,12 +58,12 @@ type RunFunction = (
 export type SubCommandType = Omit<ChatInputApplicationCommandData, 'type'> & {
 	description: string;
 	name: string;
-	options?: readonly ApplicationCommandOptionData[];
+	options?: ApplicationCommandOptionData[] | undefined;
 	run: RunFunction;
 };
 
 export type SlashCommandType = Omit<ChatInputApplicationCommandData, 'type'> & {
-	options?: readonly ApplicationCommandOptionData[];
+	options?: ApplicationCommandOptionData[] | ApplicationCommandSubCommandData[] | undefined;
 	run: RunFunction;
 	subcommands?: SubCommandType[];
 	userPermissions?: PermissionResolvable[];

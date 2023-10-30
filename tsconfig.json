@@ -1,14 +1,14 @@
 {
 	"compilerOptions": {
 		"module": "ESNext",
-		"target": "es2020",
+		"target": "es2021",
 		"useDefineForClassFields": true,
 		"lib": ["es2021"],
 		"skipLibCheck": true,
 		"allowJs": true,
 
 		/* Bundler mode */
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"allowImportingTsExtensions": true,
 		"resolveJsonModule": true,
 		"isolatedModules": true,
@@ -44,7 +44,7 @@
 
 		// Interop Constraints
 		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
+		"esModuleInterop": false,
 		"forceConsistentCasingInFileNames": true,
 
 		// Language and Environment

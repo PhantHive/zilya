@@ -6,13 +6,12 @@ import {
 } from 'discord.js';
 import colors from '../../assets/data/canvasColors.json' assert { type: 'json' };
 import LoggerModel from '../../assets/utils/models/Logger';
-import { client } from '../../index';
 import { Event } from '../../structures/Event';
 import type { ILoggerDocument } from '../../typings/MongoTypes';
 
 export default new Event(
     'messageUpdate',
-    async (oldMessage, newMessage) => {
+    async (client, oldMessage, newMessage) => {
         if (!oldMessage.guild) return;
         if (!oldMessage.author) return;
         if (oldMessage.author.bot) return;

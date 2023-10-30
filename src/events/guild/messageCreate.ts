@@ -1,6 +1,5 @@
 import type { Message } from 'discord.js';
 import RankModel from '../../assets/utils/models/Rank';
-import { client } from '../../index';
 import { Event } from '../../structures/Event';
 import type { IRankDocument } from '../../typings/MongoTypes';
 
@@ -83,7 +82,7 @@ const updateRank = async (message: Message) => {
     console.log(`xp: ${data.xpMsg} | level: ${data.levelMsg}`);
 };
 
-export default new Event('messageCreate', async (message) => {
+export default new Event('messageCreate', async (client, message) => {
     if (message.author.bot) return;
 
     const now = Date.now();

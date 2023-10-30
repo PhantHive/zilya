@@ -2,11 +2,10 @@ import type { TextChannel, ColorResolvable } from 'discord.js';
 import { EmbedBuilder, AuditLogEvent } from 'discord.js';
 import colors from '../../assets/data/canvasColors.json' assert { type: 'json' };
 import LoggerModel from '../../assets/utils/models/Logger';
-import { client } from '../../index';
 import { Event } from '../../structures/Event';
 import type { ILoggerDocument } from '../../typings/MongoTypes';
 
-export default new Event('roleDelete', async (role) => {
+export default new Event('roleDelete', async (client, role) => {
 	if (!role.guild) return;
 	if (!client.user) return;
 
