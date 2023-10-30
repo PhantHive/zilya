@@ -32,13 +32,13 @@ export const removeWelcomeCommand = new SubCommand({
 					.setStyle(ButtonStyle.Secondary),
 			);
 
-			await interaction.editReply({
+			return await interaction.editReply({
 				content: 'Are you sure you want to remove the welcome message?',
 				components: [actionRow],
 			});
 		} catch (error) {
 			console.error('An error occurred:', error);
-			await interaction.editReply({
+			return await interaction.editReply({
 				content: 'An unexpected error occurred. Please try again later.',
 			});
 		}
