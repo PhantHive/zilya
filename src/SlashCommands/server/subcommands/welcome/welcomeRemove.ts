@@ -1,50 +1,46 @@
-import { SubCommand } from '../../../../structures/SlashCommand';
 import { ActionRowBuilder, ButtonStyle, ButtonBuilder } from 'discord.js';
-import Models from '../../../../typings/MongoTypes';
+import WelcomeModel from '../../../../assets/utils/models/Welcome';
+import { SubCommand } from '../../../../structures/SlashCommand';
+import type { IWelcomeDocument } from '../../../../typings/MongoTypes';
 
 export const removeWelcomeCommand = new SubCommand({
-    name: 'remove',
-    description: 'Remove welcome message for the server',
-    run: async ({ interaction }) => {
-        // find if there is data, if not say that there is nothing to remove otherwise send a confirmation button yes or no.
-        // everything should be a Promise
-        new Promise(async (resolve, reject) => {
-            let data = await Models.WelcomeModel.findOne({
-                serverId: `${interaction.guild.id}`,
-            });
+	name: 'remove',
+	description: 'Remove welcome message for the server',
+	run: async ({ interaction }) => {
+		if (!interaction.guild) return;
+		try {
+			const data = await WelcomeModel.findOne<IWelcomeDocument>({
+				serverId: `${interaction.guild.id}`,
+			});
 
-            if (!data) {
-                reject(
-                    'There is no welcome message to remove.\nPlease configure one first with `/welcome configure`.',
-                );
-            } else {
-                resolve('Are you sure you want to remove the welcome message?');
-            }
-        })
-            .then(async (res: string) => {
-                // create an actionrowbuilder with a ❌ button and a ✅ button
-                const actionRow: ActionRowBuilder<any> =
-                    new ActionRowBuilder().addComponents(
-                        new ButtonBuilder()
-                            .setCustomId('welcome_remove_yes')
-                            .setLabel('✅')
-                            .setStyle(ButtonStyle.Secondary),
-                        new ButtonBuilder()
-                            .setCustomId('welcome_remove_no')
-                            .setLabel('❌')
-                            .setStyle(ButtonStyle.Secondary),
-                    );
+			if (!data) {
+				await interaction.reply({
+					content:
+						'There is no welcome message to remove.\nPlease configure one first with `/welcome configure`.',
+				});
+				return;
+			}
 
-                // send the message
-                await interaction.reply({
-                    content: res,
-                    components: [actionRow],
-                });
-            })
-            .catch(async (err: string) => {
-                await interaction.reply({
-                    content: err,
-                });
-            });
-    },
+			const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+				new ButtonBuilder()
+					.setCustomId('welcome_remove_yes')
+					.setLabel('✅')
+					.setStyle(ButtonStyle.Secondary),
+				new ButtonBuilder()
+					.setCustomId('welcome_remove_no')
+					.setLabel('❌')
+					.setStyle(ButtonStyle.Secondary),
+			);
+
+			await interaction.editReply({
+				content: 'Are you sure you want to remove the welcome message?',
+				components: [actionRow],
+			});
+		} catch (error) {
+			console.error('An error occurred:', error);
+			await interaction.editReply({
+				content: 'An unexpected error occurred. Please try again later.',
+			});
+		}
+	},
 });

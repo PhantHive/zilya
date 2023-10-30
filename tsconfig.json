@@ -1,29 +1,65 @@
 {
-  "compilerOptions": {
-    "lib": [
-      "ESNext",
-      "dom"
-    ],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "target": "ESNext",
-    "outDir": "dist",
-    "sourceMap": false,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "resolveJsonModule": true,
-    "importHelpers": true
-  },
-  "include": [
-    "src/**/*.ts",
-    "environment.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ]
+	"compilerOptions": {
+		"module": "ESNext",
+		"target": "es2021",
+		"useDefineForClassFields": true,
+		"lib": ["es2021"],
+		"skipLibCheck": true,
+		"allowJs": true,
+
+		/* Bundler mode */
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": false,
+
+		/* Linting */
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+
+		// Type Checking
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"exactOptionalPropertyTypes": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noPropertyAccessFromIndexSignature": false,
+		"noUncheckedIndexedAccess": true,
+
+		// Modules
+		"allowArbitraryExtensions": false,
+
+		// Emit
+		"declaration": true,
+		"declarationMap": true,
+		"importHelpers": false,
+		"newLine": "lf",
+		"noEmitHelpers": true,
+		"outDir": "dist",
+		"removeComments": false,
+		"sourceMap": true,
+
+		// Interop Constraints
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": false,
+		"forceConsistentCasingInFileNames": true,
+
+		// Language and Environment
+		"experimentalDecorators": true
+	},
+	"ts-node-dev": {
+		"transpileOnly": true,
+		"files": true,
+		"esm": true,
+		"project": "./tsconfig.json",
+		"compilerOptions": {
+			"module": "ESNext"
+		}
+	},
+	"types": ["node"],
+	"include": ["src", "./src/setupTests", "src/__tests__"],
+	"exclude": ["node_modules", "dist"],
+	"references": [{ "path": "./tsconfig.node.json" }]
 }

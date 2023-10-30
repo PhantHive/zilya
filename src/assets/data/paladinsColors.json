@@ -1,17 +1,15 @@
 {
+	"card": {
+		"main": "#F5B971",
+		"lines": "#FFECC7",
+		"text": "white",
+		"shadow": "#c7c7c7"
+	},
 
-  "card": {
-    "main": "#F5B971",
-    "lines": "#FFECC7",
-    "text": "white",
-    "shadow": "#c7c7c7"
-  },
-
-  "topCard": {
-    "main": "#F5B971",
-    "lines": "#FFECC7",
-    "text": "white",
-    "shadow": "#c7c7c7"
-  }
-
+	"topCard": {
+		"main": "#F5B971",
+		"lines": "#FFECC7",
+		"text": "white",
+		"shadow": "#c7c7c7"
+	}
 }

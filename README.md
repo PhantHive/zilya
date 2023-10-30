@@ -1,6 +1,5 @@
 <h1 align="center"><strong><i>ZILYA</i></strong></h1>
 
-
 <img src="./src/assets/img/readme-zilya.png" align="center">
 
 ---
@@ -25,14 +24,13 @@
 
 </div>
 
-
 ## Who is Zilya?
 
 Once upon a time, two bots got smashed on the floor: Zouk and UTA.
 The many particles smashed together created a great wonderful BOT called ZILYA.
 
+[//]: # 'table of contents'
 
-[//]: # (table of contents)
 ## Table of contents
 
 - [Who is Zilya?](#who-is-zilya)
@@ -42,45 +40,46 @@ The many particles smashed together created a great wonderful BOT called ZILYA.
   - [Fun commands](#fun-commands)
   - [Paladins commands](#paladins-commands)
 
-
-## Features 
+## Features
 
 - [x] Logger
 - [x] Fun commands
 - [x] Paladins commands
 
---- 
+---
+
 ### Logger
 
-| #   | Logs            | What it does?                                       |
-|-----|----------------|-----------------------------------------------------|
-| 1   | messageUpdate   | Records when a message is updated                   |
-| 2   | messageDelete   | Records when a message is deleted                   |
-| 3   | voiceStateUpdate | Records when a user joins or leaves a voice channel |
-| 4   | roleCreate      | Records when a new role is created                  |
-| 5   | roleUpdate      | Records when a role is updated                      |
-| 6   | roleDelete      | Records when a role is deleted                      |
+| #   | Logs              | What it does?                                       |
+| --- | ----------------- | --------------------------------------------------- |
+| 1   | messageUpdate     | Records when a message is updated                   |
+| 2   | messageDelete     | Records when a message is deleted                   |
+| 3   | voiceStateUpdate  | Records when a user joins or leaves a voice channel |
+| 4   | roleCreate        | Records when a new role is created                  |
+| 5   | roleUpdate        | Records when a role is updated                      |
+| 6   | roleDelete        | Records when a role is deleted                      |
 | 7   | guildMemberUpdate | Records when a guild member is updated              |
-| 8   | channelUpdate   | Records when a channel is updated                    |
+| 8   | channelUpdate     | Records when a channel is updated                   |
 
 More logs will be added later, you can suggest some in the [issues](https://github.com/PhantHive/zillya/issues) section.
 
 ### Fun commands
 
-| Commands | What it does? |
-|----------|---------------|
-| action    | hug / objection     |
-
+| Commands | What it does?   |
+| -------- | --------------- |
+| action   | hug / objection |
 
 ### Paladins commands
 
 The Paladins command allows you to get information about the game Paladins.
 
-| Subcommand | Description |
-| ---------- | ----------- |
-| profile    | Get profile information for a specific player. |
+| Subcommand | Description                                                             |
+| ---------- | ----------------------------------------------------------------------- |
+| profile    | Get profile information for a specific player.                          |
 | mostPlayed | Get information about a player's most played champions and their stats. |
 
---- 
-[//]: # (go back to top)
+---
+
+[//]: # 'go back to top'
+
 🐦 [go back to top](#table-of-contents) 🐦

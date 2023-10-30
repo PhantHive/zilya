@@ -1,69 +1,67 @@
+import type { CanvasRenderingContext2D } from 'canvas';
+import { createCanvas } from 'canvas';
+import RankModel from '../../assets/utils/models/Rank';
 import { SlashCommand } from '../../structures/SlashCommand';
-import {DrawRankCard} from "./rank/drawer/drawCard";
-import {
-    createCanvas,
-    CanvasRenderingContext2D
-} from 'canvas';
-import Models from '../../typings/MongoTypes';
-import path from 'path';
-import {ExtendedInteraction} from "../../typings/SlashCommand";
-
+import type { IRankDocument } from '../../typings/MongoTypes';
+import type { ExtendedInteraction } from '../../typings/SlashCommand';
+import { DrawRankCard } from './rank/drawer/drawCard';
 
 const rankCommand = new SlashCommand({
-    name: 'rank',
-    description: 'Display the rank card',
-    run: async ({ interaction }) => {
-        await interaction.deferReply();
+	name: 'rank',
+	description: 'Display the rank card',
+	options: [],
+	run: async ({ interaction }) => {
+		if (!interaction.guild) {
+			return interaction.reply('This command can only be used in a server.');
+		}
 
-        // creating context
-        const canvas = createCanvas(670, 270);
-        // make canvas transparent
-        const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
+		await interaction.deferReply();
 
-        new Promise(async (resolve, reject) => {
-            let data = await Models.RankModel.findOne({
-                serverId: `${interaction.guild.id}`,
-                userId: `${interaction.user.id}`,
-            }).catch((err) => {
-                reject(err);
-            });
+		// creating context
+		const canvas = createCanvas(670, 270);
+		// make canvas transparent
+		const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
 
-            if (!data) {
-                // check number of doc in db to set rank
-                const nbMembers: number = await Models.RankModel.countDocuments(
-                    {
-                        serverId: `${interaction.guild.id}`,
-                    },
-                );
+		let data = await RankModel.findOne<IRankDocument>({
+			serverId: `${interaction.guild.id}`,
+			userId: `${interaction.user.id}`,
+		});
 
-                data = await Models.RankModel.create({
-                    serverId: `${interaction.guild.id}`,
-                    userId: `${interaction.user.id}`,
-                    xpMsg: 0,
-                    levelMsg: 1,
-                    rankMsg: nbMembers + 1,
-                    xpVocal: 0,
-                    levelVocal: 1,
-                    rankVocal: nbMembers + 1,
-                });
+		try {
+			if (!data) {
+				// check number of doc in db to set rank
+				const nbMembers: number = await RankModel.countDocuments({
+					serverId: `${interaction.guild.id}`,
+				});
 
-                resolve(data);
-            } else {
-                resolve(data);
-            }
-        })
-            .then(async (data: any) => {
-                // drawing card
-                let card = new DrawRankCard(ctx, canvas, data, interaction as ExtendedInteraction);
-                let cardBuffer = await card.drawCard();
-                await interaction.editReply({ files: [cardBuffer] });
-            })
-            .catch(async (err) => {
-                await interaction.editReply({
-                    content: `An error occurred: ${err}`,
-                });
-            });
-    },
+				data = await RankModel.create({
+					serverId: `${interaction.guild.id}`,
+					userId: `${interaction.user.id}`,
+					xpMsg: 0,
+					levelMsg: 1,
+					rankMsg: nbMembers + 1,
+					xpVocal: 0,
+					levelVocal: 1,
+					rankVocal: nbMembers + 1,
+				});
+
+				const card = new DrawRankCard(ctx, canvas, data, interaction as ExtendedInteraction);
+				const cardBuffer = await card.drawCard();
+				return await interaction.editReply({ files: [cardBuffer] });
+			} else {
+				const card = new DrawRankCard(ctx, canvas, data, interaction as ExtendedInteraction);
+				const cardBuffer = await card.drawCard();
+				return await interaction.editReply({ files: [cardBuffer] });
+			}
+		} catch (error) {
+			console.error(error);
+			return interaction.editReply({
+				content: 'Error trying to draw rank card.'
+			});
+		}
+
+		
+	},
 });
 
 export default rankCommand;

@@ -1,36 +1,51 @@
-import { SlashCommandType, RunOptions, SubCommandType } from '../typings/SlashCommand';
-import {
-    CommandInteraction,
-    ChatInputApplicationCommandData,
-    PermissionResolvable,
-    ApplicationCommandSubCommandData,
+import type {
+	ApplicationCommandOptionData,
+	BooleanCache,
+	CacheType,
+	InteractionResponse,
+	Message,
+	ApplicationCommandSubCommandData,
 } from 'discord.js';
+import type { RunOptions, SlashCommandType, SubCommandType } from '../typings/SlashCommand';
 
 export class SubCommand implements SubCommandType {
-    name: string;
-    description: string;
-    options?: ApplicationCommandSubCommandData['options'];
+	public name: string;
 
-    constructor(commandOptions: SubCommandType) {
-        Object.assign(this, commandOptions);
-    }
+	public description: string;
 
-    run: (options: {
-        interaction: any
-    }) => Promise<void> = async ({ interaction }) => {};
+	public options?: ApplicationCommandOptionData[];
+
+	public run: (
+		options: RunOptions,
+	) => Promise<InteractionResponse<boolean> | Message<BooleanCache<CacheType>> | void>;
+
+	public constructor(subCommandOptions: SubCommandType) {
+		this.name = subCommandOptions.name;
+		this.description = subCommandOptions.description;
+		this.options = subCommandOptions.options ?? [];
+		this.run = subCommandOptions.run;
+	}
 }
 
 export class SlashCommand implements SlashCommandType {
-    name: string;
-    description: string;
-    options?: ChatInputApplicationCommandData['options'];
-    subcommands?: SubCommand[];
+	public name: string;
 
-    constructor(commandOptions: SlashCommandType) {
-        Object.assign(this, commandOptions);
-    }
+	public description: string;
 
-    run: (options: RunOptions) => Promise<void> = async ({ interaction }) => {}
+	public options?: ApplicationCommandOptionData[] | ApplicationCommandSubCommandData[];
 
+	public subcommands?: SubCommandType[];
 
+	public run: (
+		options: RunOptions,
+	) => Promise<InteractionResponse<boolean> | Message<BooleanCache<CacheType>> | void>;
+
+	public constructor(slashCommandOptions: SlashCommandType) {
+		this.name = slashCommandOptions.name;
+		this.description = slashCommandOptions.description;
+		this.options = slashCommandOptions.options ?? [];
+		this.subcommands = slashCommandOptions.subcommands ?? [];
+		this.run = slashCommandOptions.run;
+		console.log(`Slash command ${this.name} loaded`);
+	}
 }

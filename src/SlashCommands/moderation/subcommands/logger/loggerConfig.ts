@@ -1,152 +1,140 @@
-import { SubCommand } from '../../../../structures/SlashCommand';
+import type { ColorResolvable } from 'discord.js';
 import { EmbedBuilder } from 'discord.js';
-import Models from '../../../../typings/MongoTypes';
-import colors from '../../../../assets/data/canvasColors.json';
-import { ExtendedInteraction } from '../../../../typings/SlashCommand';
+import colors from '../../../../assets/data/canvasColors.json' assert { type: 'json' };
+import LoggerModel from '../../../../assets/utils/models/Logger';
+import { SubCommand } from '../../../../structures/SlashCommand';
+import type { ILoggerDocument } from '../../../../typings/MongoTypes';
+import type { ExtendedInteraction } from '../../../../typings/SlashCommand';
 
 export const configureLoggerCommand = new SubCommand({
-    name: 'config',
-    description: 'Configure logger for the server',
-    options: [
-        {
-            name: 'channel_id',
-            description: 'channel id',
-            type: 7,
-            required: true,
-        },
-        {
-            name: 'notif',
-            description: 'which notification you want',
-            type: 3,
-            choices: [
-                {
-                    name: 'all',
-                    value: 'all',
-                },
-                {
-                    name: 'no voice logs',
-                    value: 'no_voice_logs',
-                },
-                {
-                    name: 'voice logs',
-                    value: 'only_voice_logs',
-                },
-            ],
-            required: true,
-        },
-        {
-            name: 'color',
-            description: 'Choose a color. By default: Yellow',
-            type: 3,
-            choices: [
-                {
-                    name: 'Red',
-                    value: 'red',
-                },
-                {
-                    name: 'Blue',
-                    value: 'blue',
-                },
-                {
-                    name: 'Aqua',
-                    value: 'aqua',
-                },
-                {
-                    name: 'Green',
-                    value: 'green',
-                },
-                {
-                    name: 'Pink',
-                    value: 'luminous_vivid_pink',
-                },
-            ],
-        },
-    ],
-    run: async ({ interaction }) => {
-        let channelId = (interaction as ExtendedInteraction).options.get(
-            'channel_id',
-        ).channel.id;
-        let notifType = (interaction as ExtendedInteraction).options.get(
-            'notif',
-        ).value as string;
-        let color;
-        try {
-            if (!color)
-            color = (interaction as ExtendedInteraction).options.get('color')
-                .value as string;
-        } catch (e) {
-            color = 'default';
-        }
+	name: 'config',
+	description: 'Configure logger for the server',
+	options: [
+		{
+			name: 'channel_id',
+			description: 'channel id',
+			type: 7,
+			required: true,
+		},
+		{
+			name: 'notif',
+			description: 'which notification you want',
+			type: 3,
+			choices: [
+				{
+					name: 'all',
+					value: 'all',
+				},
+				{
+					name: 'no voice logs',
+					value: 'no_voice_logs',
+				},
+				{
+					name: 'voice logs',
+					value: 'only_voice_logs',
+				},
+			],
+			required: true,
+		},
+		{
+			name: 'color',
+			description: 'Choose a color. By default: Yellow',
+			type: 3,
+			choices: [
+				{
+					name: 'Red',
+					value: 'red',
+				},
+				{
+					name: 'Blue',
+					value: 'blue',
+				},
+				{
+					name: 'Aqua',
+					value: 'aqua',
+				},
+				{
+					name: 'Green',
+					value: 'green',
+				},
+				{
+					name: 'Pink',
+					value: 'luminous_vivid_pink',
+				},
+			],
+		},
+	],
+	run: async ({ interaction }) => {
+		const channelOption = (interaction as ExtendedInteraction).options.get('channel_id');
+		const notifOption = (interaction as ExtendedInteraction).options.get('notif');
+		const colorOption = (interaction as ExtendedInteraction).options.get('color');
 
-        // check if the channel is type text
-        if (
-            (interaction as ExtendedInteraction).options.get('channel_id')
-                .channel.type !== 0
-        ) {
-            await interaction.reply({
-                content:
-                    'Please choose a text channel. Cannot log into a voice channel.',
-                ephemeral: true,
-            });
-            return;
-        }
+		if (!channelOption?.channel) {
+			await interaction.reply({
+				content: 'Please choose a text channel. Cannot log into a voice channel.',
+				ephemeral: true,
+			});
+			return;
+		}
 
-        const serverName = interaction.guild.name;
-        const serverId = interaction.guild.id;
+		const channelId = channelOption.channel.id;
+		const notifType = notifOption?.value as string | undefined;
+		const color = colorOption?.value as string | 'default' | undefined;
 
-        let data = await Models.LoggerModel.findOne({
-            serverId: interaction.guild.id,
-        });
+		const serverName = interaction.guild?.name;
+		const serverId = interaction.guild?.id;
 
-        new Promise(async (resolve) => {
-            let embed: EmbedBuilder;
-            if (!data) {
-                await new Models.LoggerModel({
-                    serverId: serverId,
-                    notifType: notifType,
-                    logChannel: channelId,
-                    color: color,
-                }).save();
+		if (!serverName || !serverId) {
+			await interaction.reply({
+				content: 'This command can only be used in a server.',
+				ephemeral: true,
+			});
+			return;
+		}
 
-                // create EmbedBuilder with the color, a title "Server ID: Server Name" and a description "Logger has been configured."
-                // "and a description with channel id and notif type"
-                // send the embed
+		const data = await LoggerModel.findOne<ILoggerDocument>({
+			serverId,
+		});
 
-                embed = new EmbedBuilder()
-                    .setColor(colors[color.toLowerCase()])
-                    .setTitle(`${serverId}: ${serverName}`)
-                    .setDescription(`Logger has been configured.`)
-                    .addFields([
-                        {
-                            name: 'Channel ID',
-                            value: channelId,
-                            inline: true,
-                        },
-                        {
-                            name: 'Notification Type',
-                            value: notifType,
-                            inline: true,
-                        },
-                    ]);
+		try {
+			let embed: EmbedBuilder;
+			if (!data) {
+				await new LoggerModel({
+					serverId,
+					notifType,
+					logChannel: channelId,
+					color,
+				}).save();
 
-                return resolve(embed);
-            }
+				let colorName = color as keyof typeof colors;
+				if (!colors[colorName]) colorName = 'default';
 
-            embed = new EmbedBuilder()
-                .setColor(colors[color.toLowerCase()])
-                .setTitle(`${serverId}: ${serverName}`)
-                .setDescription(
-                    `This server already has a log channel. \`/logger remove\` to change it.`,
-                );
+				embed = new EmbedBuilder()
+					.setColor(colors[colorName] as ColorResolvable)
+					.setTitle(`${serverId}: ${serverName}`)
+					.setDescription(`Logger has been configured.`)
+					.addFields(
+						{ name: 'Channel ID', value: channelId, inline: true },
+						{ name: 'Notification Type', value: notifType ?? 'all', inline: true },
+					);
 
-            return resolve(embed);
-        })
-            .then((result: EmbedBuilder) => {
-                interaction.reply({ embeds: [result] });
-            })
-            .catch((err: Error) => {
-                console.log(err);
-            });
-    },
+				return await interaction.reply({ embeds: [embed] });
+			}
+
+			let colorName = color as keyof typeof colors;
+			if (!colors[colorName]) colorName = 'default';
+
+			embed = new EmbedBuilder()
+				.setColor(colors[colorName] as ColorResolvable)
+				.setTitle(`${serverId}: ${serverName}`)
+				.setDescription(`This server already has a log channel. \`/logger remove\` to change it.`);
+
+			return await interaction.reply({ embeds: [embed] });
+		} catch {
+			return await interaction.reply({
+				content: 'Error trying to configure logger.',
+				ephemeral: true,
+			});
+		}
+	},
 });
-
