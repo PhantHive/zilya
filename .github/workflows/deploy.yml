@@ -20,6 +20,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Execute deploy script
+        run: sh deployPrivateFiles.sh
+
       - name: Copy assets
         run: npm run copy:assets
 
