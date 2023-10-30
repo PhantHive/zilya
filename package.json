@@ -14,6 +14,7 @@
 		"lint:fix": "eslint --fix .",
 		"lint:commit": "commitlint -e",
 		"lint:staged": "lint-staged",
+		"copy:assets": "node copy-assets.cjs",
 		"prettier": "prettier --write .",
 		"postinstall": "husky install"
 	},
