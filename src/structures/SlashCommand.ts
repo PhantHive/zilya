@@ -17,7 +17,7 @@ export class SubCommand implements SubCommandType {
 
 	public run: (
 		options: RunOptions,
-	) => Promise<InteractionResponse<boolean> | Message<BooleanCache<CacheType>> | void>;
+	) => Promise<InteractionResponse<boolean> | Message<BooleanCache<CacheType>> | void> | void;
 
 	public constructor(subCommandOptions: SubCommandType) {
 		this.name = subCommandOptions.name;
@@ -38,7 +38,7 @@ export class SlashCommand implements SlashCommandType {
 
 	public run: (
 		options: RunOptions,
-	) => Promise<InteractionResponse<boolean> | Message<BooleanCache<CacheType>> | void>;
+	) => Promise<InteractionResponse<boolean> | Message<BooleanCache<CacheType>> | void> | void;
 
 	public constructor(slashCommandOptions: SlashCommandType) {
 		this.name = slashCommandOptions.name;

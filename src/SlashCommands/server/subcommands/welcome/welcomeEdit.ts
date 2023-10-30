@@ -24,7 +24,7 @@ export const editWelcomeCommand = new SubCommand({
 				content: 'Welcome message can be edited now. Proceeding to edit options...',
 			});
 			await wait(3_000);
-			await editOptions(interaction as ExtendedSelectMenuInteraction); 
+			await editOptions(interaction as ExtendedSelectMenuInteraction);
 		}
 	},
 });

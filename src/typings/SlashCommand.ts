@@ -54,7 +54,7 @@ export interface RunOptions {
 
 type RunFunction = (
 	options: RunOptions,
-) => Promise<InteractionResponse | Message<BooleanCache<CacheType>> | void>;
+) => Promise<InteractionResponse | Message<BooleanCache<CacheType>> | void> | void;
 
 export type SubCommandType = Omit<ChatInputApplicationCommandData, 'type'> & {
 	description: string;

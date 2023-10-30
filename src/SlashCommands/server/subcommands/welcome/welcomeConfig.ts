@@ -32,9 +32,9 @@ export const configureWelcomeCommand = new SubCommand({
 					content: 'Error trying to configure welcome message.',
 					ephemeral: true,
 				});
-			await nextStep(data, interaction as ExtendedSelectMenuInteraction); 
+			await nextStep(data, interaction as ExtendedSelectMenuInteraction);
 		} else {
-			await nextStep(data, interaction as ExtendedSelectMenuInteraction); 
+			await nextStep(data, interaction as ExtendedSelectMenuInteraction);
 		}
 	},
 });
