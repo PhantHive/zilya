@@ -23,14 +23,14 @@ jobs:
       - name: Execute deploy script
         run: sh deployPrivateFiles.sh
 
-      - name: Copy assets
-        run: npm run copy:assets
-
       - name: Build
         run: npm run build
 
       - name: Post build requirements from esnext to commonjs
         run: npm run postbuild
+
+      - name: Copy assets
+        run: npm run copy:assets
 
       - name: Package only the dist folder
         uses: actions/upload-artifact@v2
