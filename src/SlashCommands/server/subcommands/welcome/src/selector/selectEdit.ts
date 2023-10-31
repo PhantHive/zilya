@@ -26,13 +26,13 @@ const editOptions = async (interaction: ExtendedSelectMenuInteraction) => {
 	);
 
 	try {
-		await interaction.reply({
+		await interaction.editReply({
 			content: 'What do you wish to edit?',
 			components: [actionRow],
 		});
 	} catch (error) {
 		console.error('An error occurred:', error);
-		await interaction.reply({
+		await interaction.editReply({
 			content: 'An unexpected error occurred. Please try again later.',
 		});
 	}

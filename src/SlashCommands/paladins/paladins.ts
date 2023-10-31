@@ -1,3 +1,4 @@
+import type { ApplicationCommandSubCommandData } from 'discord.js';
 import { SlashCommand } from '../../structures/SlashCommand';
 import { profileSubCommand } from './subcommands/paladins/profile';
 
@@ -9,16 +10,9 @@ const paladinsCommand = new SlashCommand({
 			type: 1, // 1 is for sub command
 			name: 'profile',
 			description: 'Get paladins profile infos',
-			options: [
-				{
-					name: 'nickname',
-					description: 'User nickname',
-					type: 3,
-					required: true,
-				},
-			],
+			options: profileSubCommand.options,
 		},
-	],
+	] as ApplicationCommandSubCommandData[],
 	subcommands: [profileSubCommand],
 	run: async ({ interaction }) => {
 		await interaction.deferReply();

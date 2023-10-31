@@ -1,3 +1,4 @@
+import WelcomeModel from '../../../../../../assets/utils/models/Welcome';
 import type { IWelcomeDocument } from '../../../../../../typings/MongoTypes';
 import type { ExtendedSelectMenuInteraction } from '../../../../../../typings/SlashCommand';
 import { nextStep } from './setCustom';
@@ -8,7 +9,7 @@ const setEdit = async (
 	value: string,
 ) => {
 	if (!data) {
-		await interaction.reply({
+		await interaction.editReply({
 			content:
 				'Welcome message has been removed while the edit process was ongoing. Please configure one first with `/welcome configure`.',
 		});
@@ -27,12 +28,11 @@ const setEdit = async (
 
 	if (Object.keys(update).length > 0) {
 		await data.updateOne(update);
+		// find the updated data
+		data = await WelcomeModel.findOne<IWelcomeDocument>({ serverId: data.serverId }) ?? data;
+		console.log(data);
 		await nextStep(data, interaction);
 	}
-
-	await interaction.reply({
-		content: 'Welcome message has been edited successfully.',
-	});
 };
 
 export { setEdit };

@@ -65,6 +65,7 @@ export default [
 			'copy-assets.cjs',
 			'postBuild.cjs',
 			'ecosystem.config.cjs',
+			'jest.config.cjs',
 		],
 	},
 	commonRuleset,
