@@ -58,7 +58,7 @@ jobs:
         run: pm2 stop zilya || true
 
       - name: Start bot with pm2 and babel
-        run: pm2 start ecosystem.config.js
+        run: pm2 start ecosystem.config.cjs
 
       - name: Save pm2 process list
         run: pm2 save
