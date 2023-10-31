@@ -29,6 +29,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Post build requirements from esnext to commonjs
+        run: npm run postbuild
+
       - name: Package only the dist folder
         uses: actions/upload-artifact@v2
         with:

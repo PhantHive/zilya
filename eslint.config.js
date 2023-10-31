@@ -63,6 +63,7 @@ export default [
 			'**/.next/',
 			'**/*.spec.*',
 			'copy-assets.cjs',
+			'postBuild.cjs',
 		],
 	},
 	commonRuleset,

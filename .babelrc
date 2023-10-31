@@ -1,6 +1,18 @@
 {
 	"presets": [
-		["@babel/preset-env", { "targets": { "node": "current" } }],
+		["@babel/preset-env", { "modules": false }],
 		"@babel/preset-typescript"
+	],
+	"plugins": [
+		["@babel/plugin-syntax-import-attributes", {"deprecatedAssertSyntax": true}],
+		["transform-imports", {
+			"your-package-name": {
+				"transform": "${member}",
+				"preventFullImport": true
+			}
+		}],
+		["module-resolver", {
+			"extensions": [".js", ".jsx", ".ts", ".tsx"]
+		}]
 	]
 }
