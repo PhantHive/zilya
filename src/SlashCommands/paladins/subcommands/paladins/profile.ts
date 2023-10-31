@@ -30,6 +30,14 @@ const userCard = async (paladinsProfile: PaladinsProfile) => {
 export const profileSubCommand = new SubCommand({
 	name: 'profile',
 	description: 'Get user profile',
+	options: [
+		{
+			name: 'nickname',
+			description: 'User nickname',
+			type: 3,
+			required: true,
+		},
+	],
 	run: async ({ interaction }): Promise<Message<BooleanCache<CacheType>>> => {
 		if (!(interaction as ExtendedInteraction).options.getString('nickname')) {
 			return interaction.editReply({
@@ -62,7 +70,7 @@ export const profileSubCommand = new SubCommand({
 		let res;
 		try {
 			const playerId = await pal.getPlayerIdByName(pseudo);
-			res = await pal.getPlayer(playerId);
+			res = await pal.getPlayer(playerId[0].player_id);
 		} catch {
 			return await interaction.editReply({
 				content: `User not found.`,

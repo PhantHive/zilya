@@ -2,7 +2,7 @@
 
 
 const mockIndex = jest.fn(() => true);
-jest.mock('../index', () => ({
+jest.mock('../src/index', () => ({
     __esModule: true,
     default: mockIndex,
 }));
