@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18.12.1
+          node-version: 21.1.0
 
       - name: Install dependencies
         run: npm install
@@ -58,7 +58,7 @@ jobs:
         run: pm2 stop zilya || true
 
       - name: Start bot with pm2 and babel
-        run: pm2 start dist/index.js --name zilya --interpreter babel-node
+        run: pm2 start ecosystem.config.js
 
       - name: Save pm2 process list
         run: pm2 save

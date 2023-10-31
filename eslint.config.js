@@ -64,6 +64,7 @@ export default [
 			'**/*.spec.*',
 			'copy-assets.cjs',
 			'postBuild.cjs',
+			'ecosystem.config.cjs',
 		],
 	},
 	commonRuleset,
