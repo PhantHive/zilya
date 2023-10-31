@@ -8,7 +8,7 @@ const setEdit = async (
 	value: string,
 ) => {
 	if (!data) {
-		await interaction.reply({
+		await interaction.editReply({
 			content:
 				'Welcome message has been removed while the edit process was ongoing. Please configure one first with `/welcome configure`.',
 		});
@@ -30,7 +30,7 @@ const setEdit = async (
 		await nextStep(data, interaction);
 	}
 
-	await interaction.reply({
+	await interaction.editReply({
 		content: 'Welcome message has been edited successfully.',
 	});
 };

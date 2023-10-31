@@ -19,6 +19,11 @@ const isChannelValid = async (channel: string, configName: string) => {
 };
 
 const nextStep = async (data: IWelcomeDocument, interaction: ExtendedSelectMenuInteraction) => {
+
+	try {
+		await interaction.deferReply();
+	} catch {}
+
 	try {
 		if (!interaction.guild) throw new Error('This command can only be used in a server.');
 		const channels = interaction.guild.channels.cache
@@ -101,7 +106,7 @@ const setChannelId = async (data: IWelcomeDocument, interaction: ExtendedSelectM
 
 		const response =
 			'Thank you! I will setup the welcome message in this channel. Proceeding to the next step...';
-		await interaction.update({ content: response, components: [] });
+		await interaction.editReply({ content: response, components: [] });
 		await setTimeout(2_000);
 		await nextStep(data, interaction);
 	} catch (error) {

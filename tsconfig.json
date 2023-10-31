@@ -59,7 +59,9 @@
 		}
 	},
 	"types": ["node"],
-	"include": ["src", "./src/setupTests", "src/__tests__"],
+	"include": ["src", "./src/setupTests",
+		"src/__tests__"
+	],
 	"exclude": ["node_modules", "dist"],
 	"references": [{ "path": "./tsconfig.node.json" }]
 }
