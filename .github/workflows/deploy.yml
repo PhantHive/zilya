@@ -52,14 +52,14 @@ jobs:
         run: whoami
 
       # remove everything except on bash dist/
-      - name: Remove everything except dist/ and node_modules/
-        run: ls -I dist -I node_modules | xargs rm -rf
+      - name: Remove everything except dist/ and node_modules/ and package.json
+        run: ls -I dist -I node_modules -I package.json | xargs rm -rf
 
       - name: Stop bot with pm2 if running
         run: pm2 stop zilya || true
 
       - name: Start bot with pm2 and babel
-        run: pm2 start ecosystem.config.cjs
+        run: pm2 start dist/ecosystem.config.cjs
 
       - name: Save pm2 process list
         run: pm2 save
