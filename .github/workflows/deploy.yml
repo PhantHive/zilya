@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*' # Trigger the workflow on tags starting with 'v'
+      - 'main'
 jobs:
   deploy:
     runs-on: self-hosted
